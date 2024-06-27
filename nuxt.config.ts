@@ -1,5 +1,13 @@
 import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 export default defineNuxtConfig({
+  runtimeConfig: {
+    public: {
+      BASE_URL: 'http://localhost:5263', //replace with ENV: NUXT_PUBLIC_BASE_URL 
+      // ta zmienna srodowiskowa sie przyda, gdy bedziemy buildowac i wdrazac ta aplikacje
+      // na jakis serwer, wtedy na ten adres localhost nie zadziala, natomiast w tej zmiennej
+      // wpiszemy sobie publiczny adres naszego API
+    },
+  },
   devtools: {enabled: false},
   ssr: false,
   build: {
