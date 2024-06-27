@@ -1,13 +1,31 @@
-  <!-- 
-  <template> -> glowne komponenty
-
-  to cale nizej to zawartosc html
-      <VApp>
-        <NuxtPage />
-    </VApp>
-  -->
 <template>
-    <VApp>
-        <NuxtPage />
-    </VApp>
+	<v-app>
+		<v-app-bar>
+			<v-app-bar-nav-icon v-if="mobile" @click="drawer = !drawer"></v-app-bar-nav-icon>
+
+			<v-app-bar-title>Page Monitor</v-app-bar-title>
+		</v-app-bar>
+
+
+		<v-navigation-drawer :order="mobile ? -1 : 0"   v-model="drawer">
+			<!--  -->
+		</v-navigation-drawer>
+
+
+
+		<v-main>
+			<div class ="pa-4">
+				<NuxtPage />
+			</div>
+		</v-main>
+	</v-app>
 </template>
+
+<script setup>
+// to jest wlasnie composables
+import { useDisplay } from 'vuetify'
+
+const { mobile } = useDisplay()
+
+const drawer = ref(false);
+</script>
