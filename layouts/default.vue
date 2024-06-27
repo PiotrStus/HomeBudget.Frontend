@@ -45,12 +45,12 @@ import { useStorage } from "@vueuse/core";
 
 // tworzymy obiekt, ktory uzywa tego composable
 const theme = useTheme();
-
 const { mobile } = useDisplay();
-
 const currentTheme = useStorage("currentTheme", "light");
-
 const drawer = ref(null);
+// stala reaktywna, ktora 
+const userStore = useUserStore();
+
 
 const menuItems = [
 	{
@@ -78,6 +78,7 @@ function toggleTheme() {
 onMounted( () => {
 	// czyli przypisujemy wartosc czytana z local storage
 	theme.global.name.value = currentTheme.value;
+	userStore.loadLoggedInUser();
 });
 
 </script>
