@@ -17,7 +17,7 @@
 		</v-app-bar>
 
 		<!-- MENU -->
-		<v-navigation-drawer :order="mobile ? -1 : 0" v-model="drawer" v-if="userStore.$state,isLoggedIn === true">
+		<v-navigation-drawer :order="mobile ? -1 : 0" v-model="drawer" v-if="userStore.$state.isLoggedIn === true">
 			<VList>
 				<VListItem
 					v-for="item in menuItems"
@@ -31,7 +31,7 @@
 
 		<v-main>
 			<div class="pa-4">
-				<NuxtPage v-if="userStore.$state,isLoggedIn === true" />
+				<NuxtPage v-if="userStore.$state.isLoggedIn === true" />
 			</div>
 		</v-main>
 		<LoginDialog></LoginDialog>

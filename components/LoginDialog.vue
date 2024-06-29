@@ -14,7 +14,7 @@
     			<VProgressCircular indeterminate></VProgressCircular>
 			</div>
 
-			<VForm v-else @submit.prevent="submit">
+			<VForm v-else @submit.prevent="login" :disabled="loading">
 				<!-- VCardText -> dodaje odpowiednie odstepy przestrzen w karcie -->
 				<VCardText>
 					<!-- v-text-field -> dwa pola tekstowe -->
@@ -34,6 +34,7 @@
 						type="password"
 						label="Hasło"
 					></v-text-field>
+					<VAlert v-if="errorMsg" type="error" variant="tonal">{{ errorMsg }}</VAlert>
 				</VCardText>
 				<VCardActions>
 					<!-- "mx-auto" -> marginesy pionowe na auto, czyli bedzie wycentrowany -->
@@ -44,6 +45,7 @@
 						color="primary"
 						type="submit"
 						variant="elevated"
+						:loading="loading"
 						>Zaloguj</v-btn
 					>
 				</VCardActions>
@@ -64,9 +66,10 @@ const show = computed(() => {
     return userStore.$state.isLoggedIn === false || userStore.$state.loading === true;
 });
 
-
-// reaktywny obiekt o nazwie show
-// czy okienko jest aktualnie wyswietlane czy nie
+// wiadomosc z bledem
+const errorMsg = ref("");
+// informacja, ze trwa wlasnie wysylanie requesta do logowania po nasciscnieu submit
+const loading = ref(false);
 
 const viewModel = ref({
 	email: "",
@@ -77,5 +80,33 @@ const viewModel = ref({
 const submit = () => {
 	console.log(viewModel.value);
 }
+
+const login = () => {  
+
+    loading.value = true;
+    errorMsg.value = "";
+
+    useWebApiFetch('/User/Login', {
+      method: 'POST',
+	  // jesli dodamy ... obiekt traci swoja reaktynwosc i sa czyste properties w tym obiekcie
+      body: { ...viewModel.value },
+	  // nadpisujemy funkcje do bledow
+      onResponseError: ({ response }) => {
+        errorMsg.value = "Błąd logowania";
+      }
+    })
+	// jesli request sie uda i nie ma bledow
+	// sprwadzamy czy w odpowieidzy mamy dane i ze stora wywolujemy akcje 
+	// pobierz dane o zalogowanym uzytkowniku
+	// po zalogowaniu dostajemy token 
+    .then((response) => {
+        if (response.data.value) {
+            userStore.loadLoggedInUser();
+        }
+    })
+    .finally(() => {
+        loading.value = false;
+    });
+};
 
 </script>
