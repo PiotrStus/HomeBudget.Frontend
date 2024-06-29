@@ -1,6 +1,6 @@
 <!-- template to html komponentu -->
 <template>
-	<VDialog v-model="show" persistent width="400" scroll-strategy="none">
+	<VDialog :model-value="show" persistent width="400" scroll-strategy="none">
 		<VCard class="py-4">
 			<!-- VCardTitle -> tytul karty -->
 			<VCardTitle class="text-center">Logowanie</VCardTitle>
@@ -9,7 +9,12 @@
 			zostanie zablokowane, czyli strona nie zostanie przeladowana
 			to odpala taka metode z javascriptu na eventcie prevent default 
 			blokuje domyslne zachowanie przegladarki na tym evencie -->
-			<VForm @submit.prevent="submit">
+
+			<div v-if="userStore.$state.loading === true" class="pa-4 d-flex justify-center">
+    			<VProgressCircular indeterminate></VProgressCircular>
+			</div>
+
+			<VForm v-else @submit.prevent="submit">
 				<!-- VCardText -> dodaje odpowiednie odstepy przestrzen w karcie -->
 				<VCardText>
 					<!-- v-text-field -> dwa pola tekstowe -->
@@ -52,7 +57,14 @@
 
 <!-- script logika działania komponentu -->
 <script setup>
-const show = ref(true);
+const userStore = useUserStore();
+
+
+const show = computed(() => {
+    return userStore.$state.isLoggedIn === false || userStore.$state.loading === true;
+});
+
+
 // reaktywny obiekt o nazwie show
 // czy okienko jest aktualnie wyswietlane czy nie
 
@@ -60,6 +72,7 @@ const viewModel = ref({
 	email: "",
 	password: "",
 });
+
 
 const submit = () => {
 	console.log(viewModel.value);
