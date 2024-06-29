@@ -61,6 +61,10 @@
 <script setup>
 const userStore = useUserStore();
 
+// wciagamy ta funkcje
+// ona zwraca obiekt, ktory ma rozne funkcje i my bierzemy ta
+const { getErrorMessage } = useWebApiResponseParser();
+
 
 const show = computed(() => {
     return userStore.$state.isLoggedIn === false || userStore.$state.loading === true;
@@ -92,7 +96,12 @@ const login = () => {
       body: { ...viewModel.value },
 	  // nadpisujemy funkcje do bledow
       onResponseError: ({ response }) => {
-        errorMsg.value = "Błąd logowania";
+		// zamiast tego
+        //errorMsg.value = "Błąd logowania";
+		// robimy to
+		// czyli z kodu serwera -> ErrorException("InvalidLoginOrPassword")
+		// to jest zlapane w Exception Viewerze i potem w JSONie
+		errorMsg.value = getErrorMessage(response, {"InvalidLoginOrPassword": "Błędny login lub hasło"});
       }
     })
 	// jesli request sie uda i nie ma bledow
