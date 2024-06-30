@@ -21,6 +21,9 @@ export const useUserStore = defineStore({
 	actions: {
 		// ladowanie danych zalogowanego uzytkownika
 		loadLoggedInUser() {
+			// dodajemy accountStore
+			const accountStore = useAccountStore();
+
 			// ustawiamy loading na true
 			this.loading = true;
 			// uzywamy useWebApiFetch
@@ -39,6 +42,8 @@ export const useUserStore = defineStore({
 						// i tam jest Result jako Email
 						// czyli to bedzie json, ktory ma property email i w srodku mamy email
 						this.userData = data.value;
+						// dodajemy informacje o aktualnie zalogowanym koncie
+						accountStore.loadCurrentAccount();
 					} else if (error.value) {
 						this.isLoggedIn = false;
 						this.userData = null;

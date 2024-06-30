@@ -17,7 +17,39 @@
 		</v-app-bar>
 
 		<!-- MENU -->
-		<v-navigation-drawer :order="mobile ? -1 : 0" v-model="drawer" v-if="userStore.$state.isLoggedIn === true">
+		<v-navigation-drawer
+			:order="mobile ? -1 : 0"
+			v-model="drawer"
+			v-if="userStore.$state.isLoggedIn === true"
+		>
+
+
+		<!-- ona jest dwulinijkowa wiec bedzie droszeczke wyzsza -->
+			<v-list-item lines="two">
+				<!-- slot -> czyli miejsce w komponencie, ktore zostanie podmienione
+				na to co tutaj wstawimy 
+				list-item ma kilka slotow, jednym z nich jest prepened
+				to jest wstawienie elementu z lewej strony przed napisem
+				-->
+				<template v-slot:prepend>
+					<!-- my chcemy miec wstawiony z lewej strony komponent avatar
+					ktory bedzie wystwietal pierwsza literke maila aktualnie zalogowanego
+					uzytkownika, wyciagamy to z userStore, -->
+					<v-avatar color="brand" v-if="userStore.$state.userData?.email">
+						{{ userStore.$state.userData.email[0].toUpperCase() }}
+					</v-avatar>
+				</template>
+				<!-- w analogiczny sposob mamy tutaj subkomponenty listItem 
+				title i subtitle, one sa w odpowiedni sposob przestylowane w vuetify-->
+				<VListItemTitle v-if="accountStore.$state.accountData?.name">{{
+					accountStore.$state.accountData.name
+				}}</VListItemTitle>
+				<VListItemSubtitle v-if="userStore.$state.userData?.email">{{
+					userStore.$state.userData.email
+				}}</VListItemSubtitle>
+			</v-list-item>
+			<VDivider></VDivider>
+
 			<VList>
 				<VListItem
 					v-for="item in menuItems"
@@ -29,13 +61,16 @@
 			</VList>
 		</v-navigation-drawer>
 
+
+
+
+
 		<v-main>
 			<div class="pa-4">
 				<NuxtPage v-if="userStore.$state.isLoggedIn === true" />
 			</div>
 		</v-main>
 		<LoginDialog></LoginDialog>
-
 	</v-app>
 </template>
 
@@ -50,9 +85,9 @@ const theme = useTheme();
 const { mobile } = useDisplay();
 const currentTheme = useStorage("currentTheme", "light");
 const drawer = ref(null);
-// stala reaktywna, ktora 
+// stala reaktywna, ktora
 const userStore = useUserStore();
-
+const accountStore = useAccountStore();
 
 const menuItems = [
 	{
@@ -77,10 +112,9 @@ function toggleTheme() {
 }
 
 // w moemncie kiedy komponent jest podlaczany do drzewa i wyswietlany
-onMounted( () => {
+onMounted(() => {
 	// czyli przypisujemy wartosc czytana z local storage
 	theme.global.name.value = currentTheme.value;
 	userStore.loadLoggedInUser();
 });
-
 </script>
