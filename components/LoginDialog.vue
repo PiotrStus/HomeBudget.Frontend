@@ -124,6 +124,10 @@ const login = () => {
 	// po zalogowaniu dostajemy token 
     .then((response) => {
         if (response.data.value) {
+			// tutaj udalo nam sie zalogowac
+			// my sobie to haslo wyczyscimy
+			viewModel.value.password = '';
+
             userStore.loadLoggedInUser();
         }
     })

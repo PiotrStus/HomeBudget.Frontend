@@ -22,9 +22,7 @@
 			v-model="drawer"
 			v-if="userStore.$state.isLoggedIn === true"
 		>
-
-
-		<!-- ona jest dwulinijkowa wiec bedzie droszeczke wyzsza -->
+			<!-- ona jest dwulinijkowa wiec bedzie droszeczke wyzsza -->
 			<v-list-item lines="two">
 				<!-- slot -> czyli miejsce w komponencie, ktore zostanie podmienione
 				na to co tutaj wstawimy 
@@ -59,11 +57,21 @@
 					:to="item.url"
 				></VListItem>
 			</VList>
+
+			<!-- -slot append powoduje, ze te elemnty pojawia sie na samym dole komponentyu
+			block -> oznacza, ze ten przycisk bedzie miec cala szerokosc elementu, w ktorym
+			sie znajduje
+
+			-->
+			<template v-slot:append>
+				<div class="pa-2">
+					<v-btn block variant="text" @click="logout" prepend-icon="mdi-logout">
+						Wyloguj się
+					</v-btn>
+				</div>
+			</template>
+
 		</v-navigation-drawer>
-
-
-
-
 
 		<v-main>
 			<div class="pa-4">
@@ -109,6 +117,11 @@ function toggleTheme() {
 	theme.global.name.value = newTheme;
 
 	currentTheme.value = newTheme;
+}
+
+function logout() 
+{
+	userStore.logout();	
 }
 
 // w moemncie kiedy komponent jest podlaczany do drzewa i wyswietlany
