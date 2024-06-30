@@ -49,6 +49,9 @@
 </style>
 
 <script setup>
+
+const globalMessageStore = useGlobalMessageStore();
+
 // layout dla tej strony
 // funkcja pomocnicza definePageMeta
 // ona jest z Nuxta
@@ -103,12 +106,14 @@ const register = () => {
 	useWebApiFetch('/User/CreateUserWithAccount', {
 		method: 'POST',
 		body: { ...viewModel.value },
+
 		onResponseError: ({ response}) => {
-			errorMsg.value = getErrorMessage(response, {"AccountWithThisEmailAlreadyExists": "Konto z tym adresem email juz istnieje"});
+		errorMsg.value = getErrorMessage(response, {"AccountWithThisEmailAlreadyExists": "Konto z tym adresem email juz istnieje"});
 		}
 		})
 		.then((response) => {
 			if (response.data.value) {
+				globalMessageStore.showSuccessMessage('Twoje konto zostało utworzone. Zalogowano do aplikacji.');
 				router.push({ path: '/' });
 			}
 	})

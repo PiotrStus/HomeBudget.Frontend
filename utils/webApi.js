@@ -9,6 +9,11 @@ export const useWebApiFetch = function (request, opts) {
 	// adres do API bedziemy definiowac w innym miejscu
     const config = useRuntimeConfig()
 
+	// parsowanie wiadomosci -> zamiana na przyjazny komunikat
+	const { getErrorMessage } = useWebApiResponseParser();
+	// globalMessageStore
+	const globalMessageStore = useGlobalMessageStore();
+
 	// wyciagniecie adresu API -> base URL
     return useFetch(request, { baseURL: config.public.BASE_URL,
         onRequest({ request, options }) {
@@ -22,6 +27,11 @@ export const useWebApiFetch = function (request, opts) {
 
         },
         onResponseError({ request, response, options }) {
+			// GLOBALNA OBSLUGA BLEDOW
+			// czyli jesli ta funkcja nie zostanie nadpisana przy jakims
+			// requescie a wystapi blad to wyswietli sie takie okienko z bledem
+			const message = getErrorMessage(response, {});
+			globalMessageStore.showErrorMessage(message);
             // obsluga globalna bledow
 			// jak bedzie jakis np. blad w komunikacji z api
         },
