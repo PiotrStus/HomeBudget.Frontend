@@ -14,7 +14,7 @@
     			<VProgressCircular indeterminate></VProgressCircular>
 			</div>
 
-			<VForm v-else @submit.prevent="login" :disabled="loading">
+			<VForm v-else @submit.prevent="submit" :disabled="loading">
 				<!-- VCardText -> dodaje odpowiednie odstepy przestrzen w karcie -->
 				<VCardText>
 					<!-- v-text-field -> dwa pola tekstowe -->
@@ -26,13 +26,16 @@
 						variant="outlined"
 						v-model="viewModel.email"
 						label="Email"
+						:rules="[ruleEmail, ruleRequired]"
 					></v-text-field>
+					<!-- :rules -> mozna podac tablice regul, ktore beda przypisane i beda odpalane przy walidacji tego pola -->
 					<v-text-field
 						class="mb-4"
 						variant="outlined"
 						v-model="viewModel.password"
 						type="password"
 						label="Hasło"
+						:rules="[ruleRequired]"
 					></v-text-field>
 					<VAlert v-if="errorMsg" type="error" variant="tonal">{{ errorMsg }}</VAlert>
 				</VCardText>
@@ -64,7 +67,7 @@ const userStore = useUserStore();
 // wciagamy ta funkcje
 // ona zwraca obiekt, ktory ma rozne funkcje i my bierzemy ta
 const { getErrorMessage } = useWebApiResponseParser();
-
+const { ruleRequired, ruleEmail } = useFormValidationRules();
 
 const show = computed(() => {
     return userStore.$state.isLoggedIn === false || userStore.$state.loading === true;
@@ -81,8 +84,19 @@ const viewModel = ref({
 });
 
 
-const submit = () => {
-	console.log(viewModel.value);
+// const submit = () => {
+// 	console.log(viewModel.value);
+// }
+
+// ona jest asynchroniczna 
+// ev -> event
+// ten event zwraca obiekt, i jeden z jego properties jest valid
+const submit = async (ev) => {
+    const { valid } = await ev;
+    if (valid) {
+        login();
+    }
+	// a jesli nie to walidacja autoamtycznie wyswietli te komuinikaty bledow
 }
 
 const login = () => {  
