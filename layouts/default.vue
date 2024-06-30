@@ -79,10 +79,20 @@
 			</div>
 		</v-main>
 		<LoginDialog></LoginDialog>
+		<!-- 
+		to ref -> property, powoduje, ze mozna odwolac sie do konkretnej instancji tego komponentu
+		w kodzie naszym
+		// zeby to zrobic trzeba zdefiniowac sobie jeszcze ten reaktywny obiekt
+		-->
+		<ConfirmDialog ref="confirmDialog"></ConfirmDialog>
 	</v-app>
 </template>
 
 <script setup>
+
+// nazwa musi byc identyczna
+const confirmDialog = ref(null);
+
 // to jest wlasnie composables
 import { useDisplay } from "vuetify";
 import { useTheme } from "vuetify";
@@ -119,10 +129,32 @@ function toggleTheme() {
 	currentTheme.value = newTheme;
 }
 
-function logout() 
-{
-	userStore.logout();	
+
+// zmiana logout, zeby pokazywalo to okienko
+const logout = () => {
+	// mamy odwolanie do reaktywnej zmiennej confirmDialog, ktora jest powiazana 
+	// z naszym komponentem
+	// dostajemy sie tutaj poprzez value ze skryptu
+	// no i wolamy nasza funkcje show, ktora udostepnilismy przez defineExpose
+    confirmDialog.value.show({
+        title: 'Potwierdź wylogowanie',
+        text: 'Czy na pewno chcesz się wylogować?',
+        confirmBtnText: 'Wyloguj',
+        confirmBtnColor: 'error'
+		// podpinamy w funkcji then to co sie ma wydarzyc jak ktos sie wyloguje
+		// jak wcisnie przycisk w tym okienku
+		// ten kod bedzie wykonany pozniej, dopiero po tym jak cos sie zadzieje w okienku
+		// dlatego uzylismy promise
+		// cofirm -> parametr promise, czyli funcji resolve
+		// on jest albo true albo false
+    }).then((confirm) => {
+        if (confirm) {
+            userStore.logout();
+        }
+    })
 }
+
+
 
 // w moemncie kiedy komponent jest podlaczany do drzewa i wyswietlany
 onMounted(() => {
