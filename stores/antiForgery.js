@@ -20,6 +20,7 @@ export const useAntiForgeryStore = defineStore({
 		// a API aplikacji przez ten mechanizm wbudowany we framework porowna ten token
 		// zapisany w ciastku z tym wysylanym
 		// jesli on sie zgadza to request bedzie przechodzil
+        // koniec
         async loadAntiForgeryToken() {
             await useWebApiFetch('/User/AntiforgeryToken')
                 .then(({ data, error }) => {
