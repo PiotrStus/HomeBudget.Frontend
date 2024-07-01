@@ -14,6 +14,18 @@ export const useWebApiFetch = function (request, opts) {
 	// globalMessageStore
 	const globalMessageStore = useGlobalMessageStore();
 
+	const antiForgeryStore = useAntiForgeryStore();
+
+
+	// jesli opcje nie istnieja to tworzymy pusty obiekt
+	opts = opts || {};
+	// tak samo z header
+	opts.headers = opts.headers || {};
+	// jesli mamy juz ten headers to ustawiamy naglowek zgodnie z dokumentacja
+	// i przypisujemy token zapisany w storze
+	opts.headers['X-XSRF-TOKEN'] = antiForgeryStore.$state.token;
+
+
 	// wyciagniecie adresu API -> base URL
     return useFetch(request, { baseURL: config.public.BASE_URL,
         onRequest({ request, options }) {

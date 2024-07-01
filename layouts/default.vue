@@ -90,6 +90,8 @@
 
 <script setup>
 
+
+
 // nazwa musi byc identyczna
 const confirmDialog = ref(null);
 
@@ -106,6 +108,9 @@ const drawer = ref(null);
 // stala reaktywna, ktora
 const userStore = useUserStore();
 const accountStore = useAccountStore();
+const antiForgeryStore = useAntiForgeryStore();
+
+
 
 const menuItems = [
 	{
@@ -154,6 +159,11 @@ const logout = () => {
     })
 }
 
+// wywolanie requesta do API, ktore nam zaciagnie antifogry token i zapisze w storze
+
+
+// odpalenie komponentu bedzie czekac az ta akcja sie wykona poprzez await
+await antiForgeryStore.loadAntiForgeryToken();
 
 
 // w moemncie kiedy komponent jest podlaczany do drzewa i wyswietlany
