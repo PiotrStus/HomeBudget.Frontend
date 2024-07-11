@@ -6,7 +6,7 @@
 				@click="drawer = !drawer"
 			></v-app-bar-nav-icon>
 
-			<v-app-bar-title>Page Monitor</v-app-bar-title>
+			<v-app-bar-title>Budżet domowy</v-app-bar-title>
 
 			<v-spacer></v-spacer>
 			<VBtn
@@ -119,7 +119,7 @@ const menuItems = [
 		url: "/",
 	},
 	{
-		name: "Monitorowane strony",
+		name: "Budżet",
 		icon: "mdi-web-check",
 		url: "/urls",
 	},
