@@ -120,7 +120,7 @@ const menuItems = [
 	},
 	{
 		name: "Kategorie",
-		icon: "mdi-web-check",
+		icon: "mdi-view-grid-plus-outline",
 		url: "/categories",
 	},
 ];
