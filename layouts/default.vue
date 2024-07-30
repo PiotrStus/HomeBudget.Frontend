@@ -119,9 +119,9 @@ const menuItems = [
 		url: "/",
 	},
 	{
-		name: "Budżet",
+		name: "Kategorie",
 		icon: "mdi-web-check",
-		url: "/urls",
+		url: "/categories",
 	},
 ];
 
