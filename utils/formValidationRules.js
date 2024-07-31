@@ -28,6 +28,9 @@ export const useFormValidationRules = () => {
 			// test funkcja testuja reg
 			// jesli wartosc pasuje do tego wyrazenia, czyli przechodzi to jest ok
 			return pattern.test(value) || "Niepoprawny adres email";
+		},
+		ruleMaxLen: (max) => {
+			return (v) => (!v || v.length <= max) || `Przekroczono maksymalną długość: ${max}`;
 		}
 	};
 };

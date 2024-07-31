@@ -4,8 +4,8 @@
 			<VCardTitle class="text-center">Dodaj kategorię</VCardTitle>
 			<VForm @submit.prevent="submit" :disabled="loading">
 				<VCardText>
-					<v-text-field class="mb-4" variant="outlined" v-model="viewModel.name" label="Nazwa kategorii"></v-text-field>
-					<v-select class="mb-4" variant="outlined" label="Typ kategorii" v-model="viewModel.categoryType" :items="categoryOptions" item-title="label" item-value="value"></v-select>
+					<v-text-field :rules="[ruleRequired, ruleMaxLen(40)]" class="mb-4" variant="outlined" v-model="viewModel.name" label="Nazwa kategorii"></v-text-field>
+					<v-select :rules="[ruleRequired]" class="mb-4" variant="outlined" label="Typ kategorii" v-model="viewModel.categoryType" :items="categoryOptions" item-title="label" item-value="value"></v-select>
 					<VAlert v-if="errorMsg" type="error" variant="tonal"> {{ errorMsg }}</VAlert>
 				</VCardText>
 				<VCardActions>
@@ -26,7 +26,7 @@
 
 
 <script setup>
-
+const {ruleRequired, ruleMaxLen} = useFormValidationRules();
 
 const props = defineProps({
   show: Boolean,
