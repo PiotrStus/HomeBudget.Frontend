@@ -19,13 +19,10 @@
         <v-card-text>
             <v-tabs-window v-model="tab">
                 <v-tabs-window-item value="income">
-
                     <Category :loading="loading" :items="filteredIncomeItems" :headers="headers" @remove-item="handleRemoveItem"/>
                 </v-tabs-window-item>
-
                 <v-tabs-window-item value="expense">
                     <Category :loading="loading" :items="filteredExpenseItems" :headers="headers" @remove-item="handleRemoveItem"/>
-
                 </v-tabs-window-item>
             </v-tabs-window>
         </v-card-text>

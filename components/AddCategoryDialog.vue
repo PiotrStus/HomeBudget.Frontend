@@ -4,7 +4,7 @@
 			<VCardTitle class="text-center">Dodaj kategorię</VCardTitle>
 			<VForm @submit.prevent="submit" :disabled="loading">
 				<VCardText>
-					<v-text-field :rules="[ruleRequired, ruleMaxLen(40)]" class="mb-4" variant="outlined" v-model="viewModel.name" label="Nazwa kategorii"></v-text-field>
+					<v-text-field :rules="[ruleRequired, ruleMaxLen(50)]" class="mb-4" variant="outlined" v-model="viewModel.name" label="Nazwa kategorii"></v-text-field>
 					<v-select :rules="[ruleRequired]" class="mb-4" variant="outlined" label="Typ kategorii" v-model="viewModel.categoryType" :items="categoryOptions" item-title="label" item-value="value"></v-select>
 					<VAlert v-if="errorMsg" type="error" variant="tonal"> {{ errorMsg }}</VAlert>
 				</VCardText>
@@ -49,9 +49,21 @@ const emit = defineEmits(['update:show']);
 //  emit('update:show', newLocalShow);
 //});
 
+
+
 const localShow = computed({
   get: () => props.show,
   set: (newState) => emit('update:show', newState) 
+});
+
+watch(localShow, (newState) => {
+	if (newState)
+	{
+		viewModel.value = {
+		name: '',
+		categoryType: ''
+		}
+	}
 });
 
 
@@ -61,9 +73,9 @@ const viewModel = ref({
 });
 
 const handleCancel = () => {
-    viewModel.value.name = '';
-    viewModel.value.categoryType = '';
 	localShow.value = false;
+	//viewModel.value.name = '';
+    //viewModel.value.categoryType = '';
 	errorMsg.value = "";
 	//emit('update:show', false);
 };
@@ -76,7 +88,7 @@ const submit = () => {
 const errorMsg = ref("");
 const loading = ref(false);
 
-const addNewCategory = () => {
+const addNewCategory = async () => {
 	loading.value = true;
 	errorMsg.value = "";
 
@@ -90,7 +102,8 @@ const addNewCategory = () => {
 	.then((response) => {
 		if (response.data.value) {
 			props.fetchData();
-			handleCancel();
+			localShow.value = false;
+			//handleCancel();
 		}
 	})
 	.finally(() => {
