@@ -30,6 +30,7 @@
 
 <script setup>
 import { VSkeletonLoader } from 'vuetify/components';
+//import { categoryOptions } from '#imports';
 
 const loading = ref(false);
 const route = useRoute();
@@ -46,19 +47,10 @@ const viewModel = ref({
 	categoryType: ''
 })
 
-const categoryOptions = [
-	{title : "Przychody", value : "Income" },
-	{title : "Wydatki", value : "Expense" }
-]
-
-const test = () => {
-	console.log(viewModel)
-}
 
 const submit = async (ev) => {
 	const {valid} = await ev;
 	if (valid) {
-		test();
 		save();
 	}
 }

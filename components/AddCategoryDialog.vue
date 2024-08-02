@@ -5,7 +5,7 @@
 			<VForm @submit.prevent="submit" :disabled="loading">
 				<VCardText>
 					<v-text-field :rules="[ruleRequired, ruleMaxLen(50)]" class="mb-4" variant="outlined" v-model="viewModel.name" label="Nazwa kategorii"></v-text-field>
-					<v-select :rules="[ruleRequired]" class="mb-4" variant="outlined" label="Typ kategorii" v-model="viewModel.categoryType" :items="categoryOptions" item-title="label" item-value="value"></v-select>
+					<v-select :rules="[ruleRequired]" class="mb-4" variant="outlined" label="Typ kategorii" v-model="viewModel.categoryType" :items="categoryOptions" item-title="title" item-value="value"></v-select>
 					<VAlert v-if="errorMsg" type="error" variant="tonal"> {{ errorMsg }}</VAlert>
 				</VCardText>
 				<VCardActions>
@@ -28,33 +28,14 @@
 <script setup>
 const {ruleRequired, ruleMaxLen} = useFormValidationRules();
 
-const props = defineProps({
-  show: Boolean,
-  fetchData: Function
-});
 
 
 
-const emit = defineEmits(['update:show']);
-
-
-//const localShow = ref(props.show);
-
-//watch(() => props.show, (newShow) => {
-//  localShow.value = newShow;
-//  console.log("localShow.value:" + localShow.value);
-//});
-
-//watch(localShow, (newLocalShow) => {
-//  emit('update:show', newLocalShow);
-//});
 
 
 
-const localShow = computed({
-  get: () => props.show,
-  set: (newState) => emit('update:show', newState) 
-});
+const localShow = defineModel("show")
+
 
 watch(localShow, (newState) => {
 	if (newState)
@@ -74,10 +55,7 @@ const viewModel = ref({
 
 const handleCancel = () => {
 	localShow.value = false;
-	//viewModel.value.name = '';
-    //viewModel.value.categoryType = '';
 	errorMsg.value = "";
-	//emit('update:show', false);
 };
 
 const submit = () => {
@@ -101,9 +79,8 @@ const addNewCategory = async () => {
 	})
 	.then((response) => {
 		if (response.data.value) {
-			props.fetchData();
+			updateItems();
 			localShow.value = false;
-			//handleCancel();
 		}
 	})
 	.finally(() => {
@@ -111,9 +88,10 @@ const addNewCategory = async () => {
 	});
 };
 
-const categoryOptions = [
-  { label: 'Przychody', value: 'Income' },
-  { label: 'Wydatki', value: 'Expense' },
-];
+
+const emit = defineEmits(['update-items']);
+const updateItems = () => {
+  emit('update-items');
+};
 
 </script>
