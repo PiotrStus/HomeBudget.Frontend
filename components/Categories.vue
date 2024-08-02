@@ -36,7 +36,7 @@ const deleteCategory = (category) => {
     }).then((confirm) => {
         if (confirm){
             category.deleting = true;
-            useWebApiFetch('/Budget/DeleteCategory', {
+            useWebApiFetch('/Category/DeleteCategory', {
                 method: 'POST',
                 body: {id : category.id},
                 watch: false,

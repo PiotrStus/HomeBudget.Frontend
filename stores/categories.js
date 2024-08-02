@@ -19,7 +19,7 @@ export const useCategoriesStore = defineStore({
 	actions: {
 		loadCategories() {
 			this.loading = true;
-			useWebApiFetch('/Budget/GetAllCategories')
+			useWebApiFetch('/Category/GetAllCategories')
 				.then(({ data, error}) => {
 					if (data.value) {
 						this.categories = data.value.categories;

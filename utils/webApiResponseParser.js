@@ -68,7 +68,7 @@ export const useWebApiResponseParser = () => {
 const defaultValidationMessages = {
 	// notEmptyValidator -> ktory, zwraca validator z logowania, jesli jest regula notEmpty -> kod serwera
     "NotEmptyValidator" : "Pole nie może być puste",
-    "EmailValidator" : "Niepoprawny adres email"
+    "EmailValidator" : "Niepoprawny adres email",
 }
 
 const defaultFieldNames = {

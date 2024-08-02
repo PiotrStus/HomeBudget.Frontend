@@ -53,7 +53,7 @@ const submit = async (ev) => {
 const save = () => {
 	saving.value = true;
 
-	useWebApiFetch('/Budget/UpdateCategory', {
+	useWebApiFetch('/Category/UpdateCategory', {
 		method: 'POST',
 		body: { ...viewModel.value, id: route.params.id},
 		watch: false,
@@ -77,12 +77,11 @@ const save = () => {
 const loadData = () => {
 	loading.value = true;
 
-	useWebApiFetch('/Budget/GetCategory', {
+	useWebApiFetch('/Category/GetCategory', {
 		query: { id: route.params.id },
 	}).then(({ data, error }) => {
 		if (data.value) {
 			viewModel.value = data.value;
-			test();
 		} else if (error.value) {
 			globalMessageStore.showErrorMessage("Błąd pobierania danych");
 		}

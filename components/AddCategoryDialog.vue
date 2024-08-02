@@ -70,7 +70,7 @@ const addNewCategory = async () => {
 	loading.value = true;
 	errorMsg.value = "";
 
-	useWebApiFetch('/Budget/CreateCategory', {
+	useWebApiFetch('/Category/CreateCategory', {
 		method: 'POST',
 		body: {...viewModel.value},
 		onResponseError: ({response}) => {
