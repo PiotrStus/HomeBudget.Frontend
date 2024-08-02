@@ -26,16 +26,17 @@
 
 
 <script setup>
+const globalMessageStore = useGlobalMessageStore();
 const {ruleRequired, ruleMaxLen} = useFormValidationRules();
-
-
-
-
-
-
-
 const localShow = defineModel("show")
+const errorMsg = ref("");
+const loading = ref(false);
+const emit = defineEmits(['update-categories']);
 
+
+const updateCategories = () => {
+  emit('update-categories');
+};
 
 watch(localShow, (newState) => {
 	if (newState)
@@ -53,18 +54,17 @@ const viewModel = ref({
 	categoryType: ''
 });
 
+
 const handleCancel = () => {
 	localShow.value = false;
 	errorMsg.value = "";
 };
 
+
 const submit = () => {
-	console.log(viewModel.value);
 	addNewCategory();
 };
 
-const errorMsg = ref("");
-const loading = ref(false);
 
 const addNewCategory = async () => {
 	loading.value = true;
@@ -79,7 +79,8 @@ const addNewCategory = async () => {
 	})
 	.then((response) => {
 		if (response.data.value) {
-			updateItems();
+			globalMessageStore.showSuccessMessage('Kategoria została dodana')
+			updateCategories();
 			localShow.value = false;
 		}
 	})
@@ -87,11 +88,4 @@ const addNewCategory = async () => {
 		loading.value = false;
 	});
 };
-
-
-const emit = defineEmits(['update-items']);
-const updateItems = () => {
-  emit('update-items');
-};
-
 </script>

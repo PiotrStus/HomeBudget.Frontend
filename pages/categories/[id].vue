@@ -4,7 +4,6 @@
 			<template v-slot:prepend>
 				<v-btn icon="mdi-chevron-left" to="/categories"></v-btn>
 			</template>
-
 			<v-toolbar-title>
 				Edycja kategorii
 			</v-toolbar-title>
@@ -24,14 +23,11 @@
 			</VCardText>
 		</VForm>
 	</VCard>
-
 </template>
 
 
 <script setup>
 import { VSkeletonLoader } from 'vuetify/components';
-//import { categoryOptions } from '#imports';
-
 const loading = ref(false);
 const route = useRoute();
 const globalMessageStore = useGlobalMessageStore();
@@ -46,7 +42,6 @@ const viewModel = ref({
 	name: '',
 	categoryType: ''
 })
-
 
 const submit = async (ev) => {
 	const {valid} = await ev;
@@ -79,11 +74,8 @@ const save = () => {
 }
 
 
-
-
 const loadData = () => {
 	loading.value = true;
-	console.log("route: " +  route.params.id);
 
 	useWebApiFetch('/Budget/GetCategory', {
 		query: { id: route.params.id },
@@ -101,8 +93,5 @@ const loadData = () => {
 
 onMounted(() => {
 	loadData();
-
 });
-
-
 </script>
