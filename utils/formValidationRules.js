@@ -31,6 +31,8 @@ export const useFormValidationRules = () => {
 		},
 		ruleMaxLen: (max) => {
 			return (v) => (!v || v.length <= max) || `Przekroczono maksymalną długość: ${max}`;
-		}
+		},
+		ruleInteger: (v) => 
+			Number.isInteger(Number(v)) || "Wartość musi być liczbą całkowitą"
 	};
 };

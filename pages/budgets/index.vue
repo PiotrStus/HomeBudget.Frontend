@@ -13,6 +13,7 @@
 					:min="2020"
 					v-model="viewModel.year"
 					type="number"
+					:rules="[ruleRequired, ruleInteger]"
 				/>
 			</VCardText>
 			<VAlert v-if="errorMsg" type="error" variant="tonal"> {{ errorMsg }}</VAlert>
@@ -29,15 +30,23 @@
 import { VNumberInput } from 'vuetify/labs/VNumberInput'
 const globalMessageStore = useGlobalMessageStore();
 const { getErrorMessage} = useWebApiResponseParser();
-const submit = () => {addNewBudget()};
 const errorMsg = ref("");
 const loading = ref(false);
+const {ruleRequired, ruleInteger} = useFormValidationRules();
 
 const viewModel = ref(
 	{
 	year: 2024
 	}
 );
+
+
+const submit = async (ev) => {
+	const {valid} = await ev;
+	if (valid) {
+		addNewBudget();
+	}
+}
   
   const addNewBudget = async () => {
 	loading.value = true;

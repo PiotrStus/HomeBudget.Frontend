@@ -52,13 +52,16 @@ const submit = async (ev) => {
 
 const save = () => {
 	saving.value = true;
+	const messageMap = {
+        "CategoryWithThisTypeCategoryAlreadyExists": "Dana kategoria już istnieje"
+    };
 
 	useWebApiFetch('/Category/UpdateCategory', {
 		method: 'POST',
 		body: { ...viewModel.value, id: route.params.id},
 		watch: false,
 		onResponseError: ({ response }) => {
-			let message = getErrorMessage(response, {});
+			let message = getErrorMessage(response, messageMap);
 			globalMessageStore.showErrorMessage(message);
 		}
 	})

@@ -1,10 +1,18 @@
 <template>
-    <VCard
-    >
-
-    <v-card-title class="text-center">
-        Dodaj nowy budżet roczny
-    </v-card-title>
+    <VCard>
+        <v-card-title class="text-center">
+            Dostępne budżety roczne
+        </v-card-title>
+        <v-timeline direction="horizontal">
+            <v-timeline-item v-for="yearBudget in yearBudgetsStore.yearBudgets" :key="yearBudget">
+                <div>
+                    <div class="text-h6">
+                        {{yearBudget.year}}
+                    </div>
+                </div>
+            </v-timeline-item>
+        </v-timeline>
+  
     <v-img
       height="300px"
       :src="homeImg"
@@ -18,7 +26,7 @@
         class="mx-auto"
         :to="`/budgets`"
         type="submit"
-      >Dodaj</v-btn>
+      >Dodaj nowy budżet roczny</v-btn>
     </VCardActions>
     </VCard>
 </template>
@@ -28,4 +36,12 @@
 <script setup>
 import homeImg from 'public/assets/home-budget.jpg'
 import { VBtn } from 'vuetify/components';
+
+const yearBudgetsStore = useYearBudgetsStore();
+
+
+onMounted(
+    () => {yearBudgetsStore.loadYearBudgets()}
+);
+
 </script>

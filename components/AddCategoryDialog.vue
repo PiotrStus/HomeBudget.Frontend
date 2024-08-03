@@ -28,6 +28,7 @@
 <script setup>
 const globalMessageStore = useGlobalMessageStore();
 const {ruleRequired, ruleMaxLen} = useFormValidationRules();
+const { getErrorMessage} = useWebApiResponseParser();
 const localShow = defineModel("show")
 const errorMsg = ref("");
 const loading = ref(false);
@@ -61,20 +62,28 @@ const handleCancel = () => {
 };
 
 
-const submit = () => {
-	addNewCategory();
-};
+const submit = async (ev) => {
+	const {valid} = await ev;
+	if (valid) {
+		addNewCategory();
+	}
+}
 
 
 const addNewCategory = async () => {
 	loading.value = true;
 	errorMsg.value = "";
+	const messageMap = {
+        "CategoryWithThisTypeCategoryAlreadyExists": "Dana kategoria już istnieje"
+    };
 
 	useWebApiFetch('/Category/CreateCategory', {
 		method: 'POST',
 		body: {...viewModel.value},
 		onResponseError: ({response}) => {
 			errorMsg.value = "Błąd dodawania nowej kategorii";
+			let message = getErrorMessage(response, messageMap);
+			globalMessageStore.showErrorMessage(message);
 		}
 	})
 	.then((response) => {

@@ -123,6 +123,11 @@ const menuItems = [
 		icon: "mdi-view-grid-plus-outline",
 		url: "/categories",
 	},
+	{
+		name: "Operacje",
+		icon: "mdi-receipt-text-plus",
+		url: "/transactions",
+	},
 ];
 
 function toggleTheme() {
