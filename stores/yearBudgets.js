@@ -7,7 +7,9 @@ export const useYearBudgetsStore = defineStore({
 	state: () => {
 		return {
 		loading: false,
-		yearBudgets: []
+		yearBudgets: [],
+		currentYearBudgetId: null,
+		currentYearBudget: null
 	};
 	},
 	actions: {
@@ -25,8 +27,16 @@ export const useYearBudgetsStore = defineStore({
 					this.loading = false;
 				})
 		},
-		//removeCategory(categoryToRemove) {
-		//	this.categories = this.categories.filter(category => category !== categoryToRemove);
-		//}
+		setCurrentYearBudget() {
+			console.log('Current Year Budget ID:', this.currentYearBudgetId);
+			this.yearBudgets.forEach(budget => {
+			  console.log('Budget ID:', budget.id, 'Type:', typeof budget.id);
+			});
+			console.log(this.yearBudgets)
+			const budget = this.yearBudgets.find(b => b.id === Number(this.currentYearBudgetId));
+			console.log("test")
+			console.log(budget)
+			this.currentYearBudget = budget ? budget : null;
+		}
 	}
 });

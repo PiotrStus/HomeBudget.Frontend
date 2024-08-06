@@ -33,6 +33,6 @@ export const useCategoriesStore = defineStore({
 		},
 		removeCategory(categoryToRemove) {
 			this.categories = this.categories.filter(category => category !== categoryToRemove);
-		}
+		},
 	}
 });

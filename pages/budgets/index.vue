@@ -33,7 +33,8 @@ const { getErrorMessage} = useWebApiResponseParser();
 const errorMsg = ref("");
 const loading = ref(false);
 const {ruleRequired, ruleInteger} = useFormValidationRules();
-
+const yearBudgetsStore = useYearBudgetsStore();
+const router = useRouter();
 const viewModel = ref(
 	{
 	year: 2024
@@ -65,12 +66,15 @@ const submit = async (ev) => {
 	})
 	.then((response) => {
 		if (response.data.value) {
-			globalMessageStore.showSuccessMessage('Budżet roczny został dodany')
+			globalMessageStore.showSuccessMessage('Budżet roczny został dodany');
+			yearBudgetsStore.currentYearBudgetId = response.data.value.yearBudgetId;
+			yearBudgetsStore.setCurrentYearBudget();
+			router.push({ path: '/' });
 		}
 	})
 	.finally(() => {
 		loading.value = false;
-		this.viewModel.year = '';
+		viewModel.year = '';
 	});
 };
   

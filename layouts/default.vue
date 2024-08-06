@@ -124,6 +124,11 @@ const menuItems = [
 		url: "/categories",
 	},
 	{
+		name: "Planowany budżet",
+		icon: "mdi-receipt-clock-outline",
+		url: "/categories/planned",
+	},
+	{
 		name: "Operacje",
 		icon: "mdi-receipt-text-plus",
 		url: "/transactions",
