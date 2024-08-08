@@ -1,5 +1,42 @@
 <template>
-    <VCard>
+	    <VCard>
+        <v-toolbar color="transparent">
+            <v-toolbar-title>
+                Stwórz budżet miesięczny
+            </v-toolbar-title>
+        </v-toolbar>
+		<VForm @submit.prevent="submitCreate" :disabled="saving">
+		<VCardText>
+			<v-select
+				label="Rok budżetowy"
+				:items="yearBudgetsStore.yearBudgets"
+				variant="outlined"
+				item-value="id"
+				item-title="year"
+				no-data-text="Brak dostępnych budżetów rocznych"
+				v-model="viewModelCreate.selectedYearId"
+				/>
+				<v-select
+				label="Miesiąc"
+				:items="MonthsEnum"
+				variant="outlined"
+				item-value="value"
+				item-title="id"
+				no-data-text="Brak dostępnych budżetów miesięcznych"
+				v-model="viewModelCreate.selectedMonth"
+				/>
+				<v-number-input v-model="viewModelCreate.selectAmount" variant="outlined" controlVariant="default" label="Planowana kwota"></v-number-input>
+
+		</VCardText>
+		<VCardText class ="text-right">
+				<VBtn prepend-icon="mdi-content-save" variant="flat" color="primary" 
+					type="submit" :loading="saving" :disabled="saving">
+					Wybierz
+				</VBtn>
+			</VCardText>
+	</VForm>
+    </VCard>
+    <VCard class="pa-2 mt-4">
         <v-toolbar color="transparent">
             <v-toolbar-title>
                 Wybierz budżet
@@ -34,14 +71,17 @@
 			</VCardText>
 	</VForm>
     </VCard>
-	<VCard v-if="hasPlannedCategories" class="pa-2 mt-4">
+	<!-- <VCard v-if="hasPlannedCategories" class="pa-2 mt-4"> -->
+	<VCard class="pa-2 mt-4">
 		<v-toolbar color="transparent">
-			<v-toolbar-title>Planowane kwoty na kategorie</v-toolbar-title>
-			<v-btn color="primary" variant="flat" prepend-icon="mdi-plus" @click="showDialog = true">
-			Dodaj kategorię
+			<v-toolbar-title>Planowane kwoty per kategoria</v-toolbar-title>
+
+			<v-btn class="ml-2" color="primary" variant="flat" prepend-icon="mdi-plus" @click="showDialogPlannedCategory = true">
+			Dodaj
 			</v-btn>
 		</v-toolbar>
-		<AddCategoryDialog v-model:show="showDialog" @update-categories="updateItems"/>
+		<AddPlannedDialog v-model:show="showDialogCategory" @update-categories="updateItems"/>
+		<AddPlannedDialog v-model:show="showDialogPlannedCategory" @update-categories="updateItems" :isPlanned="true" />
 		<v-data-table 
         :loading="loading" 
         :items="plannedCategories" 
@@ -61,6 +101,7 @@
 		-->
         <template v-slot:item="{ item }">
             <tr :class="getRowClass(item)">
+				<td style="width: 50px">{{ getCategoryTitle(item.categoryType).charAt(0) }}</td>
                 <td>{{ item.category }}</td>
                 <td>{{ item.amount }}</td>
                 <td>
@@ -77,8 +118,10 @@
 
 
 <script setup>
+import { VNumberInput } from 'vuetify/labs/VNumberInput'
 import MonthsEnum from '~/utils/months';
-const showDialog = ref(false);
+const showDialogCategory = ref(false);
+const showDialogPlannedCategory = ref(false);
 const yearBudgetsStore = useYearBudgetsStore();
 
 const submit = async (ev) => {
@@ -88,9 +131,20 @@ const submit = async (ev) => {
 		yearBudgetsStore.currentYearBudgetId = viewModel.value.selectedYearId;
 		yearBudgetsStore.setCurrentYearBudget();
 		currentMonth.value = viewModel.value.selectedMonth;
-
 	}
 }
+
+const submitCreate = async (ev) => {
+	const {valid} = await ev;
+	if (valid) {
+		createNewMonthlyBudget();
+	}
+}
+
+const getCategoryTitle = (categoryType) => {
+  const category = categoryOptions.find(option => option.value === categoryType);
+  return category ? category.title : 'Unknown';
+};
 
 const getRowClass = (item) => {
 	console.log(item)
@@ -109,7 +163,15 @@ const viewModel = ref(
 	}
 )
 
+const viewModelCreate = ref(
+	{selectedYearId: null,
+	 selectedMonth: null,
+	 selectAmount: null
+	}
+)
+
 const headers = ref([
+	{title: 'Typ', value: 'categoryType'},
     {title: 'Nazwa kategorii', value: 'category'},
 	{title: 'Planowana kwota', value: 'amount'},
     {title: '', value: 'action', align: 'end'}
@@ -120,7 +182,7 @@ const plannedCategories = ref([]);
 const hasPlannedCategories = computed(() => plannedCategories.value.length > 0);
 
 const loading = ref(false);
-
+const saving = ref(false);
 const globalMessageStore = useGlobalMessageStore();
 
 const loadPlannedCategories = async () => {
@@ -141,6 +203,36 @@ const loadPlannedCategories = async () => {
 				loading.value = false;
 			})
 		}
+const { getErrorMessage} = useWebApiResponseParser();
+const createNewMonthlyBudget = async () => {
+			saving.value = true;
+			loading.value = true;
+			useWebApiFetch('/Budget/CreateMonthlyBudget', {
+				method: 'POST',
+                body: {yearBudgetId  : viewModelCreate.value.selectedYearId, month : viewModelCreate.value.selectedMonth, totalAmount: viewModelCreate.value.selectAmount},
+                watch: false,
+                onResponseError: ({ response }) => {
+                    let message = getErrorMessage(response, {})
+                    globalMessageStore.showErrorMessage(message);
+                }
+                }
+            )				
+			.then(({ data, error }) => {
+				if (data.value) {
+					plannedCategories.value = data.value.plannedCategories;
+					globalMessageStore.showSuccessMessage('Budżet został dodany');
+				} else if (error.value) {
+					plannedCategories.value = [];
+				}
+			})
+			.finally(() => {
+				saving.value = false;
+				loading.value = false;
+			})
+		}		
+
+
+
 onMounted(
     () => {yearBudgetsStore.loadYearBudgets()},
 );
@@ -149,11 +241,11 @@ onMounted(
 
 <style scoped>
 .income-row {
-    background-color:  #82f16b;
+    background-color:  #e7ffde;
 }
 
 .income-row .v-btn {
-    background-color: #82f16b; 
+    background-color: #e7ffde; 
 }
 
 .expense-row {

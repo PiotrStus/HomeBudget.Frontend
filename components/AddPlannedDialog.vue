@@ -4,17 +4,8 @@
 			<VCardTitle class="text-center">Dodaj kategorię</VCardTitle>
 			<VForm @submit.prevent="submit" :disabled="loading">
 				<VCardText>
-					<v-text-field :rules="[ruleRequired, ruleMaxLen(50)]" class="mb-4" variant="outlined" v-model="viewModel.name" label="Nazwa kategorii"></v-text-field>
-					<!-- <v-select :rules="[ruleRequired]" class="mb-4" variant="outlined" label="Typ kategorii" v-model="viewModel.categoryType" :items="categoryOptions" item-title="title" item-value="value"></v-select> -->
-					<v-radio-group v-model="viewModel.categoryType">
-						<v-radio
-							v-for="option in categoryOptions"
-							:key="option.value"
-							:label="option.title"
-							:value="option.value"
-						></v-radio>
-					</v-radio-group>
-					<v-switch color="primary" label="Użyj do szablonu" v-model="viewModel.isDraft"></v-switch>
+					<v-select :rules="[ruleRequired]" class="mb-4" variant="outlined" label="Kategoria" v-model="viewModel.categoryType" :items="categoryOptions" item-title="title" item-value="value"></v-select>
+					<v-number-input v-if="isPlanned" variant="outlined" controlVariant="default" label="Planowana kwota"></v-number-input>
 					<VAlert v-if="errorMsg" type="error" variant="tonal"> {{ errorMsg }}</VAlert>
 				</VCardText>
 				<VCardActions>
@@ -44,6 +35,7 @@ const errorMsg = ref("");
 const loading = ref(false);
 const emit = defineEmits(['update-categories']);
 const props = defineProps(['isPlanned']);
+const categoriesStore = useCategoriesStore();
 
 const updateCategories = () => {
   emit('update-categories');
@@ -88,7 +80,10 @@ const addNewCategory = async () => {
 	const messageMap = {
         "CategoryWithThisTypeCategoryAlreadyExists": "Dana kategoria już istnieje"
     };
-	useWebApiFetch('/Category/CreateCategory', {
+	const url = props.isPlanned
+		? '/Category/CreatePlannedCategory'
+		: '/Category/CreateCategory';
+	useWebApiFetch(url, {
 		method: 'POST',
 		body: {...viewModel.value},
 		onResponseError: ({response}) => {

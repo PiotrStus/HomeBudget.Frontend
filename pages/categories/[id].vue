@@ -13,7 +13,16 @@
 			<VCardText>
 				<VTextField :rules="[ruleRequired, ruleMaxLen(50)]" v-model="viewModel.name" variant="outlined" label="Nazwa kategorii">
 				</VTextField>
-				<v-select v-model="viewModel.categoryType" :rules="[ruleRequired]" variant="outlined" label="Typ kategorii" :items=categoryOptions item-title="title" item-value="value" ></v-select>
+				<!-- <v-select v-model="viewModel.categoryType" :rules="[ruleRequired]" variant="outlined" label="Typ kategorii" :items=categoryOptions item-title="title" item-value="value" ></v-select> -->
+				<v-radio-group v-model="viewModel.categoryType">
+					<v-radio
+						v-for="option in categoryOptions"
+						:key="option.value"
+						:label="option.title"
+						:value="option.value"
+					/>
+				</v-radio-group>
+				<v-switch color="primary" label="Użyj do szablonu" v-model="viewModel.isDraft"></v-switch>
 			</VCardText>
 			<VCardText class ="text-right">
 				<VBtn prepend-icon="mdi-content-save" variant="flat" color="primary" 
@@ -40,7 +49,8 @@ const router = useRouter();
 
 const viewModel = ref({
 	name: '',
-	categoryType: ''
+	categoryType: '',
+	isDraft: false
 })
 
 const submit = async (ev) => {
@@ -85,6 +95,8 @@ const loadData = () => {
 	}).then(({ data, error }) => {
 		if (data.value) {
 			viewModel.value = data.value;
+			console.log(viewModel.value)
+			console.log(data.value)
 		} else if (error.value) {
 			globalMessageStore.showErrorMessage("Błąd pobierania danych");
 		}

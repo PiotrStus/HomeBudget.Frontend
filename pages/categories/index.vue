@@ -42,9 +42,9 @@ const headers = ref([
 ]);
 
 
-onMounted(() => {
-    categoriesStore.loadCategories();
-});
+
+
+
 
 const showDialog = ref(false);
 
@@ -56,5 +56,7 @@ const removeCategory = (categoryToRemove) => {
 const updateItems = () => {
     categoriesStore.loadCategories();
 };
+
+onMounted(updateItems);
 
 </script>
