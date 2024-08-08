@@ -9,7 +9,7 @@
 					<VAlert v-if="errorMsg" type="error" variant="tonal"> {{ errorMsg }}</VAlert>
 				</VCardText>
 				<VCardActions>
-					<v-btn class="mx-auto" color="primary" type="button" variant="elevated" @click="handleCancel">Anuluj</v-btn>
+					<v-btn class="mx-auto" color="default" type="button" variant="elevated" @click="handleCancel">Anuluj</v-btn>
 					<v-btn class="mx-auto" color="primary" type="submit" variant="elevated">Ok</v-btn>
 				</VCardActions>
 			</VForm>

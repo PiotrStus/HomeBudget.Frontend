@@ -7,15 +7,13 @@ export const useYearBudgetsStore = defineStore({
 	state: () => {
 		return {
 		loading: false,
-		yearBudgets: [],
-		currentYearBudgetId: null,
-		currentYearBudget: null
+		yearBudgets: []
 	};
 	},
 	actions: {
 		loadYearBudgets() {
 			this.loading = true;
-			useWebApiFetch('/Budget/GetAllYearBudgets')
+			useWebApiFetch('/Budget/GetBudgets')
 				.then(({ data, error}) => {
 					if (data.value) {
 						this.yearBudgets = data.value.yearBudgets;
@@ -26,17 +24,6 @@ export const useYearBudgetsStore = defineStore({
 				.finally(() => {
 					this.loading = false;
 				})
-		},
-		setCurrentYearBudget() {
-			console.log('Current Year Budget ID:', this.currentYearBudgetId);
-			this.yearBudgets.forEach(budget => {
-			  console.log('Budget ID:', budget.id, 'Type:', typeof budget.id);
-			});
-			console.log(this.yearBudgets)
-			const budget = this.yearBudgets.find(b => b.id === Number(this.currentYearBudgetId));
-			console.log("test")
-			console.log(budget)
-			this.currentYearBudget = budget ? budget : null;
 		}
 	}
 });

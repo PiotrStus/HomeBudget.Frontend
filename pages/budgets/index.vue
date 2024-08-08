@@ -33,7 +33,6 @@ const { getErrorMessage} = useWebApiResponseParser();
 const errorMsg = ref("");
 const loading = ref(false);
 const {ruleRequired, ruleInteger} = useFormValidationRules();
-const yearBudgetsStore = useYearBudgetsStore();
 const router = useRouter();
 const viewModel = ref(
 	{
@@ -67,8 +66,6 @@ const submit = async (ev) => {
 	.then((response) => {
 		if (response.data.value) {
 			globalMessageStore.showSuccessMessage('Budżet roczny został dodany');
-			yearBudgetsStore.currentYearBudgetId = response.data.value.yearBudgetId;
-			yearBudgetsStore.setCurrentYearBudget();
 			router.push({ path: '/' });
 		}
 	})

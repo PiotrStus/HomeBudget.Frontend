@@ -129,8 +129,8 @@ const menuItems = [
 		url: "/createYearBudget",
 	},
 	{
-		name: "Planowany budżet",
-		icon: "mdi-receipt-clock-outline",
+		name: "Budżety",
+		icon: "mdi-newspaper",
 		url: "/categories/planned",
 	},
 	{
