@@ -129,7 +129,6 @@ const submit = async (ev) => {
 	if (valid) {
 		loadPlannedCategories();
 		yearBudgetsStore.currentYearBudgetId = viewModel.value.selectedYearId;
-		yearBudgetsStore.setCurrentYearBudget();
 		currentMonth.value = viewModel.value.selectedMonth;
 	}
 }

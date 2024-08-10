@@ -35,7 +35,6 @@
 
 
 <script setup>
-import { VNumberInput } from 'vuetify/labs/VNumberInput'
 const globalMessageStore = useGlobalMessageStore();
 const {ruleRequired, ruleMaxLen} = useFormValidationRules();
 const { getErrorMessage} = useWebApiResponseParser();

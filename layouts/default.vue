@@ -124,14 +124,14 @@ const menuItems = [
 		url: "/categories",
 	},
 	{
-		name: "Budżety roczne",
-		icon: "mdi-home-plus",
-		url: "/createYearBudget",
-	},
-	{
 		name: "Budżety",
 		icon: "mdi-newspaper",
-		url: "/categories/planned",
+		url: "/budgets",
+	},
+	{
+		name: "tests",
+		icon: "mdi-newspaper",
+		url: "/tests",
 	},
 	{
 		name: "Operacje",

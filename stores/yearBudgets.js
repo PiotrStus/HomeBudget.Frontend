@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import _ from 'lodash';
 
 export const useYearBudgetsStore = defineStore({
 
@@ -11,12 +12,15 @@ export const useYearBudgetsStore = defineStore({
 	};
 	},
 	actions: {
-		loadYearBudgets() {
+		 loadYearBudgets() {
 			this.loading = true;
-			useWebApiFetch('/Budget/GetBudgets')
-				.then(({ data, error}) => {
+			return useWebApiFetch('/Budget/GetBudgets')
+				.then(({ data, error }) => {
 					if (data.value) {
-						this.yearBudgets = data.value.yearBudgets;
+						const copiedYearBudgets = _.cloneDeep(data.value.yearBudgets);
+						const sortedYearBudgets = copiedYearBudgets.sort((a, b) => a.year - b.year);
+						this.yearBudgets = sortedYearBudgets;
+						console.log(this.yearBudgets)
 					} else if (error.value) {
 						this.yearBudgets = [];
 					}
