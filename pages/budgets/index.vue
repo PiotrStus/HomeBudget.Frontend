@@ -3,7 +3,7 @@
 		<v-toolbar color="transparent">
 			<v-toolbar-title>Dostępne budżety</v-toolbar-title>
 		</v-toolbar>
-		
+
 		<VCardText>
 			<v-select
 				label="Rok budżetowy"
@@ -15,18 +15,19 @@
 				v-model="viewModel.selectedYearId"
 			>
 				<template v-slot:append-item>
-				<v-divider class="mb-2"></v-divider>
-				<v-list-item>
-					<template v-slot:prepend>
-						<v-btn variant="flat" prepend-icon="mdi-plus" @click="showDialog = true">Dodaj nowy</v-btn>
-					</template>
-				</v-list-item>
-			</template>
+					<v-divider class="mb-2"></v-divider>
+					<v-list-item>
+						<template v-slot:prepend>
+							<v-btn
+								variant="flat"
+								prepend-icon="mdi-plus"
+								@click="showDialog = true"
+								>Dodaj nowy</v-btn
+							>
+						</template>
+					</v-list-item>
+				</template>
 			</v-select>
-
-
-
-
 
 			<v-toolbar color="transparent">
 				<v-toolbar-title>Planowane kwoty per kategoria</v-toolbar-title>
@@ -41,13 +42,12 @@
 				no-data-text="Brak dostępnych budżetów. Dodaj nowy."
 				loading-text="Wczytywanie"
 			>
-	
 				<template v-slot:item.month="{ value }">
 					{{ value }}
 				</template>
 				<template v-slot:item.totalAmount="{ value }">
 					{{ value }}
-				</template>			
+				</template>
 				<template v-slot:item.year="{ value }">
 					{{ value }}
 				</template>
@@ -70,18 +70,22 @@
 				</template>
 			</v-data-table>
 		</VCardText>
-		<AddYearBudgetDialog v-model:show="showDialog" @update-yearBudgets="updateBudgets"/>
+		<AddYearBudgetDialog
+			v-model:show="showDialog"
+			v-model:yearIdBudget="yearId"
+			@update-yearBudgets="updateBudgets"
+		/>
 	</VCard>
 </template>
 
 <script setup>
+import MonthsEnum from "~/utils/months";
 const showDialog = ref(false);
-
+const yearId = ref(null);
+const loading = ref(false);
+const saving = ref(false);
 const yearBudgetsStore = useYearBudgetsStore();
-
 const viewModel = ref({ selectedYearId: null, selectedMonth: null });
-
-
 const headers = ref([
 	{ title: "Rok", value: "year" },
 	{ title: "Miesiąc", value: "month" },
@@ -91,11 +95,17 @@ const headers = ref([
 
 const formattedBudgets = computed(() => {
 	let months = [];
+	const getPolishMonth = (englishMonth) => {
+		return (
+			MonthsEnum.find((month) => month.value === englishMonth)?.id ||
+			englishMonth
+		);
+	};
 	if (!viewModel.value.selectedYearId) {
 		months = yearBudgetsStore.yearBudgets.flatMap((yearBudget) =>
 			yearBudget.monthlyBudgets.map((monthlyBudget) => ({
 				year: yearBudget.year,
-				month: monthlyBudget.month,
+				month: getPolishMonth(monthlyBudget.month),
 				monthId: monthlyBudget.id,
 				totalAmount: monthlyBudget.totalAmount,
 			}))
@@ -107,7 +117,7 @@ const formattedBudgets = computed(() => {
 		if (selectedYear) {
 			months = selectedYear.monthlyBudgets.map((monthlyBudget) => ({
 				year: selectedYear.year,
-				month: monthlyBudget.month,
+				month: getPolishMonth(monthlyBudget.month),
 				monthId: monthlyBudget.id,
 				totalAmount: monthlyBudget.totalAmount,
 			}));
@@ -116,12 +126,14 @@ const formattedBudgets = computed(() => {
 	return months;
 });
 
-const loading = ref(false);
-const saving = ref(false);
-
 const updateBudgets = async () => {
-    await yearBudgetsStore.loadYearBudgets();
+	await yearBudgetsStore.loadYearBudgets();
+	if (yearId.value) {
+		viewModel.value.selectedYearId = yearId.value.yearBudgetId;
+	} else {
+		viewModel.value.selectedYearId = "";
+	}
 };
 
-onMounted(updateBudgets)
+onMounted(updateBudgets);
 </script>
