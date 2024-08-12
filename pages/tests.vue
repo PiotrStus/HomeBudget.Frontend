@@ -21,7 +21,7 @@
 				:items="MonthsEnum"
 				variant="outlined"
 				item-value="value"
-				item-title="id"
+				item-title="name"
 				no-data-text="Brak dostępnych budżetów miesięcznych"
 				v-model="viewModelCreate.selectedMonth"
 				/>
@@ -58,7 +58,7 @@
 				:items="MonthsEnum"
 				variant="outlined"
 				item-value="value"
-				item-title="id"
+				item-title="name"
 				no-data-text="Brak dostępnych budżetów miesięcznych"
 				v-model="viewModel.selectedMonth"
 				/>

@@ -28,6 +28,9 @@ export const useYearBudgetsStore = defineStore({
 				.finally(() => {
 					this.loading = false;
 				})
-		}
+		},
+		removeYearBudget(budgetToRemove) {
+			this.yearBudgets = this.yearBudgets.filter(budget => budget !== budgetToRemove);
+		},
 	}
 });

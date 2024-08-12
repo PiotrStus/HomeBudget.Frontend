@@ -33,7 +33,7 @@
 				<v-toolbar-title>Planowane kwoty per kategoria</v-toolbar-title>
 			</v-toolbar>
 			<v-data-table
-				:loading="loading"
+				:loading="yearBudgetsStore.loading"
 				:items="formattedBudgets"
 				:headers="headers"
 				items-per-page-text="Liczba wierszy na stronę"
@@ -58,12 +58,13 @@
 							title="Usuń"
 							variant="flat"
 							:loading="item.deleting"
-							@click="deleteCategory(item)"
+							@click="deleteMonthlyBudget(item)"
 						></v-btn>
 						<v-btn
 							icon="mdi-pencil"
 							title="Edytuj"
 							variant="flat"
+							:disabled="item.deleting"
 							:to="`/categories/planned/${item.id}`"
 						></v-btn>
 					</div>
@@ -75,15 +76,18 @@
 			v-model:yearIdBudget="yearId"
 			@update-yearBudgets="updateBudgets"
 		/>
+		<ConfirmDialog ref="confirmDialog"/>
 	</VCard>
 </template>
 
 <script setup>
+import _ from 'lodash';
 import MonthsEnum from "~/utils/months";
 const showDialog = ref(false);
+const globalMessageStore = useGlobalMessageStore();
 const yearId = ref(null);
-const loading = ref(false);
 const saving = ref(false);
+const confirmDialog = ref(null);
 const yearBudgetsStore = useYearBudgetsStore();
 const viewModel = ref({ selectedYearId: null, selectedMonth: null });
 const headers = ref([
@@ -101,8 +105,14 @@ const formattedBudgets = computed(() => {
 	let months = [];
 	const getPolishMonth = (englishMonth) => {
 		return (
-			MonthsEnum.find((month) => month.value === englishMonth)?.id ||
+			MonthsEnum.find((month) => month.value === englishMonth)?.name ||
 			englishMonth
+		);
+	};
+	const getMonthOrder = (value) => {
+		return (
+			MonthsEnum.find((month) => month.value === value)?.id ||
+			null
 		);
 	};
 	if (!viewModel.value.selectedYearId) {
@@ -111,6 +121,7 @@ const formattedBudgets = computed(() => {
 				year: yearBudget.year,
 				month: getPolishMonth(monthlyBudget.month),
 				monthId: monthlyBudget.id,
+				monthOrder: getMonthOrder(monthlyBudget.month),
 				totalAmount: monthlyBudget.totalAmount,
 			}))
 		);
@@ -123,12 +134,57 @@ const formattedBudgets = computed(() => {
 				year: selectedYear.year,
 				month: getPolishMonth(monthlyBudget.month),
 				monthId: monthlyBudget.id,
+				monthOrder: getMonthOrder(monthlyBudget.month),
 				totalAmount: monthlyBudget.totalAmount,
 			}));
 		}
 	}
-	return months;
-});
+	const copiedMonthlyBudgets = _.cloneDeep(months);
+	const sortedMonthlyBudgets = copiedMonthlyBudgets.sort((a, b) => {
+  		if (a.year !== b.year) {
+    		return a.year - b.year; 
+  		} else {
+   			 return a.monthOrder - b.monthOrder; 
+  		}
+		});	return sortedMonthlyBudgets;
+		});
+
+const deleteMonthlyBudget = (item) => {
+    confirmDialog.value.show({
+        title: "Potwierdź usunięcie",
+        text: "Czy na pewno chcesz usunać budżet miesięczny?",
+        confirmBtnText: 'Usuń',
+        confirmBtnColor: 'error'
+    }).then((confirm) => {
+        if (confirm){
+            item.deleting = true;
+            useWebApiFetch('/Budget/DeleteMonthlyBudget', {
+                method: 'POST',
+                body: {id : item.monthId},
+                watch: false,
+                onResponseError: ({ response }) => {
+                    let message = getErrorMessage(response, {})
+                    globalMessageStore.showErrorMessage(message);
+                }
+            })
+            .then((response) => {
+                if (response.data.value) {
+                    globalMessageStore.showSuccessMessage("Budżet roczny został usunięty");
+                    removeYearBudget(item);
+                }
+            })
+            .finally(() => {
+                item.deleting = false;
+            });
+        }
+    })
+}
+
+const removeYearBudget = async (budgetToRemove) => {
+    yearBudgetsStore.removeYearBudget(budgetToRemove);
+	await yearBudgetsStore.loadYearBudgets();
+};
+
 
 const updateBudgets = async () => {
 	await yearBudgetsStore.loadYearBudgets();
