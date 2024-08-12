@@ -7,7 +7,7 @@
 		<VCardText>
 			<v-select
 				label="Rok budżetowy"
-				:items="yearBudgetsStore.yearBudgets"
+				:items="yearBudgetsWithAllOption"
 				variant="outlined"
 				item-value="id"
 				item-title="year"
@@ -93,6 +93,10 @@ const headers = ref([
 	{ title: "", value: "action", align: "end" },
 ]);
 
+const yearBudgetsWithAllOption = computed(() => {
+	return [{ id: null, year: "Wszystkie" }, ...yearBudgetsStore.yearBudgets];
+});
+
 const formattedBudgets = computed(() => {
 	let months = [];
 	const getPolishMonth = (englishMonth) => {
@@ -131,7 +135,7 @@ const updateBudgets = async () => {
 	if (yearId.value) {
 		viewModel.value.selectedYearId = yearId.value.yearBudgetId;
 	} else {
-		viewModel.value.selectedYearId = "";
+		viewModel.value.selectedYearId = null;
 	}
 };
 
