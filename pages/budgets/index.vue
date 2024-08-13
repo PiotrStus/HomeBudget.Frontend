@@ -29,9 +29,9 @@
 				</template>
 			</v-select>
 
-			<v-toolbar color="transparent">
+			<!-- <v-toolbar color="transparent">
 				<v-toolbar-title>Planowane kwoty per kategoria</v-toolbar-title>
-			</v-toolbar>
+			</v-toolbar> -->
 			<v-data-table
 				:loading="yearBudgetsStore.loading"
 				:items="formattedBudgets"
@@ -42,6 +42,15 @@
 				no-data-text="Brak dostępnych budżetów. Dodaj nowy."
 				loading-text="Wczytywanie"
 			>
+				<template v-slot:item.select="{ item }">
+					<v-btn
+							icon="mdi-select"
+							title="Wybierz"
+							variant="flat"
+							:disabled="item.deleting"
+							:to="`/categories/planned/${item.id}`"
+					></v-btn>
+				</template>
 				<template v-slot:item.month="{ value }">
 					{{ value }}
 				</template>
@@ -65,7 +74,7 @@
 							title="Edytuj"
 							variant="flat"
 							:disabled="item.deleting"
-							:to="`/categories/planned/${item.id}`"
+							:to="`/budgets/${item.monthId}`"
 						></v-btn>
 					</div>
 				</template>
@@ -91,6 +100,7 @@ const confirmDialog = ref(null);
 const yearBudgetsStore = useYearBudgetsStore();
 const viewModel = ref({ selectedYearId: null, selectedMonth: null });
 const headers = ref([
+	{ title: "Wybierz", value: "select", align: "start", width: '100px'},
 	{ title: "Rok", value: "year" },
 	{ title: "Miesiąc", value: "month" },
 	{ title: "Planowana kwota", value: "totalAmount" },
@@ -147,7 +157,7 @@ const formattedBudgets = computed(() => {
    			 return a.monthOrder - b.monthOrder; 
   		}
 		});	return sortedMonthlyBudgets;
-		});
+});
 
 const deleteMonthlyBudget = (item) => {
     confirmDialog.value.show({
