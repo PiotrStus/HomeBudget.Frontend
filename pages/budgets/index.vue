@@ -22,7 +22,7 @@
 								variant="flat"
 								prepend-icon="mdi-plus"
 								@click="showDialog = true"
-								>Dodaj nowy</v-btn
+								>Dodaj</v-btn
 							>
 						</template>
 					</v-list-item>
@@ -42,13 +42,21 @@
 				no-data-text="Brak dostępnych budżetów. Dodaj nowy."
 				loading-text="Wczytywanie"
 			>
+
+
+				<template v-slot:header.action>
+					<v-btn color='primary' variant="flat" prepend-icon="mdi-plus" @click="showMonthlyDialog = true">
+						Dodaj
+					</v-btn>
+
+				</template>
 				<template v-slot:item.select="{ item }">
 					<v-btn
 							icon="mdi-select"
 							title="Wybierz"
 							variant="flat"
 							:disabled="item.deleting"
-							:to="`/categories/planned/${item.id}`"
+							:to="`/budgets/planned/${item.monthId}`"
 					></v-btn>
 				</template>
 				<template v-slot:item.month="{ value }">
@@ -80,6 +88,7 @@
 				</template>
 			</v-data-table>
 		</VCardText>
+		<AddMonthlyBudgetDialog v-model:show="showMonthlyDialog" @update-categories="updateItems"/>
 		<AddYearBudgetDialog
 			v-model:show="showDialog"
 			v-model:yearIdBudget="yearId"
@@ -93,6 +102,7 @@
 import _ from 'lodash';
 import MonthsEnum from "~/utils/months";
 const showDialog = ref(false);
+const showMonthlyDialog = ref(false);
 const globalMessageStore = useGlobalMessageStore();
 const yearId = ref(null);
 const saving = ref(false);
