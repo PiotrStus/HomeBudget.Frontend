@@ -104,6 +104,7 @@ import MonthsEnum from "~/utils/months";
 const showDialog = ref(false);
 const showMonthlyDialog = ref(false);
 const globalMessageStore = useGlobalMessageStore();
+const { getErrorMessage} = useWebApiResponseParser();
 const yearId = ref(null);
 const saving = ref(false);
 const confirmDialog = ref(null);
@@ -189,8 +190,8 @@ const deleteMonthlyBudget = (item) => {
             })
             .then((response) => {
                 if (response.data.value) {
-                    globalMessageStore.showSuccessMessage("Budżet roczny został usunięty");
-                    removeYearBudget(item);
+                    globalMessageStore.showSuccessMessage("Budżet miesięczny został usnięty");
+                    updateBudgets();
                 }
             })
             .finally(() => {
@@ -200,10 +201,6 @@ const deleteMonthlyBudget = (item) => {
     })
 }
 
-const removeYearBudget = async (budgetToRemove) => {
-    yearBudgetsStore.removeYearBudget(budgetToRemove);
-	await yearBudgetsStore.loadYearBudgets();
-};
 
 
 const updateBudgets = async () => {
