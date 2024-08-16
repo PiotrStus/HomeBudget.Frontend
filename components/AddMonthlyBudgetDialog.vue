@@ -11,7 +11,7 @@
 				item-value="id"
 				item-title="year"
 				no-data-text="Brak dostępnych budżetów rocznych"
-				v-model="viewModel.selectedYearId"
+				v-model="viewModel.yearId"
 				/>
 				<v-select
 				label="Miesiąc"
@@ -20,9 +20,9 @@
 				item-value="value"
 				item-title="name"
 				no-data-text="Brak dostępnych budżetów miesięcznych"
-				v-model="viewModel.selectedMonth"
+				v-model="viewModel.month"
 				/>
-				<v-number-input v-model="viewModel.selectAmount" variant="outlined" controlVariant="default" label="Planowana kwota"></v-number-input>
+				<v-number-input v-model="viewModel.totalAmount" variant="outlined" controlVariant="default" label="Planowana kwota"></v-number-input>
 
 				
 			</VCardText>
@@ -39,6 +39,7 @@
 </template>
 
 <script setup>
+import MonthsEnum from "~/utils/months";
 import { VNumberInput } from 'vuetify/labs/VNumberInput'
 const globalMessageStore = useGlobalMessageStore();
 const yearBudgetsStore = useYearBudgetsStore();
@@ -47,28 +48,29 @@ const { getErrorMessage} = useWebApiResponseParser();
 const localShow = defineModel("show")
 const errorMsg = ref("");
 const loading = ref(false);
-const emit = defineEmits(['update-yearBudgets']);
+const emit = defineEmits(['update-monthlyBudgets']);
 
 
-const updateYearBudgets = () => {
-  emit('update-yearBudgets');
+const updateMonthlyBudgets = () => {
+  emit('update-monthlyBudgets');
 };
 
 watch(localShow, (newState) => {
 	if (newState)
 	{
 		viewModel.value = {
-			year: '',
+			yearId: '',
+			month: '',
+			totalAmount: 0
 		}
 	}
 });
 
-const viewModel = ref(
-	{selectedYearId: null,
-	 selectedMonth: null,
-	 selectAmount: null
-	}
-)
+const viewModel = ref({
+	yearId: '',
+	month: '',
+	totalAmount: 0
+})
 
 const handleCancel = () => {
 	localShow.value = false;
@@ -83,11 +85,10 @@ const submit = async (ev) => {
 }
 
 const createNewMonthlyBudget = async () => {
-			saving.value = true;
 			loading.value = true;
 			useWebApiFetch('/Budget/CreateMonthlyBudget', {
 				method: 'POST',
-                body: {yearBudgetId  : viewModel.value.selectedYearId, month : viewModel.value.selectedMonth, totalAmount: viewModel.value.selectAmount},
+                body: {yearBudgetId  : viewModel.value.yearId, month : viewModel.value.month, totalAmount: viewModel.value.totalAmount},
                 watch: false,
                 onResponseError: ({ response }) => {
                     let message = getErrorMessage(response, {})
@@ -95,16 +96,14 @@ const createNewMonthlyBudget = async () => {
                 }
                 }
             )				
-			.then(({ data, error }) => {
-				if (data.value) {
-					plannedCategories.value = data.value.plannedCategories;
+			.then(( response ) => {
+				if (response.data.value) {
 					globalMessageStore.showSuccessMessage('Budżet został dodany');
-				} else if (error.value) {
-					plannedCategories.value = [];
+					updateMonthlyBudgets();
+					localShow.value = false;
 				}
 			})
 			.finally(() => {
-				saving.value = false;
 				loading.value = false;
 			})
 		}		

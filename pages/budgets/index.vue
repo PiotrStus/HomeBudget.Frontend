@@ -88,12 +88,15 @@
 				</template>
 			</v-data-table>
 		</VCardText>
-		<AddMonthlyBudgetDialog v-model:show="showMonthlyDialog" @update-categories="updateItems"/>
+		<AddMonthlyBudgetDialog 
+			v-model:show="showMonthlyDialog" 
+			@updateMonthlyBudgets="updateBudgets"
+			/>
 		<AddYearBudgetDialog
 			v-model:show="showDialog"
 			v-model:yearIdBudget="yearId"
 			@update-yearBudgets="updateBudgets"
-		/>
+			/>
 		<ConfirmDialog ref="confirmDialog"/>
 	</VCard>
 </template>
@@ -190,7 +193,7 @@ const deleteMonthlyBudget = (item) => {
             })
             .then((response) => {
                 if (response.data.value) {
-                    globalMessageStore.showSuccessMessage("Budżet miesięczny został usnięty");
+                    globalMessageStore.showSuccessMessage("Budżet miesięczny został usunięty");
                     updateBudgets();
                 }
             })
