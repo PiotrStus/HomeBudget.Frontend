@@ -1,5 +1,6 @@
 <template>
 STRONA GŁÓWNA
+
 </template>
 
 

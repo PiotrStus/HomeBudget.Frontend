@@ -40,12 +40,12 @@
 
 <script setup>
 import MonthsEnum from "~/utils/months";
-import { VNumberInput } from 'vuetify/labs/VNumberInput'
+import { VNumberInput } from 'vuetify/labs/VNumberInput';
 const globalMessageStore = useGlobalMessageStore();
 const yearBudgetsStore = useYearBudgetsStore();
 const {ruleRequired, ruleInteger} = useFormValidationRules();
 const { getErrorMessage} = useWebApiResponseParser();
-const localShow = defineModel("show")
+const localShow = defineModel("show");
 const errorMsg = ref("");
 const loading = ref(false);
 const emit = defineEmits(['update-monthlyBudgets']);
@@ -86,12 +86,15 @@ const submit = async (ev) => {
 
 const createNewMonthlyBudget = async () => {
 			loading.value = true;
+			const messageMap = {
+			"MonthlyBudgetAlreadyExists": "Dana budżet miesięczny już istnieje"
+			};
 			useWebApiFetch('/Budget/CreateMonthlyBudget', {
 				method: 'POST',
                 body: {yearBudgetId  : viewModel.value.yearId, month : viewModel.value.month, totalAmount: viewModel.value.totalAmount},
                 watch: false,
                 onResponseError: ({ response }) => {
-                    let message = getErrorMessage(response, {})
+                    let message = getErrorMessage(response, messageMap)
                     globalMessageStore.showErrorMessage(message);
                 }
                 }

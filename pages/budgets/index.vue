@@ -88,7 +88,7 @@
 				</template>
 			</v-data-table>
 		</VCardText>
-		<AddMonthlyBudgetDialog 
+		<AddMonthlyBudgetDialog
 			v-model:show="showMonthlyDialog" 
 			@updateMonthlyBudgets="updateBudgets"
 			/>
@@ -166,9 +166,9 @@ const formattedBudgets = computed(() => {
 	const copiedMonthlyBudgets = _.cloneDeep(months);
 	const sortedMonthlyBudgets = copiedMonthlyBudgets.sort((a, b) => {
   		if (a.year !== b.year) {
-    		return a.year - b.year; 
+    		return b.year - a.year; 
   		} else {
-   			 return a.monthOrder - b.monthOrder; 
+   			 return b.monthOrder - a.monthOrder; 
   		}
 		});	return sortedMonthlyBudgets;
 });

@@ -14,9 +14,17 @@ export default defineNuxtConfig({
     transpile: ['vuetify'],
   },
 
+  components: [
+    { path: '~/components/dialogs' },
+
+    '~/components'
+  ],
+
   imports: {
     dirs: ['stores'],
   },
+  
+
 
   modules: [
     (_options, nuxt) => {

@@ -128,11 +128,11 @@ const menuItems = [
 		icon: "mdi-newspaper",
 		url: "/budgets",
 	},
-	{
-		name: "tests",
-		icon: "mdi-newspaper",
-		url: "/tests",
-	},
+	// {
+	// 	name: "tests",
+	// 	icon: "mdi-newspaper",
+	// 	url: "/tests",
+	// },
 	{
 		name: "Operacje",
 		icon: "mdi-receipt-text-plus",

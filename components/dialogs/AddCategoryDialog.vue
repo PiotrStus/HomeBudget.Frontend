@@ -42,7 +42,7 @@ const localShow = defineModel("show")
 const errorMsg = ref("");
 const loading = ref(false);
 const emit = defineEmits(['update-categories']);
-const props = defineProps(['isPlanned']);
+
 
 const updateCategories = () => {
   emit('update-categories');

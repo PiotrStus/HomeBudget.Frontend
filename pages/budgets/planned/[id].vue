@@ -9,7 +9,7 @@
 			Dodaj
 			</v-btn>
 		</v-toolbar>
-		<AddMonthlyBudgetDialog v-model:show="showDialog" @update-categories="updateItems"/>
+		<AddPlannedDialog v-model:show="showDialog" @update-plannedCategories="updateItems" :items="categoriesToUse"/>
 		<v-data-table 
         :loading="loading" 
         :items="plannedCategories" 
@@ -22,26 +22,36 @@
         <template v-slot:item="{ item }">
             <tr>
 				<td style="width: 50px">{{ getCategoryTitle(item.categoryType).charAt(0) }}</td>
-                <td>{{ item.category }}</td>
+                <td>{{ item.name }}</td>
                 <td>{{ item.amount }}</td>
                 <td>
 					<div class="text-right">
-                    	<v-btn  icon="mdi-delete" title="Usuń" variant="flat" :loading="item.deleting" @click="deleteCategory(item)"></v-btn>
-                    	<v-btn  icon="mdi-pencil" title="Edytuj" variant="flat" :to="`/categories/planned/${item.id}`"></v-btn>
+                    	<v-btn  icon="mdi-delete" title="Usuń" variant="flat" :loading="item.deleting" @click="deletePlannedCategory(item)"></v-btn>
+                    	<v-btn  icon="mdi-pencil" title="Edytuj" variant="flat" :to="{ path: `/budgets/planned/category/${item.id}`, query: {plannedId: route.params.id }}"></v-btn>
 					</div>
 				</td>
             </tr>
         </template>
     </v-data-table>
 	</VCard>
+	<ConfirmDialog ref="confirmDialog"/>
 </template>
 
 <script setup>
+
+
 const loading = ref(false);
 const plannedCategories = ref([]);
-const globalMessageStore = useGlobalMessageStore();
 const route = useRoute();
 const showDialog = ref(false);
+const categoriesStore = useCategoriesStore();
+const confirmDialog = ref(null);
+const globalMessageStore = useGlobalMessageStore();
+
+const categoriesToUse = computed(() => {
+  const plannedNames = plannedCategories.value.map(cat => cat.name);
+  return categoriesStore.categories.filter(cat => !plannedNames.includes(cat.name));
+})
 
 const getCategoryTitle = (categoryType) => {
   const category = categoryOptions.find(option => option.value === categoryType);
@@ -50,11 +60,47 @@ const getCategoryTitle = (categoryType) => {
 
 const headers = ref([
 	{title: 'Typ', value: 'categoryType'},
-    {title: 'Nazwa kategorii', value: 'category'},
+    {title: 'Nazwa kategorii', value: 'name'},
 	{title: 'Planowana kwota', value: 'amount'},
     {title: '', value: 'action', align: 'end'}
 
 ]);
+
+const updateItems = () => {
+    loadPlannedCategories();
+};
+
+const deletePlannedCategory = (category) => {
+    confirmDialog.value.show({
+        title: "Potwierdź usunięcie",
+        text: "Czy na pewno chcesz usunać kategorię?",
+        confirmBtnText: 'Usuń',
+        confirmBtnColor: 'error'
+    }).then((confirm) => {
+        if (confirm){
+            category.deleting = true;
+            useWebApiFetch('/Category/DeletePlannedCategory', {
+                method: 'POST',
+                body: {id : category.id},
+                watch: false,
+                onResponseError: ({ response }) => {
+                    let message = getErrorMessage(response, {})
+                    globalMessageStore.showErrorMessage(message);
+                }
+            })
+            .then((response) => {
+                if (response.data.value) {
+                    globalMessageStore.showSuccessMessage("Kategoria została usunięta");
+                    //removeCategory(category);
+					loadPlannedCategories();
+                }
+            })
+            .finally(() => {
+                category.deleting = false;
+            });
+        }
+    })
+}
 
 const loadPlannedCategories = async () => {
 			loading.value = true;
@@ -65,7 +111,10 @@ const loadPlannedCategories = async () => {
 			.then(({ data, error }) => {
 				if (data.value) {
 					plannedCategories.value = data.value.plannedCategories;
-					//globalMessageStore.showSuccessMessage('Budżet został wybrany');
+					console.log('plannedCategories');
+					console.log(plannedCategories.value);
+					console.log('categoriesStore.categories');
+					console.log(categoriesStore.categories);
 				} else if (error.value) {
 					plannedCategories.value = [];
 				}
@@ -76,7 +125,7 @@ const loadPlannedCategories = async () => {
 		}
 
 
-        
+
 onMounted(loadPlannedCategories)
 
 </script>
