@@ -36,7 +36,7 @@ const yearBudgetsStore = useYearBudgetsStore();
 const {ruleRequired, ruleInteger} = useFormValidationRules();
 const { getErrorMessage} = useWebApiResponseParser();
 const localShow = defineModel("show")
-const test = defineModel("yearIdBudget")
+const yearBudgetId = defineModel("yearIdBudget");
 const errorMsg = ref("");
 const loading = ref(false);
 const emit = defineEmits(['update-yearBudgets']);
@@ -90,7 +90,7 @@ const addNewBudget = () => {
 			console.log(response.data.value)
 			globalMessageStore.showSuccessMessage('Budżet roczny został dodany');
 			updateYearBudgets();
-			test.value = response.data.value;
+			yearBudgetId.value = response.data.value.yearBudgetId;
 			localShow.value = false;
 		}
 	})

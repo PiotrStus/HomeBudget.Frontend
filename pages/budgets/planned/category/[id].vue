@@ -11,7 +11,7 @@
 		<VSkeletonLoader v-if="loading" type="paragraph, actions"></VSkeletonLoader>
 		<VForm v-else @submit.prevent="submit" :disabled="saving">
 			<VCardText>
-				<v-number-input  :rules="[ruleRequired]" v-model="viewModel.totalAmount" variant="outlined" controlVariant="default" label="Planowana kwota"></v-number-input>
+				<v-number-input  :rules="[ruleRequired]" v-model="viewModel.amount" variant="outlined" controlVariant="default" label="Planowana kwota"></v-number-input>
 			</VCardText>
 			<VCardText class ="text-right">
 				<VBtn prepend-icon="mdi-content-save" variant="flat" color="primary" 
@@ -29,13 +29,14 @@ import { VNumberInput } from 'vuetify/labs/VNumberInput';
 const {ruleRequired} = useFormValidationRules();
 const route = useRoute();
 const router = useRouter();
+const globalMessageStore = useGlobalMessageStore();
 
 
 const loading = ref(false);
 const saving = ref(false);
 
 const viewModel = ref({
-	totalAmount: 0
+	amount: 0
 })
 
 const submit = async (ev) => {
@@ -45,17 +46,17 @@ const submit = async (ev) => {
 	}
 }
 
+
 const save = () => {
 	saving.value = true;
 	const messageMap = {
         "MonthlyBudgetAlreadyExists": "Budżet miesięczny już istnieje"
     };
 
-	useWebApiFetch('/Category/UpdateMonthlyCategory', {
+	useWebApiFetch('/Category/UpdatePlannedCategory', {
 		method: 'POST',
-		body: { month: viewModel.value.month,
-			 yearBudgetId: viewModel.value.year.id,
-			 totalAmount: viewModel.value.totalAmount,
+		body: {
+			 amount: viewModel.value.amount,
 			 id: route.params.id
 			},
 		watch: false,
@@ -67,12 +68,34 @@ const save = () => {
 	.then((response) => {
 		if (response.data.value) {
 			globalMessageStore.showSuccessMessage('Zapisano zmiany.');
-			router.push({ path: '/budgets' });
+			router.push({ path: `/budgets/planned/${route.query.plannedId}` });
 		}
 		})
 	.finally(() => {
 		saving.value = false;
 	});
 }
+
+const loadData = () => {
+	loading.value = true;
+
+	useWebApiFetch('/Category/GetPlannedCategory', {
+		query: { id: route.params.id },
+	}).then(({ data, error }) => {
+		if (data.value) {
+			viewModel.value = data.value;
+			console.log(viewModel.value)
+			console.log(data.value)
+		} else if (error.value) {
+			globalMessageStore.showErrorMessage("Błąd pobierania danych");
+		}
+	}).finally(() => {
+		loading.value = false;
+	});
+};
+
+onMounted(() => {
+	loadData();
+});
 
 </script>

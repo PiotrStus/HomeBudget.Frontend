@@ -48,6 +48,7 @@ const { getErrorMessage} = useWebApiResponseParser();
 const localShow = defineModel("show");
 const errorMsg = ref("");
 const loading = ref(false);
+const yearBudgetId = defineModel("yearIdBudget");
 const emit = defineEmits(['update-monthlyBudgets']);
 
 
@@ -102,6 +103,7 @@ const createNewMonthlyBudget = async () => {
 			.then(( response ) => {
 				if (response.data.value) {
 					globalMessageStore.showSuccessMessage('Budżet został dodany');
+					yearBudgetId.value = viewModel.value.yearId;
 					updateMonthlyBudgets();
 					localShow.value = false;
 				}

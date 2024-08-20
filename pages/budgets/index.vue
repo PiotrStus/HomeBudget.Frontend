@@ -90,6 +90,7 @@
 		</VCardText>
 		<AddMonthlyBudgetDialog
 			v-model:show="showMonthlyDialog" 
+			v-model:yearIdBudget="yearId"
 			@updateMonthlyBudgets="updateBudgets"
 			/>
 		<AddYearBudgetDialog
@@ -208,8 +209,9 @@ const deleteMonthlyBudget = (item) => {
 
 const updateBudgets = async () => {
 	await yearBudgetsStore.loadYearBudgets();
+	console.log(yearId);
 	if (yearId.value) {
-		viewModel.value.selectedYearId = yearId.value.yearBudgetId;
+		viewModel.value.selectedYearId = yearId.value;
 	} else {
 		viewModel.value.selectedYearId = null;
 	}
