@@ -73,15 +73,23 @@ const submit = async (ev) => {
 const save = () => {
 	saving.value = true;
 	const messageMap = {
-        "MonthlyBudgetAlreadyExists": "Budżet miesięczny już istnieje"
+        "MonthlyBudgetDidNotChange": "Budżet miesięczny już istnieje"
     };
+
+	const idAsNumber = Number(route.params.id);
+
+	if (isNaN(idAsNumber)) {
+		globalMessageStore.showErrorMessage('Wprowadzono niewłaściwy ID miesiąca.');
+		saving.value = false;
+		return;
+	}
 
 	useWebApiFetch('/Budget/UpdateMonthlyBudget', {
 		method: 'POST',
 		body: { month: viewModel.value.month,
 			 yearBudgetId: viewModel.value.year.id,
 			 totalAmount: viewModel.value.totalAmount,
-			 id: route.params.id
+			 id: idAsNumber
 			},
 		watch: false,
 		onResponseError: ({ response }) => {

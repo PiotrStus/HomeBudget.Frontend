@@ -32,7 +32,6 @@
 <script setup>
 import { VNumberInput } from 'vuetify/labs/VNumberInput'
 const globalMessageStore = useGlobalMessageStore();
-const yearBudgetsStore = useYearBudgetsStore();
 const {ruleRequired, ruleInteger} = useFormValidationRules();
 const { getErrorMessage} = useWebApiResponseParser();
 const localShow = defineModel("show")
@@ -89,8 +88,8 @@ const addNewBudget = () => {
 		if (response.data.value) {
 			console.log(response.data.value)
 			globalMessageStore.showSuccessMessage('Budżet roczny został dodany');
-			updateYearBudgets();
 			yearBudgetId.value = response.data.value.yearBudgetId;
+			updateYearBudgets();
 			localShow.value = false;
 		}
 	})

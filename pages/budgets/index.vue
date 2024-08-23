@@ -207,8 +207,18 @@ const deleteMonthlyBudget = (item) => {
 
 
 
-const updateBudgets = async () => {
-	await yearBudgetsStore.loadYearBudgets();
+// const updateBudgets = async () => {
+// 	await yearBudgetsStore.loadYearBudgets();
+// 	console.log(yearId);
+// 	if (yearId.value) {
+// 		viewModel.value.selectedYearId = yearId.value;
+// 	} else {
+// 		viewModel.value.selectedYearId = null;
+// 	}
+// };
+
+const updateBudgets =  () => {
+	yearBudgetsStore.loadYearBudgets().then 
 	console.log(yearId);
 	if (yearId.value) {
 		viewModel.value.selectedYearId = yearId.value;
@@ -216,6 +226,8 @@ const updateBudgets = async () => {
 		viewModel.value.selectedYearId = null;
 	}
 };
+
+
 
 onMounted(updateBudgets);
 </script>

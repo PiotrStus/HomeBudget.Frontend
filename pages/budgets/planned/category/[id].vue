@@ -30,7 +30,7 @@ const {ruleRequired} = useFormValidationRules();
 const route = useRoute();
 const router = useRouter();
 const globalMessageStore = useGlobalMessageStore();
-
+const { getErrorMessage} = useWebApiResponseParser();
 
 const loading = ref(false);
 const saving = ref(false);
@@ -50,7 +50,7 @@ const submit = async (ev) => {
 const save = () => {
 	saving.value = true;
 	const messageMap = {
-        "MonthlyBudgetAlreadyExists": "Budżet miesięczny już istnieje"
+        "PlannedCategoryDidNotChange": "Nie zmieniono planowanej kwoty"
     };
 
 	useWebApiFetch('/Category/UpdatePlannedCategory', {

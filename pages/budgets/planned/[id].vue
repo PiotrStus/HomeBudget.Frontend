@@ -6,10 +6,10 @@
 			</template>
 			<v-toolbar-title>Planowane kwoty per kategoria</v-toolbar-title>
 			<v-btn class="ml-2" color="primary" variant="flat" prepend-icon="mdi-plus" @click="showDialog = true">
-			Dodaj
+			Przypisz
 			</v-btn>
 		</v-toolbar>
-		<AddPlannedDialog v-model:show="showDialog" @update-plannedCategories="updateItems" :items="categoriesToUse"/>
+		<AddPlannedDialog v-model:show="showDialog" @plannedCategoriesAdded="updateItems" :items="categoriesToUse"/>
 		<v-data-table 
         :loading="loading" 
         :items="plannedCategories" 
@@ -21,7 +21,11 @@
         loading-text="Wczytywanie">
         <template v-slot:item="{ item }">
             <tr>
-				<td style="width: 50px">{{ getCategoryTitle(item.categoryType).charAt(0) }}</td>
+				<td style="width: 50px">   
+                    <v-icon :class="[item.categoryType === 'Expense' ? 'icon-red' : 'icon-green', 'icon-large']">
+                        {{ item.categoryType === 'Expense' ? 'mdi-cash-remove' : 'mdi-cash-plus' }}
+                    </v-icon>
+                </td>
                 <td>{{ item.name }}</td>
                 <td>{{ item.amount }}</td>
                 <td>
@@ -49,14 +53,18 @@ const confirmDialog = ref(null);
 const globalMessageStore = useGlobalMessageStore();
 
 const categoriesToUse = computed(() => {
-  const plannedNames = plannedCategories.value.map(cat => cat.name);
-  return categoriesStore.categories.filter(cat => !plannedNames.includes(cat.name));
-})
+    const plannedPairs = plannedCategories.value.map(cat => ({
+        name:cat.name,
+        categoryType: cat.categoryType
+    }));
+    return categoriesStore.categories.filter(cat => {
+        return !plannedPairs.some(plannedCat => 
+            plannedCat.name === cat.name && 
+            plannedCat.categoryType === cat.categoryType
+        );
+});
+});
 
-const getCategoryTitle = (categoryType) => {
-  const category = categoryOptions.find(option => option.value === categoryType);
-  return category ? category.title : 'Unknown';
-};
 
 const headers = ref([
 	{title: 'Typ', value: 'categoryType'},
@@ -68,6 +76,7 @@ const headers = ref([
 
 const updateItems = () => {
     loadPlannedCategories();
+    console.log(categoriesToUse);
 };
 
 const deletePlannedCategory = (category) => {
@@ -111,6 +120,12 @@ const loadPlannedCategories = async () => {
 			.then(({ data, error }) => {
 				if (data.value) {
 					plannedCategories.value = data.value.plannedCategories;
+                    plannedCategories.value.sort((a, b) => {
+                    if (a.categoryType === 'Income' && b.categoryType === 'Expense') return -1;
+                    if (a.categoryType === 'Expense' && b.categoryType === 'Income') return 1;
+                    return 0;
+                    });
+
 					console.log('plannedCategories');
 					console.log(plannedCategories.value);
 					console.log('categoriesStore.categories');
@@ -129,3 +144,19 @@ const loadPlannedCategories = async () => {
 onMounted(loadPlannedCategories)
 
 </script>
+
+
+<style scoped>
+
+.icon-large {
+  font-size: 26px; 
+}
+
+.icon-green {
+  color: green;
+}
+.icon-red {
+  color: red;
+}
+
+</style>

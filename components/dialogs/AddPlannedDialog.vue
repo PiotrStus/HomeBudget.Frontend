@@ -4,7 +4,17 @@
 			<VCardTitle class="text-center">Przypisz kategorię</VCardTitle>
 			<VForm @submit.prevent="submit" :disabled="loading">
 				<VCardText>
-					<v-select :rules="[ruleRequired]" class="mb-4" variant="outlined" label="Kategoria" v-model="viewModel.name" :items="props.items" item-title="name" item-value="name" no-data-text="Brak kategorii do przypisania"></v-select>
+					<v-select 
+						:rules="[ruleRequired]" 
+						class="mb-4" 
+						variant="outlined" 
+						label="Kategoria" 
+						v-model="viewModel.selectedCategory" 
+						:items="computedItems" 
+						item-title="name" 
+						item-value="uniqueId" 
+						no-data-text="Brak kategorii do przypisania"
+						/>
 					<v-select
 						:rules="[ruleRequired]"
 						class="mb-4"
@@ -15,7 +25,7 @@
 						item-title="title"
 						no-data-text="Brak dostępnych budżetów miesięcznych"
 						v-model="viewModel.categoryType"
-						disabled="true"
+						:disabled=true
 						menu-icon=""
 						/>
 					<v-number-input :rules="[ruleRequired]" v-model="viewModel.totalAmount" variant="outlined" controlVariant="default" label="Planowana kwota" />
@@ -39,12 +49,12 @@ const { getErrorMessage} = useWebApiResponseParser();
 const localShow = defineModel("show")
 const errorMsg = ref("");
 const loading = ref(false);
-const emit = defineEmits(['update-plannedCategories']);
+const emit = defineEmits(['plannedCategoriesAdded']);
 const route = useRoute();
 
 
-const updatePlannedCategories = () => {
-  emit('update-plannedCategories');
+const plannedCategoriesAdded = () => {
+  emit('plannedCategoriesAdded');
 };
 
 watch(localShow, (newState) => {
@@ -53,7 +63,8 @@ watch(localShow, (newState) => {
 		viewModel.value = {
 			name: '',
 			totalAmount: 0,
-			categoryType: ''
+			categoryType: '',
+			selectedCategory: ''
 		}
 	}
 });
@@ -62,13 +73,22 @@ watch(localShow, (newState) => {
 const viewModel = ref({
 	name: '',
 	totalAmount: 0,
-	categoryType: ''
+	categoryType: '',
+	selectedCategory: ''
 });
 
-watch(() => viewModel.value.name, (cat) => {
-  const selectedCategory = props.items.find(item => item.name === cat);
-  viewModel.value.categoryType = selectedCategory ? selectedCategory.categoryType : '';
-  console.log(viewModel.value)
+watch(() => viewModel.value.selectedCategory, (uniqueId) => {
+  const selectedCategory = props.items.find(item => `${item.name}-${item.categoryType}` === uniqueId);
+  if (selectedCategory)
+  {
+    viewModel.value.name= selectedCategory.name;
+    viewModel.value.categoryType = selectedCategory.categoryType;
+  }
+  else 
+  {
+    viewModel.value.name = '';
+    viewModel.value.categoryType = '';
+  }
 });
 
 
@@ -89,6 +109,12 @@ const props = defineProps({
     items: Array
 });
 
+const computedItems = computed(() => {
+    return props.items.map(item => ({
+        ...item,
+        uniqueId: `${item.name}-${item.categoryType}`
+    }));
+});
 
 const assignCategory = async () => {
 	loading.value = true;
@@ -98,7 +124,11 @@ const assignCategory = async () => {
     };
 	useWebApiFetch('/Category/CreatePlannedCategory', {
 		method: 'POST',
-		body: {...viewModel.value, monthlyBudgetId: route.params.id},
+		body: {
+			name: viewModel.value.name,
+			categoryType: viewModel.value.categoryType,
+			totalAmount: viewModel.value.totalAmount,
+			monthlyBudgetId: route.params.id},
 		onResponseError: ({response}) => {
 			errorMsg.value = "Błąd przypisywania nowej kategorii";
 			let message = getErrorMessage(response, messageMap);
@@ -108,7 +138,7 @@ const assignCategory = async () => {
 	.then((response) => {
 		if (response.data.value) {
 			globalMessageStore.showSuccessMessage('Kategoria została przypisana')
-			updatePlannedCategories();
+			plannedCategoriesAdded();
 			localShow.value = false;
 		}
 	})
