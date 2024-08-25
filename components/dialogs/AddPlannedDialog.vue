@@ -122,7 +122,7 @@ const assignCategory = async () => {
 	const messageMap = {
         "CategoryWithThisTypeCategoryAlreadyExists": "Dana kategoria już istnieje"
     };
-	useWebApiFetch('/Category/CreatePlannedCategory', {
+	useWebApiFetch('/PlannedCategory/CreatePlannedCategory', {
 		method: 'POST',
 		body: {
 			name: viewModel.value.name,

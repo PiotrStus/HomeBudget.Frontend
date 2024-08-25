@@ -52,7 +52,7 @@
 				</template>
 				<template v-slot:item.select="{ item }">
 					<v-btn
-							icon="mdi-select"
+							icon="mdi-book-search-outline"
 							title="Wybierz"
 							variant="flat"
 							:disabled="item.deleting"
@@ -68,24 +68,71 @@
 				<template v-slot:item.year="{ value }">
 					{{ value }}
 				</template>
+
+
+
+
 				<template v-slot:item.action="{ item }">
-					<div class="text-right">
-						<v-btn
-							icon="mdi-delete"
-							title="Usuń"
+					<v-btn-group >
+						<v-btn icon
+							size="large"
+							append-icon="mdi-magnify"
 							variant="flat"
-							:loading="item.deleting"
-							@click="deleteMonthlyBudget(item)"
-						></v-btn>
+							title="Wybierz"
+							:disabled="item.deleting"
+							:to="`/budgets/planned/${item.monthId}`"
+							class="justify-end "
+						>
+						<v-icon icon="mdi-magnify" title="Wybierz"/>
+						</v-btn>
+						<v-btn icon title="Więcej">
+							<v-icon icon="mdi-dots-vertical"/>
+							<v-menu
+							activator="parent"
+							location="bottom end"
+							transition="fade-transition"
+							>
+								<v-list rounded="lg">
+									<v-list-item
+									link
+									variant="flat"
+									:loading="item.deleting"
+									@click="deleteMonthlyBudget(item)"
+									class="d-flex justify-center"
+								>
+									<v-icon icon="mdi-delete" title="Usuń"/>
+								</v-list-item>
+								<v-list-item
+									link
+									variant="flat"
+									class="d-flex justify-center"
+									:disabled="item.deleting"
+									:to="`/budgets/${item.monthId}`"
+								>
+									<v-icon icon="mdi-pencil" title="Edytuj"/>
+								</v-list-item>
+							</v-list>
+						</v-menu>
+						</v-btn>
+					</v-btn-group>
+				</template>
+
+
+
+				<!--
 						<v-btn
-							icon="mdi-pencil"
-							title="Edytuj"
+
 							variant="flat"
 							:disabled="item.deleting"
 							:to="`/budgets/${item.monthId}`"
 						></v-btn>
 					</div>
-				</template>
+				</template> -->
+
+
+
+
+
 			</v-data-table>
 		</VCardText>
 		<AddMonthlyBudgetDialog
@@ -115,7 +162,6 @@ const confirmDialog = ref(null);
 const yearBudgetsStore = useYearBudgetsStore();
 const viewModel = ref({ selectedYearId: null, selectedMonth: null });
 const headers = ref([
-	{ title: "Wybierz", value: "select", align: "start", width: '100px'},
 	{ title: "Rok", value: "year" },
 	{ title: "Miesiąc", value: "month" },
 	{ title: "Planowana kwota", value: "totalAmount" },
@@ -183,7 +229,7 @@ const deleteMonthlyBudget = (item) => {
     }).then((confirm) => {
         if (confirm){
             item.deleting = true;
-            useWebApiFetch('/Budget/DeleteMonthlyBudget', {
+            useWebApiFetch('/MonthlyBudget/DeleteMonthlyBudget', {
                 method: 'POST',
                 body: {id : item.monthId},
                 watch: false,

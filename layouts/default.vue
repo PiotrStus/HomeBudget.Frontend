@@ -125,7 +125,7 @@ const menuItems = [
 	},
 	{
 		name: "Budżety",
-		icon: "mdi-newspaper",
+		icon: "mdi-book-outline",
 		url: "/budgets",
 	},
 	// {

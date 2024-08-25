@@ -84,7 +84,7 @@ const save = () => {
 		return;
 	}
 
-	useWebApiFetch('/Budget/UpdateMonthlyBudget', {
+	useWebApiFetch('/MonthlyBudget/UpdateMonthlyBudget', {
 		method: 'POST',
 		body: { month: viewModel.value.month,
 			 yearBudgetId: viewModel.value.year.id,
@@ -113,7 +113,7 @@ const save = () => {
 const loadData = () => {
 	loading.value = true;
 
-	useWebApiFetch('/Budget/GetMonthlyBudget', {
+	useWebApiFetch('/MonthlyBudget/GetMonthlyBudget', {
 		query: { id: route.params.id },
 	}).then(({ data, error }) => {
 		if (data.value) {

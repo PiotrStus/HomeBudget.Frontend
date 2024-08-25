@@ -20,10 +20,11 @@
         no-data-text="Brak planowanych kategorii. Dodaj nową." 
         loading-text="Wczytywanie">
         <template v-slot:item="{ item }">
+            
             <tr>
 				<td style="width: 50px">   
                     <v-icon :class="[item.categoryType === 'Expense' ? 'icon-red' : 'icon-green', 'icon-large']">
-                        {{ item.categoryType === 'Expense' ? 'mdi-cash-remove' : 'mdi-cash-plus' }}
+                        {{ item.categoryType === 'Expense' ? 'mdi-arrow-bottom-left-bold-outline' : 'mdi-arrow-top-right-bold-outline' }}
                     </v-icon>
                 </td>
                 <td>{{ item.name }}</td>
@@ -88,7 +89,7 @@ const deletePlannedCategory = (category) => {
     }).then((confirm) => {
         if (confirm){
             category.deleting = true;
-            useWebApiFetch('/Category/DeletePlannedCategory', {
+            useWebApiFetch('/PlannedCategory/DeletePlannedCategory', {
                 method: 'POST',
                 body: {id : category.id},
                 watch: false,
@@ -113,7 +114,7 @@ const deletePlannedCategory = (category) => {
 
 const loadPlannedCategories = async () => {
 			loading.value = true;
-			useWebApiFetch('/Category/GetPlannedCategories', {
+			useWebApiFetch('/PlannedCategory/GetAllPlannedCategories', {
                 query: { monthId: route.params.id }
                 }
             )				

@@ -53,7 +53,7 @@ const save = () => {
         "PlannedCategoryDidNotChange": "Nie zmieniono planowanej kwoty"
     };
 
-	useWebApiFetch('/Category/UpdatePlannedCategory', {
+	useWebApiFetch('/PlannedCategory/UpdatePlannedCategory', {
 		method: 'POST',
 		body: {
 			 amount: viewModel.value.amount,
@@ -79,7 +79,7 @@ const save = () => {
 const loadData = () => {
 	loading.value = true;
 
-	useWebApiFetch('/Category/GetPlannedCategory', {
+	useWebApiFetch('/PlannedCategory/GetPlannedCategory', {
 		query: { id: route.params.id },
 	}).then(({ data, error }) => {
 		if (data.value) {

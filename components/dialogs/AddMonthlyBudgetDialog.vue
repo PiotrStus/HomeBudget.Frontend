@@ -90,7 +90,7 @@ const createNewMonthlyBudget = async () => {
 			const messageMap = {
 			"MonthlyBudgetAlreadyExists": "Dana budżet miesięczny już istnieje"
 			};
-			useWebApiFetch('/Budget/CreateMonthlyBudget', {
+			useWebApiFetch('/MonthlyBudget/CreateMonthlyBudget', {
 				method: 'POST',
                 body: {yearBudgetId  : viewModel.value.yearId, month : viewModel.value.month, totalAmount: viewModel.value.totalAmount},
                 watch: false,
