@@ -38,11 +38,11 @@ const localShow = defineModel("show")
 const yearBudgetId = defineModel("yearIdBudget");
 const errorMsg = ref("");
 const loading = ref(false);
-const emit = defineEmits(['update-yearBudgets']);
+const emit = defineEmits(['yearBudgetAdded']);
 
 
-const updateYearBudgets = () => {
-  emit('update-yearBudgets');
+const yearBudgetAdded = () => {
+  emit('yearBudgetAdded');
 };
 
 watch(localShow, (newState) => {
@@ -89,7 +89,7 @@ const addNewBudget = () => {
 			console.log(response.data.value)
 			globalMessageStore.showSuccessMessage('Budżet roczny został dodany');
 			yearBudgetId.value = response.data.value.yearBudgetId;
-			updateYearBudgets();
+			yearBudgetAdded();
 			localShow.value = false;
 		}
 	})

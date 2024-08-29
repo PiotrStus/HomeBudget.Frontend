@@ -49,11 +49,11 @@ const localShow = defineModel("show");
 const errorMsg = ref("");
 const loading = ref(false);
 const yearBudgetId = defineModel("yearIdBudget");
-const emit = defineEmits(['update-monthlyBudgets']);
+const emit = defineEmits(['monthlyBudgetAdded']);
 
 
-const updateMonthlyBudgets = () => {
-  emit('update-monthlyBudgets');
+const monthlyBudgetAdded = (monthlyBudgetId) => {
+  emit('monthlyBudgetAdded', monthlyBudgetId);
 };
 
 watch(localShow, (newState) => {
@@ -62,7 +62,8 @@ watch(localShow, (newState) => {
 		viewModel.value = {
 			yearId: '',
 			month: '',
-			totalAmount: 0
+			totalAmount: 0,
+			monthlyBudgetId: ''
 		}
 	}
 });
@@ -70,7 +71,8 @@ watch(localShow, (newState) => {
 const viewModel = ref({
 	yearId: '',
 	month: '',
-	totalAmount: 0
+	totalAmount: 0,
+	monthlyBudgetId: ''
 })
 
 const handleCancel = () => {
@@ -104,7 +106,8 @@ const createNewMonthlyBudget = async () => {
 				if (response.data.value) {
 					globalMessageStore.showSuccessMessage('Budżet został dodany');
 					yearBudgetId.value = viewModel.value.yearId;
-					updateMonthlyBudgets();
+					viewModel.value.monthlyBudgetId = response.data.value.monthlyBudgetId;
+					monthlyBudgetAdded(viewModel.value.monthlyBudgetId);
 					localShow.value = false;
 				}
 			})

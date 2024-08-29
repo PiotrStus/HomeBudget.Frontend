@@ -42,21 +42,23 @@
 				no-data-text="Brak dostępnych budżetów. Dodaj nowy."
 				loading-text="Wczytywanie"
 			>
-
-
 				<template v-slot:header.action>
-					<v-btn color='primary' variant="flat" prepend-icon="mdi-plus" @click="showMonthlyDialog = true">
+					<v-btn
+						color="primary"
+						variant="flat"
+						prepend-icon="mdi-plus"
+						@click="showMonthlyDialog = true"
+					>
 						Dodaj
 					</v-btn>
-
 				</template>
 				<template v-slot:item.select="{ item }">
 					<v-btn
-							icon="mdi-book-search-outline"
-							title="Wybierz"
-							variant="flat"
-							:disabled="item.deleting"
-							:to="`/budgets/planned/${item.monthId}`"
+						icon="mdi-book-search-outline"
+						title="Wybierz"
+						variant="flat"
+						:disabled="item.deleting"
+						:to="`/budgets/planned/${item.monthId}`"
 					></v-btn>
 				</template>
 				<template v-slot:item.month="{ value }">
@@ -69,98 +71,76 @@
 					{{ value }}
 				</template>
 
-
-
-
 				<template v-slot:item.action="{ item }">
-					<v-btn-group >
-						<v-btn icon
-							size="large"
-							append-icon="mdi-magnify"
-							variant="flat"
-							title="Wybierz"
-							:disabled="item.deleting"
-							:to="`/budgets/planned/${item.monthId}`"
-							class="justify-end "
-						>
-						<v-icon icon="mdi-magnify" title="Wybierz"/>
-						</v-btn>
-						<v-btn icon title="Więcej">
-							<v-icon icon="mdi-dots-vertical"/>
-							<v-menu
+					<v-btn
+						icon="mdi-magnify"
+						title="Wybierz"
+						:disabled="item.deleting"
+						:to="`/budgets/planned/${item.monthId}`"
+						variant="flat"
+					/>
+
+					<v-btn icon title="Więcej" variant="flat">
+						<v-icon icon="mdi-dots-vertical" />
+						<v-menu
 							activator="parent"
 							location="bottom end"
-							transition="fade-transition"
-							>
-								<v-list rounded="lg">
-									<v-list-item
-									link
+							transition="fab-transition"
+						>
+							<v-list rounded="lg">
+								<v-list-item
 									variant="flat"
 									:loading="item.deleting"
 									@click="deleteMonthlyBudget(item)"
-									class="d-flex justify-center"
+									title="Usuń"
 								>
-									<v-icon icon="mdi-delete" title="Usuń"/>
+									<template v-slot:prepend>
+										<v-icon icon="mdi-delete" />
+									</template>
 								</v-list-item>
 								<v-list-item
-									link
 									variant="flat"
-									class="d-flex justify-center"
 									:disabled="item.deleting"
 									:to="`/budgets/${item.monthId}`"
+									title="Edytuj"
 								>
-									<v-icon icon="mdi-pencil" title="Edytuj"/>
+									<template v-slot:prepend>
+										<v-icon icon="mdi-pencil" />
+									</template>
 								</v-list-item>
 							</v-list>
 						</v-menu>
-						</v-btn>
-					</v-btn-group>
+					</v-btn>
 				</template>
-
-
-
-				<!--
-						<v-btn
-
-							variant="flat"
-							:disabled="item.deleting"
-							:to="`/budgets/${item.monthId}`"
-						></v-btn>
-					</div>
-				</template> -->
-
-
-
-
-
 			</v-data-table>
 		</VCardText>
 		<AddMonthlyBudgetDialog
-			v-model:show="showMonthlyDialog" 
+			v-model:show="showMonthlyDialog"
 			v-model:yearIdBudget="yearId"
-			@updateMonthlyBudgets="updateBudgets"
-			/>
+			@monthlyBudgetAdded="monthlyBudgetAdded"
+		/>
 		<AddYearBudgetDialog
 			v-model:show="showDialog"
 			v-model:yearIdBudget="yearId"
-			@update-yearBudgets="updateBudgets"
-			/>
-		<ConfirmDialog ref="confirmDialog"/>
+			@yearBudgetAdded="updateBudgets"
+		/>
+		<ConfirmDialog ref="confirmDialog" />
 	</VCard>
 </template>
 
 <script setup>
-import _ from 'lodash';
+import _ from "lodash";
 import MonthsEnum from "~/utils/months";
 const showDialog = ref(false);
 const showMonthlyDialog = ref(false);
 const globalMessageStore = useGlobalMessageStore();
-const { getErrorMessage} = useWebApiResponseParser();
+const { getErrorMessage } = useWebApiResponseParser();
 const yearId = ref(null);
 const saving = ref(false);
 const confirmDialog = ref(null);
 const yearBudgetsStore = useYearBudgetsStore();
 const viewModel = ref({ selectedYearId: null, selectedMonth: null });
+const router = useRouter();
 const headers = ref([
 	{ title: "Rok", value: "year" },
 	{ title: "Miesiąc", value: "month" },
@@ -181,10 +161,7 @@ const formattedBudgets = computed(() => {
 		);
 	};
 	const getMonthOrder = (value) => {
-		return (
-			MonthsEnum.find((month) => month.value === value)?.id ||
-			null
-		);
+		return MonthsEnum.find((month) => month.value === value)?.id || null;
 	};
 	if (!viewModel.value.selectedYearId) {
 		months = yearBudgetsStore.yearBudgets.flatMap((yearBudget) =>
@@ -212,60 +189,52 @@ const formattedBudgets = computed(() => {
 	}
 	const copiedMonthlyBudgets = _.cloneDeep(months);
 	const sortedMonthlyBudgets = copiedMonthlyBudgets.sort((a, b) => {
-  		if (a.year !== b.year) {
-    		return b.year - a.year; 
-  		} else {
-   			 return b.monthOrder - a.monthOrder; 
-  		}
-		});	return sortedMonthlyBudgets;
+		if (a.year !== b.year) {
+			return b.year - a.year;
+		} else {
+			return b.monthOrder - a.monthOrder;
+		}
+	});
+	return sortedMonthlyBudgets;
 });
 
 const deleteMonthlyBudget = (item) => {
-    confirmDialog.value.show({
-        title: "Potwierdź usunięcie",
-        text: "Czy na pewno chcesz usunać budżet miesięczny?",
-        confirmBtnText: 'Usuń',
-        confirmBtnColor: 'error'
-    }).then((confirm) => {
-        if (confirm){
-            item.deleting = true;
-            useWebApiFetch('/MonthlyBudget/DeleteMonthlyBudget', {
-                method: 'POST',
-                body: {id : item.monthId},
-                watch: false,
-                onResponseError: ({ response }) => {
-                    let message = getErrorMessage(response, {})
-                    globalMessageStore.showErrorMessage(message);
-                }
-            })
-            .then((response) => {
-                if (response.data.value) {
-                    globalMessageStore.showSuccessMessage("Budżet miesięczny został usunięty");
-                    updateBudgets();
-                }
-            })
-            .finally(() => {
-                item.deleting = false;
-            });
-        }
-    })
-}
+	confirmDialog.value
+		.show({
+			title: "Potwierdź usunięcie",
+			text: "Czy na pewno chcesz usunać budżet miesięczny?",
+			confirmBtnText: "Usuń",
+			confirmBtnColor: "error",
+		})
+		.then((confirm) => {
+			if (confirm) {
+				item.deleting = true;
+				useWebApiFetch("/MonthlyBudget/DeleteMonthlyBudget", {
+					method: "POST",
+					body: { id: item.monthId },
+					watch: false,
+					onResponseError: ({ response }) => {
+						let message = getErrorMessage(response, {});
+						globalMessageStore.showErrorMessage(message);
+					},
+				})
+					.then((response) => {
+						if (response.data.value) {
+							globalMessageStore.showSuccessMessage(
+								"Budżet miesięczny został usunięty"
+							);
+							updateBudgets();
+						}
+					})
+					.finally(() => {
+						item.deleting = false;
+					});
+			}
+		});
+};
 
-
-
-// const updateBudgets = async () => {
-// 	await yearBudgetsStore.loadYearBudgets();
-// 	console.log(yearId);
-// 	if (yearId.value) {
-// 		viewModel.value.selectedYearId = yearId.value;
-// 	} else {
-// 		viewModel.value.selectedYearId = null;
-// 	}
-// };
-
-const updateBudgets =  () => {
-	yearBudgetsStore.loadYearBudgets().then 
-	console.log(yearId);
+const updateBudgets = () => {
+	yearBudgetsStore.loadYearBudgets().then;
 	if (yearId.value) {
 		viewModel.value.selectedYearId = yearId.value;
 	} else {
@@ -273,7 +242,9 @@ const updateBudgets =  () => {
 	}
 };
 
-
+const monthlyBudgetAdded = (monthlyBudgetId) => {
+	router.push({ path: `/budgets/planned/${monthlyBudgetId}` });
+};
 
 onMounted(updateBudgets);
 </script>

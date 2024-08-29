@@ -9,22 +9,22 @@
 						class="mb-4" 
 						variant="outlined" 
 						label="Kategoria" 
-						v-model="viewModel.selectedCategory" 
-						:items="computedItems" 
+						v-model="viewModel.categoryId" 
+						:items="props.items" 
 						item-title="name" 
-						item-value="uniqueId" 
+						item-value="id" 
 						no-data-text="Brak kategorii do przypisania"
 						/>
 					<v-select
 						:rules="[ruleRequired]"
 						class="mb-4"
 						label="Typ kategorii"
+						v-model="viewModel.categoryType"
 						:items="categoryOptions"
 						variant="outlined"
 						item-value="value"
 						item-title="title"
 						no-data-text="Brak dostępnych budżetów miesięcznych"
-						v-model="viewModel.categoryType"
 						:disabled=true
 						menu-icon=""
 						/>
@@ -57,40 +57,44 @@ const plannedCategoriesAdded = () => {
   emit('plannedCategoriesAdded');
 };
 
+
+
 watch(localShow, (newState) => {
+	console.log(props.items)
 	if (newState)
 	{
 		viewModel.value = {
-			name: '',
 			totalAmount: 0,
-			categoryType: '',
-			selectedCategory: ''
+			categoryId: '',
+			categoryType: ''
 		}
 	}
 });
 
 
 const viewModel = ref({
-	name: '',
 	totalAmount: 0,
-	categoryType: '',
-	selectedCategory: ''
+	categoryId: '',
+	categoryType: ''
 });
 
-watch(() => viewModel.value.selectedCategory, (uniqueId) => {
-  const selectedCategory = props.items.find(item => `${item.name}-${item.categoryType}` === uniqueId);
-  if (selectedCategory)
-  {
-    viewModel.value.name= selectedCategory.name;
+// watch(viewModel.value, (newValue) => {
+//   const selectedCategory = props.items.find(item => item.id === newValue.categoryId);
+//   if (selectedCategory) {
+//     viewModel.value.categoryType = selectedCategory.categoryType;
+//   } else {
+//     viewModel.value.categoryType = '';
+//   }
+// });
+
+watch(() => viewModel.value.categoryId, (newValue) => {
+  const selectedCategory = props.items.find(item => item.id === newValue);
+  if (selectedCategory) {
     viewModel.value.categoryType = selectedCategory.categoryType;
-  }
-  else 
-  {
-    viewModel.value.name = '';
+  } else {
     viewModel.value.categoryType = '';
   }
 });
-
 
 const handleCancel = () => {
 	localShow.value = false;
@@ -109,12 +113,6 @@ const props = defineProps({
     items: Array
 });
 
-const computedItems = computed(() => {
-    return props.items.map(item => ({
-        ...item,
-        uniqueId: `${item.name}-${item.categoryType}`
-    }));
-});
 
 const assignCategory = async () => {
 	loading.value = true;
@@ -125,8 +123,7 @@ const assignCategory = async () => {
 	useWebApiFetch('/PlannedCategory/CreatePlannedCategory', {
 		method: 'POST',
 		body: {
-			name: viewModel.value.name,
-			categoryType: viewModel.value.categoryType,
+			categoryId: viewModel.value.categoryId,
 			totalAmount: viewModel.value.totalAmount,
 			monthlyBudgetId: route.params.id},
 		onResponseError: ({response}) => {

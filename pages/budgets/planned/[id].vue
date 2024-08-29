@@ -56,8 +56,10 @@ const globalMessageStore = useGlobalMessageStore();
 const categoriesToUse = computed(() => {
     const plannedPairs = plannedCategories.value.map(cat => ({
         name:cat.name,
-        categoryType: cat.categoryType
+        categoryType: cat.categoryType,
+        
     }));
+    console.log(plannedPairs)
     return categoriesStore.categories.filter(cat => {
         return !plannedPairs.some(plannedCat => 
             plannedCat.name === cat.name && 

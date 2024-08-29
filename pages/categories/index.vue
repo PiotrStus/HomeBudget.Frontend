@@ -11,7 +11,7 @@
             </template>
         </v-toolbar>
         <AddCategoryDialog v-model:show="showDialog" @update-categories="updateItems"/>
-        <v-tabs v-model="tab" bg-color="primary">
+        <v-tabs v-model="tab" color="primary">
             <v-tab value="income">Przychody</v-tab>
             <v-tab value="expense">Wydatki</v-tab>
         </v-tabs>
