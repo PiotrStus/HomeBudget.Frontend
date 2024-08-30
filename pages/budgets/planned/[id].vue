@@ -144,7 +144,10 @@ const loadPlannedCategories = async () => {
 
 
 
-onMounted(loadPlannedCategories)
+onMounted(async () => {
+    await categoriesStore.loadCategories();
+    loadPlannedCategories();
+});
 
 </script>
 
