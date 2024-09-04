@@ -1,6 +1,6 @@
 <template>
 	<VDialog v-model="localShow" width="400" scroll-strategy="none" @click:outside="handleCancel">
-		<v-card>
+		<v-card class="py-4">
 		<VCardTitle class="text-center">Dodaj nowy budżet miesięczny</VCardTitle>
 		<VForm @submit.prevent="submit" :disabled="loading">
 			<VCardText>

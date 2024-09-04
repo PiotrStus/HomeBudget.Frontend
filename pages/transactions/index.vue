@@ -18,34 +18,69 @@
 				<template v-slot:item.date="{ value }">
 					{{ dayjs(value).format('DD.MM.YYYY HH:mm') }}
 				</template>
+				<template v-slot:item.amount="{ value }">
+					{{ value }} zł
+				</template>
 				<template v-slot:item.action="{ item }">
-					<v-btn
-						icon="mdi-magnify"
-						title="Wybierz"
-						:disabled="item.deleting"
-						:to="`/budgets/planned/${item.monthId}`"
-						variant="flat"
-					/>
+					<v-btn icon title="Więcej" variant="flat">
+						<v-icon icon="mdi-dots-vertical" />
+						<v-menu
+							activator="parent"
+							location="bottom end"
+							transition="fab-transition"
+						>
+							<v-list rounded="lg">
+								<v-list-item
+									variant="flat"
+									:loading="item.deleting"
+									@click="deleteTransaction(item)"
+									title="Usuń"
+								>
+									<template v-slot:prepend>
+										<v-icon icon="mdi-delete" />
+									</template>
+								</v-list-item>
+								<v-list-item
+									variant="flat"
+									:disabled="item.deleting"
+									:to="`/budgets/${item.monthId}`"
+									title="Edytuj"
+								>
+									<template v-slot:prepend>
+										<v-icon icon="mdi-pencil" />
+									</template>
+								</v-list-item>
+							</v-list>
+						</v-menu>
+					</v-btn>
 				</template>
 				<template v-slot:header.action>
 					<v-btn
 						color="primary"
 						variant="flat"
 						prepend-icon="mdi-plus"
-						@click="showMonthlyDialog = true"
+						@click="showDialog = true"
 					>
 						Dodaj
 					</v-btn>
 				</template>
 			</v-data-table>
 		</v-card-text>
+		<ConfirmDialog ref="confirmDialog" />
+		<AddTransactionDialog
+			v-model:show="showDialog"
+			@transactionAdded="updateTransactions"
+			:categories="categoriesStore.categories"
+		/>
 	</v-card>
 </template>
 
 
 
 <script setup>
+const showDialog = ref(false);
 const dayjs = useDayjs();
+const categoriesStore = useCategoriesStore();
 const headers = ref([
 	{ title: "Data", value: "date" },
 	{ title: "Opis", value: "name" },
@@ -57,10 +92,13 @@ const headers = ref([
 
 const transactions = ref([]);
 const loading = ref(false);
+const confirmDialog = ref(null);
+const globalMessageStore = useGlobalMessageStore();
+const { getErrorMessage } = useWebApiResponseParser();
 
 const loadTransactions = async () => {
 			loading.value = true;
-			useWebApiFetch('/Transaction/GetAllTransactions'
+			return useWebApiFetch('/Transaction/GetAllTransactions'
             )				
 			.then(({ data, error }) => {
 				if (data.value) {
@@ -75,5 +113,48 @@ const loadTransactions = async () => {
 			})
 		}
 
-onMounted(loadTransactions);
+const deleteTransaction = (item) => {
+	confirmDialog.value
+		.show({
+			title: "Potwierdź usunięcie",
+			text: "Czy na pewno chcesz usunać daną transakcję?",
+			confirmBtnText: "Usuń",
+			confirmBtnColor: "error",
+		})
+		.then((confirm) => {
+			if (confirm) {
+				item.deleting = true;
+				useWebApiFetch("/Transaction/DeleteTransaction", {
+					method: "POST",
+					body: { id: item.id },
+					watch: false,
+					onResponseError: ({ response }) => {
+						let message = getErrorMessage(response, {});
+						globalMessageStore.showErrorMessage(message);
+					},
+				})
+					.then((response) => {
+						if (response.data.value) {
+							globalMessageStore.showSuccessMessage(
+								"Budżet miesięczny został usunięty"
+							);
+							updateTransactions();
+						}
+					})
+					.finally(() => {
+						item.deleting = false;
+					});
+			}
+		});
+};	
+
+const updateTransactions = () => {
+	loadTransactions();
+};
+
+onMounted(async () => {
+	await categoriesStore.loadCategories();
+	await loadTransactions();
+	});
+	
 </script>
