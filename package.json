@@ -10,6 +10,7 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@date-io/date-fns": "^3.0.0",
     "@mdi/font": "^7.4.47",
     "@pinia/nuxt": "^0.5.1",
     "nuxt": "^3.12.2",
@@ -23,7 +24,7 @@
     "nuxt-lodash": "^2.5.3",
     "sass": "^1.77.6",
     "vite-plugin-vuetify": "^2.0.3",
-    "vuetify": "^3.6.10"
+    "vuetify": "^3.7.1"
   },
   "overrides": {
     "vue": "latest"

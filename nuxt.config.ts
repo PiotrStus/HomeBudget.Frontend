@@ -51,4 +51,9 @@ export default defineNuxtConfig({
     prefixSkip: false,
     upperAfterPrefix: false,
   },
+  dayjs: {
+    locales: ['en','pl'],
+    plugins: ['customParseFormat'],
+    defaultLocale: 'pl'
+  },
 })

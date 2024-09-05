@@ -16,10 +16,13 @@
 				loading-text="Wczytywanie"
 			>
 				<template v-slot:item.date="{ value }">
-					{{ dayjs(value).format('DD.MM.YYYY HH:mm') }}
+					{{ dayjs(value).format('DD.MM.YYYY') }}
 				</template>
 				<template v-slot:item.amount="{ value }">
 					{{ value }} zł
+				</template>
+				<template v-slot:item.categoryId="{ value }">
+					{{ categoryMap[value] ?? value }}
 				</template>
 				<template v-slot:item.action="{ item }">
 					<v-btn icon title="Więcej" variant="flat">
@@ -43,7 +46,7 @@
 								<v-list-item
 									variant="flat"
 									:disabled="item.deleting"
-									:to="`/budgets/${item.monthId}`"
+									:to="`/transactions/${item.id}`"
 									title="Edytuj"
 								>
 									<template v-slot:prepend>
@@ -152,8 +155,16 @@ const updateTransactions = () => {
 	loadTransactions();
 };
 
+const categoryMap = ref({});
+const loadCategories = async () => {
+    await categoriesStore.loadCategories();
+    categoryMap.value = categoriesStore.categories.reduce((map, category) => {
+        map[category.id] = category.name;
+        return map;
+    }, {});
+};
 onMounted(async () => {
-	await categoriesStore.loadCategories();
+	await loadCategories();
 	await loadTransactions();
 	});
 	

@@ -9,13 +9,28 @@
 			<VCardTitle class="text-center">Dodaj nową operację</VCardTitle>
 			<VForm @submit.prevent="submit" :disabled="loading">
 				<VCardText>
-					<v-date-input 
+					<!-- <v-date-input 
 						label="Data operacji"
 						v-model="viewModel.date"
-						:rules="[ruleRequired]"
+						:rules="[ruleRequired, ruleDate]"
 						prepend-icon="" 
-						variant="outlined"/>
-					<v-text-field :rules="[ruleRequired, ruleMaxLen(50)]" variant="outlined" v-model="viewModel.name" label="Nazwa operacji"></v-text-field>
+						variant="outlined"
+						class="mb-2"
+					/> -->
+					<TextFieldDatePicker 
+						class="mb-2"
+						v-model="viewModel.date"
+						variant="outlined"
+						label="Data operacji"
+						:rules="[ruleRequired, ruleDate]" 
+					/>
+					<v-text-field 
+						:rules="[ruleRequired, ruleMaxLen(50)]" 
+						variant="outlined" 
+						v-model="viewModel.name" 
+						label="Nazwa operacji"
+						class="mb-2"
+					/>
 					<v-select
 						:rules="[ruleRequired]"  
 						variant="outlined" 
@@ -25,6 +40,7 @@
 						item-title="name" 
 						item-value="id" 
 						no-data-text="Brak kategorii do przypisania"
+						class="mb-2"
 					/>
 					<v-number-input
 						v-model="viewModel.amount"
@@ -65,17 +81,20 @@
 import { VNumberInput } from "vuetify/labs/VNumberInput";
 import { VDateInput } from 'vuetify/labs/VDateInput';
 const globalMessageStore = useGlobalMessageStore();
-const { ruleRequired, ruleMaxLen } = useFormValidationRules();
+const { ruleRequired, ruleMaxLen, ruleDate } = useFormValidationRules();
 const { getErrorMessage } = useWebApiResponseParser();
 const localShow = defineModel("show");
 const errorMsg = ref("");
 const loading = ref(false);
 const emit = defineEmits(['transactionAdded']);
+const dayjs = useDayjs();
 
 
 const transactionAdded = () => {
   emit('transactionAdded');
 };
+
+
 
 
 watch(localShow, (newState) => {
@@ -94,6 +113,12 @@ const viewModel = ref({
 	name: "",
 	categoryId: "",
 	amount: "",
+});
+
+watch(() => viewModel.value.date, (newDate) => {
+	console.log(newDate);
+	//formatDateWithoutTimezone2(newDate);
+	console.log(dayjs('30.09.2024', 'DD.MM.YYYY', true).isValid()); 
 });
 
 const handleCancel = () => {
@@ -115,9 +140,24 @@ const props = defineProps({
 	}
 })
 
+const formatDateWithoutTimezone = (date) => {
+	console.log(date)
+    const isoString = date.toISOString(); // Format: YYYY-MM-DDTHH:MM:SS.sssZ
+	console.log(isoString)
+    return isoString.split('.')[0]; 
+};
+
+const formatDateWithoutTimezone2 = (date) => {
+	console.log(date)
+	console.log(dayjs(date).format('YYYY-MM-DDTHH:mm:ss'));
+	return dayjs(date).format('YYYY-MM-DDTHH:mm:ss');
+};
+
 const createNewTransaction = async () => {
 	loading.value = true;
 	console.log(viewModel.value);
+	const formattedDate = formatDateWithoutTimezone2(viewModel.value.date);
+	console.log(formattedDate);
 	useWebApiFetch("/Transaction/CreateTransaction", {
 		method: "POST",
 		body: {

@@ -1,3 +1,6 @@
+import dayjs from 'dayjs';
+
+
 // modul java scriptowy, ktory jest funkcja zwracajaca obiekt
 // ten obiekt ma dwie reguly
 // te reguly walidacji w wvue dziala tak, ze albo zwracaja true i wtedy walidacja jest spelniona
@@ -30,9 +33,14 @@ export const useFormValidationRules = () => {
 			return pattern.test(value) || "Niepoprawny adres email";
 		},
 		ruleMaxLen: (max) => {
-			return (v) => (!v || v.length <= max) || `Przekroczono maksymalną długość: ${max}`;
+			return (value) => (!value || value.length <= max) || `Przekroczono maksymalną długość: ${max}`;
 		},
-		ruleInteger: (v) => 
-			Number.isInteger(Number(v)) || "Wartość musi być liczbą całkowitą"
+		ruleInteger: (value) => 
+			Number.isInteger(Number(value)) || "Wartość musi być liczbą całkowitą",
+		
+		ruleDate: (value) => {
+			const date = dayjs(value, 'DD.MM.YYYY', true);
+			return date.isValid() || 'Wprowadź poprawną datę w formacie DD-MM-RRRR';
+		}
 	};
 };
