@@ -140,24 +140,9 @@ const props = defineProps({
 	}
 })
 
-const formatDateWithoutTimezone = (date) => {
-	console.log(date)
-    const isoString = date.toISOString(); // Format: YYYY-MM-DDTHH:MM:SS.sssZ
-	console.log(isoString)
-    return isoString.split('.')[0]; 
-};
-
-const formatDateWithoutTimezone2 = (date) => {
-	console.log(date)
-	console.log(dayjs(date).format('YYYY-MM-DDTHH:mm:ss'));
-	return dayjs(date).format('YYYY-MM-DDTHH:mm:ss');
-};
 
 const createNewTransaction = async () => {
 	loading.value = true;
-	console.log(viewModel.value);
-	const formattedDate = formatDateWithoutTimezone2(viewModel.value.date);
-	console.log(formattedDate);
 	useWebApiFetch("/Transaction/CreateTransaction", {
 		method: "POST",
 		body: {
