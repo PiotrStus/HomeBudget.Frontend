@@ -79,7 +79,6 @@
 
 <script setup>
 import { VNumberInput } from "vuetify/labs/VNumberInput";
-import { VDateInput } from 'vuetify/labs/VDateInput';
 const globalMessageStore = useGlobalMessageStore();
 const { ruleRequired, ruleMaxLen, ruleDate } = useFormValidationRules();
 const { getErrorMessage } = useWebApiResponseParser();

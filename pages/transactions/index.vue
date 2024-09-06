@@ -156,6 +156,7 @@ const updateTransactions = () => {
 };
 
 const categoryMap = ref({});
+
 const loadCategories = async () => {
     await categoriesStore.loadCategories();
     categoryMap.value = categoriesStore.categories.reduce((map, category) => {

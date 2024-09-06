@@ -29,7 +29,7 @@
 				no-data-text="Brak dostępnych budżetów miesięcznych"
 				v-model="viewModel.month"
 				/>
-				<v-number-input v-model="viewModel.totalAmount" variant="outlined" controlVariant="default" label="Planowana kwota"></v-number-input>
+				<v-number-input v-model="viewModel.totalAmount" variant="outlined" controlVariant="default" label="Planowana kwota" />
 
 				<!-- <v-select v-model="viewModel.categoryType" :rules="[ruleRequired]" variant="outlined" label="Typ kategorii" :items=categoryOptions item-title="title" item-value="value" ></v-select> -->
 			</VCardText>
@@ -46,7 +46,7 @@
 
 
 <script setup>
-import { VNumberInput } from 'vuetify/labs/VNumberInput'
+import { VNumberInput } from 'vuetify/labs/VNumberInput';
 
 import MonthsEnum from "~/utils/months";
 const loading = ref(false);
