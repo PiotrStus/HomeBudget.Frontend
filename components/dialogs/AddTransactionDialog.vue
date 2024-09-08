@@ -47,7 +47,7 @@
 						variant="outlined"
 						controlVariant="default"
 						label="Kwota"
-						:rules="[ruleRequired]"
+						:rules="[ruleRequired, ruleMaxNumberWithDecimals(6,2)]"
 					></v-number-input>
 				</VCardText>
 				<VAlert v-if="errorMsg" type="error" variant="tonal">
@@ -80,7 +80,7 @@
 <script setup>
 import { VNumberInput } from "vuetify/labs/VNumberInput";
 const globalMessageStore = useGlobalMessageStore();
-const { ruleRequired, ruleMaxLen, ruleDate } = useFormValidationRules();
+const { ruleRequired, ruleMaxLen, ruleDate, ruleMaxNumberWithDecimals } = useFormValidationRules();
 const { getErrorMessage } = useWebApiResponseParser();
 const localShow = defineModel("show");
 const errorMsg = ref("");

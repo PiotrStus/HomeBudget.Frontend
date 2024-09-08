@@ -35,6 +35,15 @@ export const useFormValidationRules = () => {
 		ruleMaxLen: (max) => {
 			return (value) => (!value || value.length <= max) || `Przekroczono maksymalną długość: ${max}`;
 		},
+		ruleMaxNumberWithDecimals: (maxDigitsBeforeDecimal, maxDigitsAfterDecimal) => {
+			const patttern = new RegExp(`^\\d{1,${maxDigitsBeforeDecimal}}(\\.\\d{0,${maxDigitsAfterDecimal}})?$`);
+			
+			return (value) => {
+			  if (!value) return true; 
+		  
+			  return patttern.test(value) || `Wartość powinna mieć maksymalnie ${maxDigitsBeforeDecimal} cyfr przed przecinkiem i ${maxDigitsAfterDecimal} cyfr po przecinku.`;
+			};
+		  },
 		ruleInteger: (value) => 
 			Number.isInteger(Number(value)) || "Wartość musi być liczbą całkowitą",
 		

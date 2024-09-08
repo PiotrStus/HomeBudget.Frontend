@@ -5,7 +5,7 @@
                 Kategorie
             </v-toolbar-title>
             <template v-slot:append>
-                <div class="ml-2">
+                <div class="mr-2">
                     <v-btn color="primary" variant="flat" prepend-icon="mdi-plus" @click="showDialog = true" >Dodaj</v-btn>
                 </div>
             </template>
