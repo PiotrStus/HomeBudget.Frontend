@@ -2,7 +2,7 @@
   <v-menu v-model="open" bottom left offset-y :close-on-content-click="false" :disabled="readonly" min-width="200">
     <template v-slot:activator="{ props }">
       <v-text-field :variant="variant" v-bind="props" :model-value="textValue" :label="label" :rules="rules"
-        :hide-details="hideDetails" :readonly="readonly" :clearable="!readonly" @click:clear="clear"
+        :hide-details="hideDetails" :readonly="readonly" :clearable="!readonly" @click:clear="clear " :style="textFieldStyle"
         @update:model-value="onTextFieldInput" :class="[textFieldClass]">
         <template v-slot:append-inner>
           <v-icon>mdi-calendar</v-icon>
@@ -39,6 +39,8 @@ const props = defineProps({
     default: false
   },
   "textFieldClass" : String,
+  "textFieldStyle": Object,
+  "menuStyle": Object,
 });
 
 const open = ref(false);

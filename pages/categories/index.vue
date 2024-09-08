@@ -36,7 +36,7 @@ const categoriesStore = useCategoriesStore();
 const tab = ref('income');
 
 const headers = ref([
-    {title: 'Nazwa kategorii', value: 'name'},
+    {title: 'Nazwa kategorii', value: 'name', text: 'bold'},
     {title: '', value: 'action', align: 'end'}
 
 ]);

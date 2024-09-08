@@ -5,28 +5,6 @@
 		</v-toolbar>
 
 		<v-card-text>
-			<div class="d-flex align-center justify-space-between ">
-				<div>
-				<v-text-field
-					label="Szukaj"
-					:items="filteredTransactions"
-					item-title="name"
-					v-model="mainFilter"
-					variant="outlined"
-					rounded
-					:style="{ minWidth: '200px' }"
-				/>
-			</div>
-			<div>
-				<v-btn
-					icon="mdi-filter-remove-outline"
-					title="Usuń filtry"
-					variant="flat"
-					class="d-flex justify-center align-center"
-					@click="handleClearFilters"
-				/>
-			</div>
-			</div>
 			<v-data-table
 				:loading="loading"
 				:items="filteredTransactions"
@@ -38,12 +16,12 @@
 				no-data-text="Brak dostępnych budżetów. Dodaj nowy."
 				loading-text="Wczytywanie"
 			>
-				<template v-slot:header.name="{ value }">
-					<v-btn variant="flat">
-						Opis
+			<template v-slot:header.categoryId="{ value }">
+					<v-btn variant="flat" style="padding: 0; margin: 0;">
+						Kategoria
 						<v-icon icon="mdi-filter-outline" />
 						<v-menu
-							v-model="nameMenu"
+							v-model="categoryMenu"
 							activator="parent"
 							location="bottom end"
 							transition="fab-transition"
@@ -54,9 +32,9 @@
 									<div class="d-flex align-center w-100">
 										<v-autocomplete
 											label="Szukaj"
-											:items="uniqueNames"
-											item-title="name"
-											v-model="nameFilter"
+											:items="uniqueCategories"
+											item-title="categoryId"
+											v-model="categoryFilter"
 											class="mt-4"
 											variant="outlined"
 											:style="{ minWidth: '200px' }"
@@ -74,8 +52,13 @@
 					</v-btn>
 				</template>
 
+
+
+
 				<template v-slot:header.date="{ value }">
-					<v-btn variant="flat">
+					<div>
+					<v-btn variant="flat" style="padding: 0; margin: 0;">
+						
 						Data
 						<v-icon icon="mdi-filter-outline" />
 						<v-menu
@@ -88,7 +71,7 @@
 							<v-list>
 								<v-list-item class="d-flex align-center">
 									<div class="d-flex align-center w-100">
-										<v-autocomplete
+										<!-- <v-autocomplete
 											label="Szukaj"
 											:items="uniqueDates"
 											item-title="name"
@@ -96,6 +79,13 @@
 											class="mt-4"
 											variant="outlined"
 											:style="{ minWidth: '200px' }"
+										/> -->
+										<TextFieldDatePicker 
+											textFieldClass="mt-4"
+											v-model="dateFilter"
+											variant="outlined"
+											label="Data operacji"
+											:textFieldStyle="{ minWidth: '300px' }"
 										/>
 										<v-btn
 											icon="mdi-magnify"
@@ -108,6 +98,7 @@
 							</v-list>
 						</v-menu>
 					</v-btn>
+				</div>
 				</template>
 
 				<template v-slot:item.date="{ value }">
@@ -150,6 +141,13 @@
 				</template>
 				<template v-slot:header.action>
 					<v-btn
+					icon="mdi-filter-remove-outline"
+					title="Usuń filtry"
+					variant="flat"
+					@click="handleClearFilters"
+					class="mr-2"
+				/>
+					<v-btn
 						color="primary"
 						variant="flat"
 						prepend-icon="mdi-plus"
@@ -172,17 +170,25 @@
 <script setup>
 const nameMenu = ref(false);
 const dateMenu = ref(false);
+const categoryMenu = ref(false);
 const showDialog = ref(false);
 const mainFilter = ref("");
-const nameFilter = ref("");
-const dateFilter = ref("");
+const dateFilter = ref(null);
+
+watch(dateFilter, (newValue) =>
+	console.log(newValue)
+	);
+
+
+
+const categoryFilter = ref("");
 const dayjs = useDayjs();
 const categoriesStore = useCategoriesStore();
 const headers = ref([
-	{ title: "Data", value: "date", sortable: true },
-	{ title: "Opis", value: "name", sortable: true },
-	{ title: "Kategoria", value: "categoryId", sortable: true },
-	{ title: "Kwota", value: "amount", sortable: true },
+	{ title: "Data", value: "date", sortable: true, align: "start" },
+	{ title: "Kategoria", value: "categoryId", sortable: true, align: "start"  },
+	{ title: "OPIS", value: "name", align: "start"},
+	{ title: "KWOTA", value: "amount", sortable: true, align: "start" },
 	{ title: "", value: "action", align: "end" },
 ]);
 
@@ -248,27 +254,30 @@ const updateTransactions = () => {
 };
 
 const filteredTransactions = computed(() => {
-	if (!nameFilter.value && !dateFilter.value) return transactions.value;
-
+	if (!dateFilter.value && !categoryFilter) return transactions.value;
+	const formattedCurrentDate = dayjs(dateFilter.value).format(
+			"DD.MM.YYYY"
+		);
 	return transactions.value.filter((transaction) => {
 		const formattedTransactionDate = dayjs(transaction.date).format(
 			"DD.MM.YYYY"
 		);
 
-		const matchesNameFilter =
-			!nameFilter.value || transaction.name === nameFilter.value;
+		console.log(formattedTransactionDate);
+		const map = categoryMap.value;
+
+		console.log(categoryFilter.value)
+		const matchesCategoryFilter =
+			!categoryFilter.value || map[transaction.categoryId] === categoryFilter.value;
+		
+		console.log(formattedTransactionDate);
+		console.log(formattedCurrentDate);
+		
 		const matchesDateFilter =
-			!dateFilter.value || formattedTransactionDate === dateFilter.value;
+			!dateFilter.value || formattedTransactionDate === formattedCurrentDate;
 
-		return matchesNameFilter && matchesDateFilter;
+		return  matchesDateFilter && matchesCategoryFilter;
 	});
-});
-
-const uniqueNames = computed(() => {
-	if (!transactions.value.length) return [];
-	const names = transactions.value.map((transaction) => transaction.name);
-	const uniqueNames = [...new Set(names)];
-	return uniqueNames;
 });
 
 const uniqueDates = computed(() => {
@@ -279,6 +288,28 @@ const uniqueDates = computed(() => {
 	const uniqueDates = [...new Set(dates)];
 	return uniqueDates;
 });
+
+const uniqueCategories = computed(() => {
+	if (!transactions.value.length) return [];
+	console.log(transactions)
+	console.log(categoryMap.value)
+	
+	const categories = transactions.value.map((transaction) => 
+	{
+		console.log(categoryMap["Transport"])
+		const map = categoryMap.value;
+		const categoryName = map[transaction.categoryId];
+		console.log(`Transaction ID: ${transaction.categoryId}, Category Name: ${categoryName}`);
+		return categoryName
+	})
+
+	console.log(categories)
+	const uniqueCategories = [...new Set(categories)];
+	console.log(uniqueCategories)
+	return uniqueCategories;
+});
+
+
 
 const categoryMap = ref({});
 
@@ -292,8 +323,8 @@ const loadCategories = async () => {
 
 const handleClearFilters = () => {
 	mainFilter.value = "";
-	nameFilter.value = "";
 	dateFilter.value = "";
+	categoryFilter.value = "";
 };
 
 onMounted(async () => {
