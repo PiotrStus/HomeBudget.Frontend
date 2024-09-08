@@ -15,8 +15,8 @@
 				no-data-text="Brak dostępnych budżetów. Dodaj nowy."
 				loading-text="Wczytywanie"
 			>
-			<template v-slot:header.categoryId="{ value }">
-					<v-btn variant="flat" style="padding: 0; margin: 0;">
+				<template v-slot:header.categoryId="{ value }">
+					<v-btn variant="flat" style="padding: 0; margin: 0">
 						Kategoria
 						<v-icon icon="mdi-filter-outline" />
 						<v-menu
@@ -28,106 +28,91 @@
 						>
 							<v-list>
 								<v-list-item class="d-flex align-center">
-
-										<v-autocomplete
-											label="Szukaj"
-											:items="uniqueCategories"
-											item-title="categoryId"
-											v-model="categoryFilter"
-											class="mt-4"
-											variant="outlined"
-											:style="{ minWidth: '200px' }"
-											:clearable="true"
-											@click:clear="() => clearFilter('categoryFilter')"
-										/>
-
+									<v-autocomplete
+										label="Szukaj"
+										:items="uniqueCategories"
+										item-title="categoryId"
+										v-model="categoryFilter"
+										class="mt-4"
+										variant="outlined"
+										:style="{ minWidth: '200px' }"
+										:clearable="true"
+										@click:clear="() => clearFilter('categoryFilter')"
+									/>
 								</v-list-item>
 							</v-list>
 						</v-menu>
 					</v-btn>
 				</template>
-
-
-
-
 
 				<template v-slot:header.amount="{ value }">
 					<div>
-					<v-btn variant="flat" style="padding: 0; margin: 0;">
-						
-						Kwota
-						<v-icon icon="mdi-filter-outline" />
-						<v-menu
-							v-model="amountMenu"
-							activator="parent"
-							location="bottom end"
-							transition="fab-transition"
-							:close-on-content-click="false"
-						>
-							<v-list>
-								<v-list-item class="d-flex align-center">
-									<div class="d-block align-center w-100">
-										<v-number-input
-										class="mt-4"
-										v-model="amountMinFilter"
-										variant="outlined"
-										controlVariant="default"
-										label="Od"
-										:style="{ minWidth: '200px' }"
-										:clearable="true"
-										@click:clear="() => clearFilter('amountMinFilter')"
-										/>
-										<v-number-input
-										v-model="amountMaxFilter"
-										variant="outlined"
-										controlVariant="default"
-										label="Do"
-										:style="{ minWidth: '200px' }"
-										:clearable="true"
-										@click:clear="() => clearFilter('amountMaxFilter')"
-										/>
-									</div>
-								</v-list-item>
-							</v-list>
-						</v-menu>
-					</v-btn>
-				</div>
+						<v-btn variant="flat" style="padding: 0; margin: 0">
+							Kwota
+							<v-icon icon="mdi-filter-outline" />
+							<v-menu
+								v-model="amountMenu"
+								activator="parent"
+								location="bottom end"
+								transition="fab-transition"
+								:close-on-content-click="false"
+							>
+								<v-list>
+									<v-list-item class="d-flex align-center">
+										<div class="d-block align-center w-100">
+											<v-number-input
+												class="mt-4"
+												v-model="amountMinFilter"
+												variant="outlined"
+												controlVariant="default"
+												label="Od"
+												:style="{ minWidth: '200px' }"
+												:clearable="true"
+												@click:clear="() => clearFilter('amountMinFilter')"
+											/>
+											<v-number-input
+												v-model="amountMaxFilter"
+												variant="outlined"
+												controlVariant="default"
+												label="Do"
+												:style="{ minWidth: '200px' }"
+												:clearable="true"
+												@click:clear="() => clearFilter('amountMaxFilter')"
+											/>
+										</div>
+									</v-list-item>
+								</v-list>
+							</v-menu>
+						</v-btn>
+					</div>
 				</template>
-
-
-
-
-
-
 
 				<template v-slot:header.date="{ value }">
 					<div>
-					<v-btn variant="flat" style="padding: 0; margin: 0;">
-						
-						Data
-						<v-icon icon="mdi-filter-outline" />
-						<v-menu
-							v-model="dateMenu"
-							activator="parent"
-							location="bottom end"
-							transition="fab-transition"
-							:close-on-content-click="false"
-						>
-							<v-list>
-								<v-list-item class="d-flex align-center">
-										<TextFieldDatePicker 
+						<v-btn variant="flat" style="padding: 0; margin: 0">
+							Data
+							<v-icon icon="mdi-filter-outline" />
+							<v-menu
+								v-model="dateMenu"
+								activator="parent"
+								location="bottom end"
+								transition="fab-transition"
+								:close-on-content-click="false"
+							>
+								<v-list>
+									<v-list-item class="d-flex align-center">
+										<TextFieldDatePicker
 											textFieldClass="mt-4"
 											v-model="dateFilter"
 											variant="outlined"
 											label="Data operacji"
 											:textFieldStyle="{ minWidth: '300px' }"
 										/>
-
-								</v-list-item>
-							</v-list>
-						</v-menu>
-					</v-btn>
-				</div>
+									</v-list-item>
+								</v-list>
+							</v-menu>
+						</v-btn>
+					</div>
 				</template>
 
 				<template v-slot:item.date="{ value }">
@@ -170,12 +155,12 @@
 				</template>
 				<template v-slot:header.action>
 					<v-btn
-					icon="mdi-filter-off-outline"
-					title="Usuń filtry"
-					variant="flat"
-					@click="handleClearAllFilters"
-					class="mr-2"
-				/>
+						icon="mdi-filter-off-outline"
+						title="Usuń filtry"
+						variant="flat"
+						@click="handleClearAllFilters"
+						class="mr-2"
+					/>
 					<v-btn
 						color="primary"
 						variant="flat"
@@ -202,25 +187,43 @@ const dateMenu = ref(false);
 const amountMenu = ref(false);
 const categoryMenu = ref(false);
 const showDialog = ref(false);
-const dateFilter = ref(null);
-const amountMinFilter = ref(null);
-const amountMaxFilter = ref(null);
+// const dateFilter = ref(null);
+// const categoryFilter = ref(null);
+// const amountMinFilter = ref(null);
+// const amountMaxFilter = ref(null);
 
-
-watch(amountMinFilter, (newValue) =>
-	console.log(newValue)
-	);
-
-
-
-const categoryFilter = ref("");
 const dayjs = useDayjs();
 const categoriesStore = useCategoriesStore();
+const globalFiltersStore = useGlobalFiltersStore();
+const listingId = "transactions";
+
+const dateFilter = ref(
+	globalFiltersStore.getFilters(listingId).dateFilter 
+);
+const categoryFilter = ref(
+	globalFiltersStore.getFilters(listingId).categoryFilter
+);
+const amountMinFilter = ref(
+	globalFiltersStore.getFilters(listingId).amountMinFilter
+);
+const amountMaxFilter = ref(
+	globalFiltersStore.getFilters(listingId).amountMaxFilter
+);
+
+watch([dateFilter, categoryFilter, amountMinFilter, amountMaxFilter], () => {
+	globalFiltersStore.setFilters(listingId, {
+		dateFilter: dateFilter.value,
+		categoryFilter: categoryFilter.value,
+		amountMinFilter: amountMinFilter.value,
+		amountMaxFilter: amountMaxFilter.value,
+	});
+});
+
 const headers = ref([
 	{ title: "Data", value: "date", align: "start" },
-	{ title: "Kategoria", value: "categoryId", align: "start"  },
-	{ title: "OPIS", value: "name", align: "start"},
-	{ title: "KWOTA", value: "amount", sortable: true, align: "start" },
+	{ title: "Kategoria", value: "categoryId", align: "start" },
+	{ title: "OPIS", value: "name", align: "start" },
+	{ title: "Kwota", value: "amount", sortable: true, align: "start" },
 	{ title: "", value: "action", align: "end" },
 ]);
 
@@ -229,6 +232,7 @@ const loading = ref(false);
 const confirmDialog = ref(null);
 const globalMessageStore = useGlobalMessageStore();
 const { getErrorMessage } = useWebApiResponseParser();
+
 
 const loadTransactions = async () => {
 	loading.value = true;
@@ -244,6 +248,7 @@ const loadTransactions = async () => {
 			loading.value = false;
 		});
 };
+
 
 const deleteTransaction = (item) => {
 	confirmDialog.value
@@ -285,11 +290,15 @@ const updateTransactions = () => {
 };
 
 const filteredTransactions = computed(() => {
-	if (!dateFilter.value && !categoryFilter) return transactions.value;
+	if (
+		!dateFilter.value &&
+		!categoryFilter.value &&
+		!amountMinFilter.value &&
+		!amountMaxFilter.value
+	)
+		return transactions.value;
 
-	const formattedCurrentDate = dayjs(dateFilter.value).format(
-			"DD.MM.YYYY"
-		);
+	const formattedCurrentDate = dayjs(dateFilter.value).format("DD.MM.YYYY");
 
 	return transactions.value.filter((transaction) => {
 		const formattedTransactionDate = dayjs(transaction.date).format(
@@ -298,38 +307,40 @@ const filteredTransactions = computed(() => {
 
 		const map = categoryMap.value;
 		const matchesCategoryFilter =
-			!categoryFilter.value || map[transaction.categoryId] === categoryFilter.value;
-		
-		
+			!categoryFilter.value ||
+			map[transaction.categoryId] === categoryFilter.value;
+
 		const matchesDateFilter =
 			!dateFilter.value || formattedTransactionDate === formattedCurrentDate;
 
-		console.log((!amountMinFilter.value && amountMaxFilter.value && transaction.amount >= amountMinFilter.value))
 		const matchesAmountFilter =
-			(!amountMinFilter.value && !amountMaxFilter.value) || 
-			(amountMinFilter.value && !amountMaxFilter.value && transaction.amount >= amountMinFilter.value) ||
-			(!amountMinFilter.value && amountMaxFilter.value && transaction.amount <= amountMaxFilter.value) ||
-			(!amountMinFilter.value && !amountMaxFilter.value !== null && transaction.amount >= amountMinFilter.value && transaction.amount <= amountMaxFilter.value)
+			(!amountMinFilter.value && !amountMaxFilter.value) ||
+			(amountMinFilter.value &&
+				!amountMaxFilter.value &&
+				transaction.amount >= amountMinFilter.value) ||
+			(!amountMinFilter.value &&
+				amountMaxFilter.value &&
+				transaction.amount <= amountMaxFilter.value) ||
+			(amountMinFilter.value &&
+				amountMaxFilter.value &&
+				transaction.amount >= amountMinFilter.value &&
+				transaction.amount <= amountMaxFilter.value);
 
-		return  matchesDateFilter && matchesCategoryFilter && matchesAmountFilter;
+		return matchesDateFilter && matchesCategoryFilter && matchesAmountFilter;
 	});
 });
 
-
 const uniqueCategories = computed(() => {
 	if (!transactions.value.length) return [];
-	
-	const categories = transactions.value.map((transaction) => 
-	{
+
+	const categories = transactions.value.map((transaction) => {
 		const map = categoryMap.value;
 		const categoryName = map[transaction.categoryId];
-		return categoryName
-	})
+		return categoryName;
+	});
 	const uniqueCategories = [...new Set(categories)];
 	return uniqueCategories;
 });
-
-
 
 const categoryMap = ref({});
 
@@ -342,11 +353,13 @@ const loadCategories = async () => {
 };
 
 function clearFilter(refName) {
-  if (refName === 'categoryFilter') {
-    categoryFilter.value = null;
-  } else if (refName === 'amountMinFilter') {
-    amountMinFilter.value = null;
-  }
+	if (refName === "categoryFilter") {
+		categoryFilter.value = null;
+	} else if (refName === "amountMinFilter") {
+		amountMinFilter.value = null;
+	} else if (refName === "amountMaxFilter") {
+		amountMaxFilter.value = null;
+	}
 }
 
 const handleClearAllFilters = () => {
@@ -354,10 +367,23 @@ const handleClearAllFilters = () => {
 	categoryFilter.value = null;
 	amountMinFilter.value = null;
 	amountMaxFilter.value = null;
+	globalFiltersStore.setFilters(listingId, {});
+};
+
+const loadFilters = () =>
+{
+	const savedFilters = globalFiltersStore.getFilters(listingId);
+	console.log(savedFilters);
+	dateFilter.value = savedFilters.dateFilter;
+	categoryFilter.value = savedFilters.categoryFilter;
+	amountMinFilter.value = savedFilters.amountMinFilter;
+	amountMaxFilter.value = savedFilters.amountMaxFilter;
 };
 
 onMounted(async () => {
 	await loadCategories();
 	await loadTransactions();
+	loadFilters();
 });
+
 </script>
