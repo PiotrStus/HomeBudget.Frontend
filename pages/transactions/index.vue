@@ -9,7 +9,6 @@
 				:loading="loading"
 				:items="filteredTransactions"
 				:headers="headers"
-				:search="mainFilter"
 				items-per-page-text="Liczba wierszy na stronę"
 				:items-per-page-options="[10, 20, 50]"
 				page-text="{0}-{1} z {2}"
@@ -29,7 +28,7 @@
 						>
 							<v-list>
 								<v-list-item class="d-flex align-center">
-									<div class="d-flex align-center w-100">
+
 										<v-autocomplete
 											label="Szukaj"
 											:items="uniqueCategories"
@@ -38,19 +37,65 @@
 											class="mt-4"
 											variant="outlined"
 											:style="{ minWidth: '200px' }"
+											:clearable="true"
+											@click:clear="() => clearFilter('categoryFilter')"
 										/>
-										<v-btn
-											icon="mdi-magnify"
-											@click="nameMenu = false"
-											variant="flat"
-											class="ml-2"
+
+								</v-list-item>
+							</v-list>
+						</v-menu>
+					</v-btn>
+				</template>
+
+
+
+
+
+				<template v-slot:header.amount="{ value }">
+					<div>
+					<v-btn variant="flat" style="padding: 0; margin: 0;">
+						
+						Kwota
+						<v-icon icon="mdi-filter-outline" />
+						<v-menu
+							v-model="amountMenu"
+							activator="parent"
+							location="bottom end"
+							transition="fab-transition"
+							:close-on-content-click="false"
+						>
+							<v-list>
+								<v-list-item class="d-flex align-center">
+									<div class="d-block align-center w-100">
+										<v-number-input
+										class="mt-4"
+										v-model="amountMinFilter"
+										variant="outlined"
+										controlVariant="default"
+										label="Od"
+										:style="{ minWidth: '200px' }"
+										:clearable="true"
+										@click:clear="() => clearFilter('amountMinFilter')"
+										/>
+										<v-number-input
+										v-model="amountMaxFilter"
+										variant="outlined"
+										controlVariant="default"
+										label="Do"
+										:style="{ minWidth: '200px' }"
+										:clearable="true"
+										@click:clear="() => clearFilter('amountMaxFilter')"
 										/>
 									</div>
 								</v-list-item>
 							</v-list>
 						</v-menu>
 					</v-btn>
+				</div>
 				</template>
+
+
+
 
 
 
@@ -70,16 +115,6 @@
 						>
 							<v-list>
 								<v-list-item class="d-flex align-center">
-									<div class="d-flex align-center w-100">
-										<!-- <v-autocomplete
-											label="Szukaj"
-											:items="uniqueDates"
-											item-title="name"
-											v-model="dateFilter"
-											class="mt-4"
-											variant="outlined"
-											:style="{ minWidth: '200px' }"
-										/> -->
 										<TextFieldDatePicker 
 											textFieldClass="mt-4"
 											v-model="dateFilter"
@@ -87,13 +122,7 @@
 											label="Data operacji"
 											:textFieldStyle="{ minWidth: '300px' }"
 										/>
-										<v-btn
-											icon="mdi-magnify"
-											@click="dateMenu = false"
-											variant="flat"
-											class="ml-2"
-										/>
-									</div>
+
 								</v-list-item>
 							</v-list>
 						</v-menu>
@@ -141,10 +170,10 @@
 				</template>
 				<template v-slot:header.action>
 					<v-btn
-					icon="mdi-filter-remove-outline"
+					icon="mdi-filter-off-outline"
 					title="Usuń filtry"
 					variant="flat"
-					@click="handleClearFilters"
+					@click="handleClearAllFilters"
 					class="mr-2"
 				/>
 					<v-btn
@@ -168,14 +197,17 @@
 </template>
 
 <script setup>
-const nameMenu = ref(false);
+import { VNumberInput } from "vuetify/labs/VNumberInput";
 const dateMenu = ref(false);
+const amountMenu = ref(false);
 const categoryMenu = ref(false);
 const showDialog = ref(false);
-const mainFilter = ref("");
 const dateFilter = ref(null);
+const amountMinFilter = ref(null);
+const amountMaxFilter = ref(null);
 
-watch(dateFilter, (newValue) =>
+
+watch(amountMinFilter, (newValue) =>
 	console.log(newValue)
 	);
 
@@ -185,8 +217,8 @@ const categoryFilter = ref("");
 const dayjs = useDayjs();
 const categoriesStore = useCategoriesStore();
 const headers = ref([
-	{ title: "Data", value: "date", sortable: true, align: "start" },
-	{ title: "Kategoria", value: "categoryId", sortable: true, align: "start"  },
+	{ title: "Data", value: "date", align: "start" },
+	{ title: "Kategoria", value: "categoryId", align: "start"  },
 	{ title: "OPIS", value: "name", align: "start"},
 	{ title: "KWOTA", value: "amount", sortable: true, align: "start" },
 	{ title: "", value: "action", align: "end" },
@@ -204,7 +236,6 @@ const loadTransactions = async () => {
 		.then(({ data, error }) => {
 			if (data.value) {
 				transactions.value = data.value.transactions;
-				console.log(transactions.value);
 			} else if (error.value) {
 				transactions.value = [];
 			}
@@ -255,57 +286,46 @@ const updateTransactions = () => {
 
 const filteredTransactions = computed(() => {
 	if (!dateFilter.value && !categoryFilter) return transactions.value;
+
 	const formattedCurrentDate = dayjs(dateFilter.value).format(
 			"DD.MM.YYYY"
 		);
+
 	return transactions.value.filter((transaction) => {
 		const formattedTransactionDate = dayjs(transaction.date).format(
 			"DD.MM.YYYY"
 		);
 
-		console.log(formattedTransactionDate);
 		const map = categoryMap.value;
-
-		console.log(categoryFilter.value)
 		const matchesCategoryFilter =
 			!categoryFilter.value || map[transaction.categoryId] === categoryFilter.value;
 		
-		console.log(formattedTransactionDate);
-		console.log(formattedCurrentDate);
 		
 		const matchesDateFilter =
 			!dateFilter.value || formattedTransactionDate === formattedCurrentDate;
 
-		return  matchesDateFilter && matchesCategoryFilter;
+		console.log((!amountMinFilter.value && amountMaxFilter.value && transaction.amount >= amountMinFilter.value))
+		const matchesAmountFilter =
+			(!amountMinFilter.value && !amountMaxFilter.value) || 
+			(amountMinFilter.value && !amountMaxFilter.value && transaction.amount >= amountMinFilter.value) ||
+			(!amountMinFilter.value && amountMaxFilter.value && transaction.amount <= amountMaxFilter.value) ||
+			(!amountMinFilter.value && !amountMaxFilter.value !== null && transaction.amount >= amountMinFilter.value && transaction.amount <= amountMaxFilter.value)
+
+		return  matchesDateFilter && matchesCategoryFilter && matchesAmountFilter;
 	});
 });
 
-const uniqueDates = computed(() => {
-	if (!transactions.value.length) return [];
-	const dates = transactions.value.map((transaction) =>
-		dayjs(transaction.date).format("DD.MM.YYYY")
-	);
-	const uniqueDates = [...new Set(dates)];
-	return uniqueDates;
-});
 
 const uniqueCategories = computed(() => {
 	if (!transactions.value.length) return [];
-	console.log(transactions)
-	console.log(categoryMap.value)
 	
 	const categories = transactions.value.map((transaction) => 
 	{
-		console.log(categoryMap["Transport"])
 		const map = categoryMap.value;
 		const categoryName = map[transaction.categoryId];
-		console.log(`Transaction ID: ${transaction.categoryId}, Category Name: ${categoryName}`);
 		return categoryName
 	})
-
-	console.log(categories)
 	const uniqueCategories = [...new Set(categories)];
-	console.log(uniqueCategories)
 	return uniqueCategories;
 });
 
@@ -321,10 +341,19 @@ const loadCategories = async () => {
 	}, {});
 };
 
-const handleClearFilters = () => {
-	mainFilter.value = "";
-	dateFilter.value = "";
-	categoryFilter.value = "";
+function clearFilter(refName) {
+  if (refName === 'categoryFilter') {
+    categoryFilter.value = null;
+  } else if (refName === 'amountMinFilter') {
+    amountMinFilter.value = null;
+  }
+}
+
+const handleClearAllFilters = () => {
+	dateFilter.value = null;
+	categoryFilter.value = null;
+	amountMinFilter.value = null;
+	amountMaxFilter.value = null;
 };
 
 onMounted(async () => {
