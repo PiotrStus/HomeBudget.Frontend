@@ -44,6 +44,7 @@ export const useUserStore = defineStore({
 						this.userData = data.value;
 						// dodajemy informacje o aktualnie zalogowanym koncie
 						accountStore.loadCurrentAccount();
+						this.loadUserNotifications();
 					} else if (error.value) {
 						this.isLoggedIn = false;
 						this.userData = null;
@@ -69,5 +70,20 @@ export const useUserStore = defineStore({
 				}
 			});
 		},
+
+		loadUserNotifications() {
+			useWebApiFetch("/User/GetUserNotifications")
+				.then(({ data, error }) => {
+					if (data.value) {
+						this.userData = {...this.userData, ...data.value}
+						console.log(this.userData);
+						console.log(data.value);
+						console.log(this.userData.notifications[0])
+					}
+					else if (error.value) {
+						console.log("Brak powiadomień")
+					}
+				})
+		}
 	},
 });

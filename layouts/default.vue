@@ -37,6 +37,20 @@
 						{{ userStore.$state.userData.email[0].toUpperCase() }}
 					</v-avatar>
 				</template>
+
+				<template v-slot:append>
+					<v-btn @click="openDialog" variant="flat" icon>
+						<v-badge
+							v-if="notificationsLength > 0"
+							:content="notificationsLength"
+							color="red"
+						>
+							<v-icon>mdi-bell</v-icon>
+						</v-badge>
+						<v-icon v-else>mdi-bell-outline</v-icon>
+					</v-btn>
+				</template>
+
 				<!-- w analogiczny sposob mamy tutaj subkomponenty listItem 
 				title i subtitle, one sa w odpowiedni sposob przestylowane w vuetify-->
 				<VListItemTitle v-if="accountStore.$state.accountData?.name">{{
@@ -70,7 +84,6 @@
 					</v-btn>
 				</div>
 			</template>
-
 		</v-navigation-drawer>
 
 		<v-main>
@@ -78,7 +91,10 @@
 				<NuxtPage v-if="userStore.$state.isLoggedIn === true" />
 			</div>
 		</v-main>
+		<WarningsDialog v-model:show="show"/>
 		<LoginDialog></LoginDialog>
+		
+	
 		<!-- 
 		to ref -> property, powoduje, ze mozna odwolac sie do konkretnej instancji tego komponentu
 		w kodzie naszym
@@ -89,11 +105,15 @@
 </template>
 
 <script setup>
-
-
-
 // nazwa musi byc identyczna
 const confirmDialog = ref(null);
+
+
+const show = ref(false);
+
+function openDialog() {
+  show.value = true;
+}
 
 // to jest wlasnie composables
 import { useDisplay } from "vuetify";
@@ -110,7 +130,11 @@ const userStore = useUserStore();
 const accountStore = useAccountStore();
 const antiForgeryStore = useAntiForgeryStore();
 
-
+const notificationsLength = computed(() => {
+	console.log(userStore.userData);
+	console.log(userStore.userData.notifications?.length);
+	return userStore.userData.notifications?.length || 0;
+});
 
 const menuItems = [
 	{
@@ -149,37 +173,36 @@ function toggleTheme() {
 	currentTheme.value = newTheme;
 }
 
-
 // zmiana logout, zeby pokazywalo to okienko
 const logout = () => {
-	// mamy odwolanie do reaktywnej zmiennej confirmDialog, ktora jest powiazana 
+	// mamy odwolanie do reaktywnej zmiennej confirmDialog, ktora jest powiazana
 	// z naszym komponentem
 	// dostajemy sie tutaj poprzez value ze skryptu
 	// no i wolamy nasza funkcje show, ktora udostepnilismy przez defineExpose
-    confirmDialog.value.show({
-        title: 'Potwierdź wylogowanie',
-        text: 'Czy na pewno chcesz się wylogować?',
-        confirmBtnText: 'Wyloguj',
-        confirmBtnColor: 'error'
-		// podpinamy w funkcji then to co sie ma wydarzyc jak ktos sie wyloguje
-		// jak wcisnie przycisk w tym okienku
-		// ten kod bedzie wykonany pozniej, dopiero po tym jak cos sie zadzieje w okienku
-		// dlatego uzylismy promise
-		// cofirm -> parametr promise, czyli funcji resolve
-		// on jest albo true albo false
-    }).then((confirm) => {
-        if (confirm) {
-            userStore.logout();
-        }
-    })
-}
+	confirmDialog.value
+		.show({
+			title: "Potwierdź wylogowanie",
+			text: "Czy na pewno chcesz się wylogować?",
+			confirmBtnText: "Wyloguj",
+			confirmBtnColor: "error",
+			// podpinamy w funkcji then to co sie ma wydarzyc jak ktos sie wyloguje
+			// jak wcisnie przycisk w tym okienku
+			// ten kod bedzie wykonany pozniej, dopiero po tym jak cos sie zadzieje w okienku
+			// dlatego uzylismy promise
+			// cofirm -> parametr promise, czyli funcji resolve
+			// on jest albo true albo false
+		})
+		.then((confirm) => {
+			if (confirm) {
+				userStore.logout();
+			}
+		});
+};
 
 // wywolanie requesta do API, ktore nam zaciagnie antifogry token i zapisze w storze
 
-
 // odpalenie komponentu bedzie czekac az ta akcja sie wykona poprzez await
 await antiForgeryStore.loadAntiForgeryToken();
-
 
 // w moemncie kiedy komponent jest podlaczany do drzewa i wyswietlany
 onMounted(() => {
