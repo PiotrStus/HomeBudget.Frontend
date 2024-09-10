@@ -94,31 +94,7 @@
 				</template>
 
 				<template v-slot:header.date="{ value }">
-					<div>
-						<v-btn variant="flat" style="padding: 0; margin: 0">
-							Data
-							<v-icon icon="mdi-filter-outline" />
-							<v-menu
-								v-model="dateMenu"
-								activator="parent"
-								location="bottom end"
-								transition="fab-transition"
-								:close-on-content-click="false"
-							>
-								<v-list>
-									<v-list-item class="d-flex align-center">
-										<TextFieldDatePicker
-											textFieldClass="mt-4"
-											v-model="dateFilter"
-											variant="outlined"
-											label="Data operacji"
-											:textFieldStyle="{ minWidth: '300px' }"
-										/>
-									</v-list-item>
-								</v-list>
-							</v-menu>
-						</v-btn>
-					</div>
+					<DateFilter v-model:dateFilter="dateFilter"/>
 				</template>
 
 				<template v-slot:item.date="{ value }">
@@ -189,13 +165,14 @@
 
 <script setup>
 import { VNumberInput } from "vuetify/labs/VNumberInput";
+const globalFiltersStore = useGlobalFiltersStore();
 const dateMenu = ref(false);
 const amountMenu = ref(false);
 const categoryMenu = ref(false);
 const showDialog = ref(false);
-const currentPage = ref(1);
-const pageSize = ref(10);
-const totalItems = ref(10);
+const currentPage = ref(globalFiltersStore.getFilters(listingId).currentPage);
+const pageSize = ref(globalFiltersStore.getFilters(listingId).pageSize ?? 10);
+const totalItems = ref(globalFiltersStore.getFilters(listingId).totalItems ?? 0);
 
 const handlePageChange = (page) => {
   currentPage.value = page;
@@ -208,7 +185,7 @@ const handlePageSizeChange = (size) => {
 
 const dayjs = useDayjs();
 const categoriesStore = useCategoriesStore();
-const globalFiltersStore = useGlobalFiltersStore();
+
 const listingId = "transactions";
 
 const dateFilter = ref(
@@ -231,13 +208,18 @@ watch([currentPage, pageSize, categoryFilter], ([newPage, pageSize, newCategory 
 	console.log(newCategory);
 })
 
-watch([dateFilter, categoryFilter, amountMinFilter, amountMaxFilter], () => {
+watch([dateFilter, categoryFilter, amountMinFilter, amountMaxFilter, currentPage, pageSize], () => {
 	globalFiltersStore.setFilters(listingId, {
 		dateFilter: dateFilter.value,
 		categoryFilter: categoryFilter.value,
 		amountMinFilter: amountMinFilter.value,
 		amountMaxFilter: amountMaxFilter.value,
+		currentPage: currentPage.value,
+        pageSize: pageSize.value,
+		totalItems: totalItems
 	});
+	console.log(pageSize)
+	console.log(globalFiltersStore.filters)
 });
 
 const headers = ref([
@@ -284,6 +266,7 @@ watch([dateFilter, amountMinFilter, amountMaxFilter, categoryFilter, currentPage
     loadTransactions(currentPage.value, pageSize.value);
 });
 
+
 const deleteTransaction = (item) => {
 	confirmDialog.value
 		.show({
@@ -323,20 +306,6 @@ const updateTransactions = () => {
 	loadTransactions();
 };
 
-
-// const uniqueCategories = computed(() => {
-// 	if (!transactions.value.length) return [];
-
-// 	const categories = transactions.value.map((transaction) => {
-// 		const map = categoryMap.value;
-// 		const categoryName = map[transaction.categoryId];
-// 		return categoryName;
-// 	});
-// 	const uniqueCategories = [...new Set(categories)];
-// 	console.log(uniqueCategories)
-// 	return uniqueCategories;
-// });
-
 const categoryMap = ref({});
 
 const loadCategories = async () => {
@@ -362,6 +331,7 @@ const handleClearAllFilters = () => {
 	categoryFilter.value = null;
 	amountMinFilter.value = null;
 	amountMaxFilter.value = null;
+	currentPage.value = 1;
 	globalFiltersStore.setFilters(listingId, {});
 };
 
@@ -373,6 +343,8 @@ const loadFilters = () =>
 	categoryFilter.value = savedFilters.categoryFilter;
 	amountMinFilter.value = savedFilters.amountMinFilter;
 	amountMaxFilter.value = savedFilters.amountMaxFilter;
+	currentPage.value = savedFilters.currentPage ?? currentPage.value;
+	pageSize.value = savedFilters.pageSize ?? pageSize.value;
 };
 
 onMounted(async () => {
