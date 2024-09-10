@@ -5,12 +5,17 @@
 		</v-toolbar>
 
 		<v-card-text>
-			<v-data-table
+			<v-data-table-server
 				:loading="loading"
-				:items="filteredTransactions"
+				:items="transactions"
 				:headers="headers"
 				items-per-page-text="Liczba wierszy na stronę"
 				:items-per-page-options="[10, 20, 50]"
+				@update:page="handlePageChange"
+				@update:itemsPerPage="handlePageSizeChange"
+				:page="currentPage"
+				:itemsPerPage="pageSize"
+				:items-length="totalItems"
 				page-text="{0}-{1} z {2}"
 				no-data-text="Brak dostępnych budżetów. Dodaj nowy."
 				loading-text="Wczytywanie"
@@ -30,8 +35,9 @@
 								<v-list-item class="d-flex align-center">
 									<v-autocomplete
 										label="Szukaj"
-										:items="uniqueCategories"
-										item-title="categoryId"
+										:items="categoriesStore.categories"
+										item-title="name"
+										item-value="id"
 										v-model="categoryFilter"
 										class="mt-4"
 										variant="outlined"
@@ -170,7 +176,7 @@
 						Dodaj
 					</v-btn>
 				</template>
-			</v-data-table>
+			</v-data-table-server>
 		</v-card-text>
 		<ConfirmDialog ref="confirmDialog" />
 		<AddTransactionDialog
@@ -187,10 +193,18 @@ const dateMenu = ref(false);
 const amountMenu = ref(false);
 const categoryMenu = ref(false);
 const showDialog = ref(false);
-// const dateFilter = ref(null);
-// const categoryFilter = ref(null);
-// const amountMinFilter = ref(null);
-// const amountMaxFilter = ref(null);
+const currentPage = ref(1);
+const pageSize = ref(10);
+const totalItems = ref(10);
+
+const handlePageChange = (page) => {
+  currentPage.value = page;
+};
+
+const handlePageSizeChange = (size) => {
+  pageSize.value = size;
+};
+
 
 const dayjs = useDayjs();
 const categoriesStore = useCategoriesStore();
@@ -209,6 +223,13 @@ const amountMinFilter = ref(
 const amountMaxFilter = ref(
 	globalFiltersStore.getFilters(listingId).amountMaxFilter
 );
+
+watch([currentPage, pageSize, categoryFilter], ([newPage, pageSize, newCategory ]) =>
+{
+	console.log(newPage);
+	console.log(pageSize);
+	console.log(newCategory);
+})
 
 watch([dateFilter, categoryFilter, amountMinFilter, amountMaxFilter], () => {
 	globalFiltersStore.setFilters(listingId, {
@@ -234,12 +255,21 @@ const globalMessageStore = useGlobalMessageStore();
 const { getErrorMessage } = useWebApiResponseParser();
 
 
-const loadTransactions = async () => {
+const loadTransactions = async (page = 1, pageSize = 10) => {
 	loading.value = true;
-	return useWebApiFetch("/Transaction/GetAllTransactions")
+	const formattedDate = dateFilter.value ? dayjs(dateFilter.value).format('YYYY-MM-DD') : null;
+	return useWebApiFetch("/Transaction/GetTransactions", {
+		query: { page, 
+			pageSize, 
+			date: formattedDate,
+			amountMin: amountMinFilter.value, 
+			amountMax: amountMaxFilter.value,
+			categoryId: categoryFilter.value,},
+	})
 		.then(({ data, error }) => {
 			if (data.value) {
 				transactions.value = data.value.transactions;
+				totalItems.value = data.value.totalCount;
 			} else if (error.value) {
 				transactions.value = [];
 			}
@@ -249,6 +279,10 @@ const loadTransactions = async () => {
 		});
 };
 
+
+watch([dateFilter, amountMinFilter, amountMaxFilter, categoryFilter, currentPage, pageSize], () => {
+    loadTransactions(currentPage.value, pageSize.value);
+});
 
 const deleteTransaction = (item) => {
 	confirmDialog.value
@@ -289,58 +323,19 @@ const updateTransactions = () => {
 	loadTransactions();
 };
 
-const filteredTransactions = computed(() => {
-	if (
-		!dateFilter.value &&
-		!categoryFilter.value &&
-		!amountMinFilter.value &&
-		!amountMaxFilter.value
-	)
-		return transactions.value;
 
-	const formattedCurrentDate = dayjs(dateFilter.value).format("DD.MM.YYYY");
+// const uniqueCategories = computed(() => {
+// 	if (!transactions.value.length) return [];
 
-	return transactions.value.filter((transaction) => {
-		const formattedTransactionDate = dayjs(transaction.date).format(
-			"DD.MM.YYYY"
-		);
-
-		const map = categoryMap.value;
-		const matchesCategoryFilter =
-			!categoryFilter.value ||
-			map[transaction.categoryId] === categoryFilter.value;
-
-		const matchesDateFilter =
-			!dateFilter.value || formattedTransactionDate === formattedCurrentDate;
-
-		const matchesAmountFilter =
-			(!amountMinFilter.value && !amountMaxFilter.value) ||
-			(amountMinFilter.value &&
-				!amountMaxFilter.value &&
-				transaction.amount >= amountMinFilter.value) ||
-			(!amountMinFilter.value &&
-				amountMaxFilter.value &&
-				transaction.amount <= amountMaxFilter.value) ||
-			(amountMinFilter.value &&
-				amountMaxFilter.value &&
-				transaction.amount >= amountMinFilter.value &&
-				transaction.amount <= amountMaxFilter.value);
-
-		return matchesDateFilter && matchesCategoryFilter && matchesAmountFilter;
-	});
-});
-
-const uniqueCategories = computed(() => {
-	if (!transactions.value.length) return [];
-
-	const categories = transactions.value.map((transaction) => {
-		const map = categoryMap.value;
-		const categoryName = map[transaction.categoryId];
-		return categoryName;
-	});
-	const uniqueCategories = [...new Set(categories)];
-	return uniqueCategories;
-});
+// 	const categories = transactions.value.map((transaction) => {
+// 		const map = categoryMap.value;
+// 		const categoryName = map[transaction.categoryId];
+// 		return categoryName;
+// 	});
+// 	const uniqueCategories = [...new Set(categories)];
+// 	console.log(uniqueCategories)
+// 	return uniqueCategories;
+// });
 
 const categoryMap = ref({});
 
