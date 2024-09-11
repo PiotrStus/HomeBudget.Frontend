@@ -1,12 +1,13 @@
 export function useTransactionsFilters(listingId) {
 	const globalFiltersStore = useGlobalFiltersStore();
-	const dateFilter = ref(globalFiltersStore.getFilters(listingId).dateFilter);
-	const categoryFilter = ref(globalFiltersStore.getFilters(listingId).categoryFilter);
-	const amountMinFilter = ref(globalFiltersStore.getFilters(listingId).amountMinFilter);
-	const amountMaxFilter = ref(globalFiltersStore.getFilters(listingId).amountMaxFilter);
-	const currentPage = ref(globalFiltersStore.getFilters(listingId).currentPage ?? 1);
-	const pageSize = ref(globalFiltersStore.getFilters(listingId).pageSize ?? 10);
-	const totalItems = ref(globalFiltersStore.getFilters(listingId).totalItems ?? 0);
+	const filtersFromStore = globalFiltersStore.getFilters(listingId);
+	const dateFilter = ref(filtersFromStore.dateFilter || null);
+	const categoryFilter = ref(filtersFromStore.categoryFilter || null);
+	const amountMinFilter = ref(filtersFromStore.amountMinFilter || null);
+	const amountMaxFilter = ref(filtersFromStore.amountMaxFilter || null);
+	const currentPage = ref(filtersFromStore.currentPage ?? 1);
+	const pageSize = ref(filtersFromStore.pageSize ?? 10);
+	const totalItems = ref(filtersFromStore.totalItems ?? 0);
 
 	const updateTransactionsFilters = () => {
 		globalFiltersStore.setFilters(listingId, {
@@ -18,7 +19,38 @@ export function useTransactionsFilters(listingId) {
 		  pageSize: pageSize.value,
 		  totalItems: totalItems.value,
 		});
+	};
+
+	const clearAllFilters = () => {
+		dateFilter.value = null;
+		categoryFilter.value = null;
+		amountMinFilter.value = null;
+		amountMaxFilter.value = null;
+		currentPage.value = 1;
+		updateTransactionsFilters();
 	  };
+
+	const loadFilters = () => {
+		const savedFilters = globalFiltersStore.getFilters(listingId);
+		console.log(savedFilters);
+		dateFilter.value = savedFilters.dateFilter;
+		categoryFilter.value = savedFilters.categoryFilter;
+		amountMinFilter.value = savedFilters.amountMinFilter;
+		amountMaxFilter.value = savedFilters.amountMaxFilter;
+		currentPage.value = savedFilters.currentPage ?? currentPage.value;
+		pageSize.value = savedFilters.pageSize ?? pageSize.value;
+	};  
+
+	const handlePageChange = (page) => {
+		currentPage.value = page;
+	  };
+	
+	  const handlePageSizeChange = (size) => {
+		pageSize.value = size;
+	  };
+
+
+	watch([dateFilter, categoryFilter, amountMinFilter, amountMaxFilter, currentPage, pageSize], updateTransactionsFilters);
 
 	return {
 		dateFilter,
@@ -29,5 +61,9 @@ export function useTransactionsFilters(listingId) {
 		pageSize,
 		totalItems,
 		updateTransactionsFilters,
+		clearAllFilters,
+		loadFilters,
+		handlePageChange,
+		handlePageSizeChange
 	  };	  
 }

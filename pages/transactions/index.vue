@@ -24,7 +24,7 @@
 				"
 				loading-text="Wczytywanie"
 			>
-				<template v-slot:header.categoryId>
+				<template v-slot:header.categoryName>
 					<CategoryFilter
 						v-model:categoryFilter="categoryFilter"
 						:categories="categoriesStore.categories"
@@ -46,8 +46,8 @@
 					{{ dayjs(value).format("DD.MM.YYYY") }}
 				</template>
 				<template v-slot:item.amount="{ value }"> {{ value }} zł </template>
-				<template v-slot:item.categoryId="{ value }">
-					{{ categoryMap[value] ?? value }}
+				<template v-slot:item.categoryName="{ value }">
+					{{ value }}
 				</template>
 				<template v-slot:item.action="{ item }">
 					<v-btn icon title="Więcej" variant="flat">
@@ -85,7 +85,7 @@
 						icon="mdi-filter-off-outline"
 						title="Usuń filtry"
 						variant="flat"
-						@click="handleClearAllFilters"
+						@click="clearAllFilters"
 						class="mr-2"
 					/>
 					<v-btn
@@ -109,20 +109,9 @@
 </template>
 
 <script setup>
-const globalFiltersStore = useGlobalFiltersStore();
-const showDialog = ref(false);
-
-const handlePageChange = (page) => {
-	currentPage.value = page;
-};
-
-const handlePageSizeChange = (size) => {
-	pageSize.value = size;
-};
-
 const dayjs = useDayjs();
 const categoriesStore = useCategoriesStore();
-
+const showDialog = ref(false);
 const listingId = "transactions";
 
 const {
@@ -134,11 +123,15 @@ const {
   pageSize,
   totalItems,
   updateTransactionsFilters,
+  clearAllFilters,
+  loadFilters,
+  handlePageChange,
+  handlePageSizeChange
 } = useTransactionsFilters(listingId);
 
 const headers = ref([
 	{ title: "Data", value: "date", align: "start" },
-	{ title: "Kategoria", value: "categoryId", align: "start" },
+	{ title: "Kategoria", value: "categoryName", align: "start" },
 	{ title: "OPIS", value: "name", align: "start" },
 	{ title: "Kwota", value: "amount", sortable: true, align: "start" },
 	{ title: "", value: "action", align: "end" },
@@ -187,10 +180,7 @@ watch(
 		currentPage,
 		pageSize,
 	],
-	() => {
-		updateTransactionsFilters();
-		loadTransactions(currentPage.value, pageSize.value);
-	}
+	() => loadTransactions(currentPage.value, pageSize.value)
 );
 
 const deleteTransaction = (item) => {
@@ -218,7 +208,6 @@ const deleteTransaction = (item) => {
 							globalMessageStore.showSuccessMessage(
 								"Budżet miesięczny został usunięty"
 							);
-							updateTransactionsFilters();
 							loadTransactions(currentPage.value, pageSize.value);
 						}
 					})
@@ -229,35 +218,8 @@ const deleteTransaction = (item) => {
 		});
 };
 
-
-const categoryMap = ref({});
-
 const loadCategories = async () => {
 	await categoriesStore.loadCategories();
-	categoryMap.value = categoriesStore.categories.reduce((map, category) => {
-		map[category.id] = category.name;
-		return map;
-	}, {});
-};
-
-const handleClearAllFilters = () => {
-	dateFilter.value = null;
-	categoryFilter.value = null;
-	amountMinFilter.value = null;
-	amountMaxFilter.value = null;
-	currentPage.value = 1;
-	updateTransactionsFilters(); 
-};
-
-const loadFilters = () => {
-	const savedFilters = globalFiltersStore.getFilters(listingId);
-	console.log(savedFilters);
-	dateFilter.value = savedFilters.dateFilter;
-	categoryFilter.value = savedFilters.categoryFilter;
-	amountMinFilter.value = savedFilters.amountMinFilter;
-	amountMaxFilter.value = savedFilters.amountMaxFilter;
-	currentPage.value = savedFilters.currentPage ?? currentPage.value;
-	pageSize.value = savedFilters.pageSize ?? pageSize.value;
 };
 
 onMounted(async () => {
