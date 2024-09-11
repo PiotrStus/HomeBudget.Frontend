@@ -50,35 +50,11 @@
 					{{ value }}
 				</template>
 				<template v-slot:item.action="{ item }">
-					<v-btn icon title="Więcej" variant="flat">
-						<v-icon icon="mdi-dots-vertical" />
-						<v-menu
-							activator="parent"
-							location="bottom end"
-							transition="fab-transition"
-						>
-							<v-list rounded="lg">
-								<v-list-item
-									:loading="item.deleting"
-									@click="deleteTransaction(item)"
-									title="Usuń"
-								>
-									<template v-slot:prepend>
-										<v-icon icon="mdi-delete" />
-									</template>
-								</v-list-item>
-								<v-list-item
-									:disabled="item.deleting"
-									:to="`/transactions/${item.id}`"
-									title="Edytuj"
-								>
-									<template v-slot:prepend>
-										<v-icon icon="mdi-pencil" />
-									</template>
-								</v-list-item>
-							</v-list>
-						</v-menu>
-					</v-btn>
+					<Actions
+						:item="item"
+						path="transactions"
+						@itemDeleted="deleteTransaction(item)"
+					/>
 				</template>
 				<template v-slot:header.action>
 					<v-btn
