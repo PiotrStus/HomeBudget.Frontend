@@ -52,45 +52,7 @@
 				</template>
 
 				<template v-slot:header.amount="{ value }">
-					<div>
-						<v-btn variant="flat" style="padding: 0; margin: 0">
-							Kwota
-							<v-icon icon="mdi-filter-outline" />
-							<v-menu
-								v-model="amountMenu"
-								activator="parent"
-								location="bottom end"
-								transition="fab-transition"
-								:close-on-content-click="false"
-							>
-								<v-list>
-									<v-list-item class="d-flex align-center">
-										<div class="d-block align-center w-100">
-											<v-number-input
-												class="mt-4"
-												v-model="amountMinFilter"
-												variant="outlined"
-												controlVariant="default"
-												label="Od"
-												:style="{ minWidth: '200px' }"
-												:clearable="true"
-												@click:clear="() => clearFilter('amountMinFilter')"
-											/>
-											<v-number-input
-												v-model="amountMaxFilter"
-												variant="outlined"
-												controlVariant="default"
-												label="Do"
-												:style="{ minWidth: '200px' }"
-												:clearable="true"
-												@click:clear="() => clearFilter('amountMaxFilter')"
-											/>
-										</div>
-									</v-list-item>
-								</v-list>
-							</v-menu>
-						</v-btn>
-					</div>
+					<AmountFilter v-model:amountMinFilter="amountMinFilter" v-model:amountMaxFilter="amountMaxFilter"/>
 				</template>
 
 				<template v-slot:header.date="{ value }">
@@ -164,7 +126,6 @@
 </template>
 
 <script setup>
-import { VNumberInput } from "vuetify/labs/VNumberInput";
 const globalFiltersStore = useGlobalFiltersStore();
 const dateMenu = ref(false);
 const amountMenu = ref(false);
