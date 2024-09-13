@@ -3,7 +3,6 @@
 						<v-btn variant="flat" style="padding: 0; margin: 0">
 							Kwota
 							<v-icon icon="mdi-filter-outline" />
-							<!-- v-model="amountMenu" w v-menu, nie obsluguje zagniezdonych komentarzy-->
 							<v-menu
 								activator="parent"
 								location="bottom end"
@@ -15,7 +14,8 @@
 										<div class="d-block align-center w-100">
 											<v-number-input
 												class="mt-4"
-												v-model="localAmountMinFilter"
+												v-model="debouncedMinAmount"
+												@input="debouncedValueChanged('min', $event)"
 												variant="outlined"
 												controlVariant="default"
 												label="Od"
@@ -24,8 +24,8 @@
 												@click:clear="() => clearFilter('localAmountMinFilter')"
 											/>
 											<v-number-input
-												v-model="localAmountMaxFilter"
-												variant="outlined"
+											v-model="debouncedMaxAmount"
+											@input="debouncedValueChanged('max', $event)"												variant="outlined"
 												controlVariant="default"
 												label="Do"
 												:style="{ minWidth: '200px' }"
@@ -40,10 +40,8 @@
 					</div>
 </template>
 
-
 <script setup>
 import { VNumberInput } from "vuetify/labs/VNumberInput";
-
 const localAmountMinFilter = defineModel("amountMinFilter");
 const localAmountMaxFilter = defineModel("amountMaxFilter");
 
@@ -55,5 +53,33 @@ const clearFilter = (filterName) => {
   }
 };
 
-</script>
+const debouncedMinAmount = ref(localAmountMinFilter.value);
+const debouncedMaxAmount = ref(localAmountMaxFilter.value);
 
+const updateMinFilterDebounced = useDebounceFn((value) => {
+  localAmountMinFilter.value = value;
+}, 1000);
+
+const updateMaxFilterDebounced = useDebounceFn((value) => {
+  localAmountMaxFilter.value = value;
+}, 1000);
+
+
+// function valueChanged() {
+// 	updateMinFilterDebounced(debouncedMinAmount.value)
+// }
+
+function debouncedValueChanged(type, event) {
+  const value = parseFloat(event.target.value) || null;
+  if (type === 'min') {
+    updateMinFilterDebounced(value);
+  } else if (type === 'max') {
+    updateMaxFilterDebounced(value);
+  }
+}
+
+// watch(debouncedMinAmount, (newVal) => {
+//   updateMinFilterDebounced(newVal);
+// });
+
+</script>

@@ -3,7 +3,6 @@
 		<v-toolbar color="transparent">
 			<v-toolbar-title>Dostępne operacje</v-toolbar-title>
 		</v-toolbar>
-
 		<v-card-text>
 			<v-data-table-server
 				:loading="loading"
@@ -30,25 +29,19 @@
 						:categories="categoriesStore.categories"
 					/>
 				</template>
-
 				<template v-slot:header.amount>
 					<AmountFilter
 						v-model:amountMinFilter="amountMinFilter"
 						v-model:amountMaxFilter="amountMaxFilter"
 					/>
 				</template>
-
 				<template v-slot:header.date>
 					<DateFilter v-model:dateFilter="dateFilter" />
 				</template>
-
 				<template v-slot:item.date="{ value }">
 					{{ dayjs(value).format("DD.MM.YYYY") }}
 				</template>
 				<template v-slot:item.amount="{ value }"> {{ value }} zł </template>
-				<template v-slot:item.categoryName="{ value }">
-					{{ value }}
-				</template>
 				<template v-slot:item.action="{ item }">
 					<Actions
 						:item="item"
@@ -89,20 +82,24 @@ const dayjs = useDayjs();
 const categoriesStore = useCategoriesStore();
 const showDialog = ref(false);
 const listingId = "transactions";
+import { useTransactionsFilters } from '~/composables/transactions/useTransactionsFilters'
+
+
+
 
 const {
-  dateFilter,
-  categoryFilter,
-  amountMinFilter,
-  amountMaxFilter,
-  currentPage,
-  pageSize,
-  totalItems,
-  updateTransactionsFilters,
-  clearAllFilters,
-  loadFilters,
-  handlePageChange,
-  handlePageSizeChange
+	dateFilter,
+	categoryFilter,
+	amountMinFilter,
+	amountMaxFilter,
+	currentPage,
+	pageSize,
+	totalItems,
+	updateTransactionsFilters,
+	clearAllFilters,
+	loadFilters,
+	handlePageChange,
+	handlePageSizeChange,
 } = useTransactionsFilters(listingId);
 
 const headers = ref([
@@ -147,17 +144,44 @@ const loadTransactions = async (page = 1, pageSize = 10) => {
 		});
 };
 
+const resetPage = () => {
+  currentPage.value = 1;
+};
+
 watch(
-	[
-		dateFilter,
-		amountMinFilter,
-		amountMaxFilter,
-		categoryFilter,
-		currentPage,
-		pageSize,
-	],
-	() => loadTransactions(currentPage.value, pageSize.value)
+  [
+    dateFilter,
+    amountMinFilter,
+    amountMaxFilter,
+    categoryFilter,
+  ],
+  () => {
+	if (currentPage.value !== 1) {
+		resetPage();
+	} else {
+		loadTransactions(currentPage.value, pageSize.value);
+	}
+  }
 );
+
+watch(
+  [currentPage, pageSize],
+  () => {
+    loadTransactions(currentPage.value, pageSize.value);
+  }
+);
+
+// watch(
+// 	[
+// 		dateFilter,
+// 		amountMinFilter,
+// 		amountMaxFilter,
+// 		categoryFilter,
+// 		currentPage,
+// 		pageSize,
+// 	],
+// 	() => loadTransactions(currentPage.value, pageSize.value)
+// );
 
 const deleteTransaction = (item) => {
 	confirmDialog.value
@@ -194,12 +218,8 @@ const deleteTransaction = (item) => {
 		});
 };
 
-const loadCategories = async () => {
-	await categoriesStore.loadCategories();
-};
-
 onMounted(async () => {
-	await loadCategories();
+	await categoriesStore.loadCategories();
 	await loadTransactions(currentPage.value, pageSize.value);
 	loadFilters();
 });
