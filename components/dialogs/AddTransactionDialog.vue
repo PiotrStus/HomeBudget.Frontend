@@ -102,7 +102,7 @@ watch(localShow, (newState) => {
 			date: null,
 			name: "",
 			categoryId: "",
-			amount: "",
+			amount: null,
 		};
 	}
 });
@@ -111,7 +111,7 @@ const viewModel = ref({
 	date: null,
 	name: "",
 	categoryId: "",
-	amount: "",
+	amount: null,
 });
 
 watch(() => viewModel.value.date, (newDate) => {

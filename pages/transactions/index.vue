@@ -71,7 +71,7 @@
 		<ConfirmDialog ref="confirmDialog" />
 		<AddTransactionDialog
 			v-model:show="showDialog"
-			@transactionAdded="updateTransactionsFilters"
+			@transactionAdded="loadTransactions(currentPage, pageSize, true)"
 			:categories="categoriesStore.categories"
 		/>
 	</v-card>
@@ -95,12 +95,11 @@ const {
 	currentPage,
 	pageSize,
 	totalItems,
-	updateTransactionsFilters,
 	clearAllFilters,
-	loadFilters,
 	handlePageChange,
 	handlePageSizeChange,
 } = useTransactionsFilters(listingId);
+
 
 const headers = ref([
 	{ title: "Data", value: "date", align: "start" },
@@ -116,7 +115,7 @@ const confirmDialog = ref(null);
 const globalMessageStore = useGlobalMessageStore();
 const { getErrorMessage } = useWebApiResponseParser();
 
-const loadTransactions = async (page = 1, pageSize = 10) => {
+const loadTransactions = async (page = 1, pageSize = 10, countPages = null) => {
 	loading.value = true;
 	const formattedDate = dateFilter.value
 		? dayjs(dateFilter.value).format("YYYY-MM-DD")
@@ -129,12 +128,15 @@ const loadTransactions = async (page = 1, pageSize = 10) => {
 			amountMin: amountMinFilter.value,
 			amountMax: amountMaxFilter.value,
 			categoryId: categoryFilter.value,
+			countPages
 		},
 	})
 		.then(({ data, error }) => {
 			if (data.value) {
 				transactions.value = data.value.transactions;
+				if (data.value.totalCount !== null) {
 				totalItems.value = data.value.totalCount;
+				}
 			} else if (error.value) {
 				transactions.value = [];
 			}
@@ -143,6 +145,11 @@ const loadTransactions = async (page = 1, pageSize = 10) => {
 			loading.value = false;
 		});
 };
+
+// const handleTransactionAdded = () => {
+// 	loadTransactions(currentPage.value, pageSize.value, true);
+// 	// totalItems.value = totalItems.value + 1;
+// }
 
 const resetPage = () => {
   currentPage.value = 1;
@@ -171,17 +178,6 @@ watch(
   }
 );
 
-// watch(
-// 	[
-// 		dateFilter,
-// 		amountMinFilter,
-// 		amountMaxFilter,
-// 		categoryFilter,
-// 		currentPage,
-// 		pageSize,
-// 	],
-// 	() => loadTransactions(currentPage.value, pageSize.value)
-// );
 
 const deleteTransaction = (item) => {
 	confirmDialog.value
@@ -208,7 +204,8 @@ const deleteTransaction = (item) => {
 							globalMessageStore.showSuccessMessage(
 								"Budżet miesięczny został usunięty"
 							);
-							loadTransactions(currentPage.value, pageSize.value);
+							loadTransactions(currentPage.value, pageSize.value, true);
+							// totalItems.value = totalItems.value - 1;
 						}
 					})
 					.finally(() => {
@@ -221,6 +218,5 @@ const deleteTransaction = (item) => {
 onMounted(async () => {
 	await categoriesStore.loadCategories();
 	await loadTransactions(currentPage.value, pageSize.value);
-	loadFilters();
 });
 </script>

@@ -76,9 +76,9 @@ export const useUserStore = defineStore({
 				.then(({ data, error }) => {
 					if (data.value) {
 						this.userData = {...this.userData, ...data.value}
-						console.log(this.userData);
-						console.log(data.value);
-						console.log(this.userData.notifications[0])
+						// console.log(this.userData);
+						// console.log(data.value);
+						// console.log(this.userData.notifications[0])
 					}
 					else if (error.value) {
 						console.log("Brak powiadomień")

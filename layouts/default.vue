@@ -131,8 +131,6 @@ const accountStore = useAccountStore();
 const antiForgeryStore = useAntiForgeryStore();
 
 const notificationsLength = computed(() => {
-	console.log(userStore.userData);
-	console.log(userStore.userData.notifications?.length);
 	return userStore.userData.notifications?.length || 0;
 });
 
@@ -152,11 +150,6 @@ const menuItems = [
 		icon: "mdi-book-outline",
 		url: "/budgets",
 	},
-	// {
-	// 	name: "tests",
-	// 	icon: "mdi-newspaper",
-	// 	url: "/tests",
-	// },
 	{
 		name: "Operacje",
 		icon: "mdi-receipt-text-plus",

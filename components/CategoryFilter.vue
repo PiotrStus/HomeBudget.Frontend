@@ -28,8 +28,6 @@
 	</v-btn>
 </template>
 
-
-
 <script setup>
 const props = defineProps({
   categories: {
@@ -45,6 +43,5 @@ const clearFilter = (filterName) => {
     categoryFilter.value = null;
   }
 };
-
 
 </script>

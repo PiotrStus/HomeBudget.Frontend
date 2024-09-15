@@ -1,69 +1,91 @@
+import { useStorage } from "@vueuse/core";
+
 export function useTransactionsFilters(listingId) {
-	const globalFiltersStore = useGlobalFiltersStore();
-	const filtersFromStore = globalFiltersStore.getFilters(listingId);
-	const dateFilter = ref(filtersFromStore.dateFilter || null);
-	const categoryFilter = ref(filtersFromStore.categoryFilter || null);
-	const amountMinFilter = ref(filtersFromStore.amountMinFilter || null);
-	const amountMaxFilter = ref(filtersFromStore.amountMaxFilter || null);
-	const currentPage = ref(filtersFromStore.currentPage ?? 1);
-	const pageSize = ref(filtersFromStore.pageSize ?? 10);
-	const totalItems = ref(filtersFromStore.totalItems ?? 0);
+  const globalFiltersStore = useGlobalFiltersStore();
 
-	const updateTransactionsFilters = () => {
-		globalFiltersStore.setFilters(listingId, {
-		  dateFilter: dateFilter.value,
-		  categoryFilter: categoryFilter.value,
-		  amountMinFilter: amountMinFilter.value,
-		  amountMaxFilter: amountMaxFilter.value,
-		  currentPage: currentPage.value,
-		  pageSize: pageSize.value,
-		  totalItems: totalItems.value,
-		});
-	};
+  const filters = useStorage(
+    `${listingId}-filters`,
+    globalFiltersStore.getFilters(listingId)
+  );
 
-	const clearAllFilters = () => {
-		dateFilter.value = null;
-		categoryFilter.value = null;
-		amountMinFilter.value = null;
-		amountMaxFilter.value = null;
-		currentPage.value = 1;
-		updateTransactionsFilters();
-	  };
+  const dateFilter = computed({
+    get: () => filters.value.dateFilter || null,
+    set: (value) => (filters.value.dateFilter = value),
+  });
 
-	const loadFilters = () => {
-		const savedFilters = globalFiltersStore.getFilters(listingId);
-		console.log(savedFilters);
-		dateFilter.value = savedFilters.dateFilter;
-		categoryFilter.value = savedFilters.categoryFilter;
-		amountMinFilter.value = savedFilters.amountMinFilter;
-		amountMaxFilter.value = savedFilters.amountMaxFilter;
-		currentPage.value = savedFilters.currentPage ?? currentPage.value;
-		pageSize.value = savedFilters.pageSize ?? pageSize.value;
-	};  
+  const categoryFilter = computed({
+    get: () => Number(filters.value.categoryFilter) || null,
+    set: (value) => (filters.value.categoryFilter = value),
+  });
 
-	const handlePageChange = (page) => {
-		currentPage.value = page;
-	  };
-	
-	  const handlePageSizeChange = (size) => {
-		pageSize.value = size;
-	  };
+  const amountMinFilter = computed({
+    get: () => parseFloat(filters.value.amountMinFilter) || null,
+    set: (value) => (filters.value.amountMinFilter = value),
+  });
 
+  const amountMaxFilter = computed({
+    get: () => parseFloat(filters.value.amountMaxFilter) || null,
+    set: (value) => (filters.value.amountMaxFilter = value),
+  });
 
-	watch([dateFilter, categoryFilter, amountMinFilter, amountMaxFilter, currentPage, pageSize], updateTransactionsFilters);
+  const currentPage = computed({
+    get: () => {
+		console.log('filters.value.currentPage:', filters.value.currentPage);
+		const page = parseInt(filters.value.currentPage) ?? 1;
+		console.log('page:', page);
+		return page;
+	  },
+    set: (value) => (filters.value.currentPage = value),
+  });
 
-	return {
-		dateFilter,
-		categoryFilter,
-		amountMinFilter,
-		amountMaxFilter,
-		currentPage,
-		pageSize,
-		totalItems,
-		updateTransactionsFilters,
-		clearAllFilters,
-		loadFilters,
-		handlePageChange,
-		handlePageSizeChange
-	  };	  
+  const pageSize = computed({
+    get: () => filters.value.pageSize ?? 10,
+    set: (value) => (filters.value.pageSize = value),
+  });
+
+  const totalItems = computed({
+    get: () => filters.value.totalItems !== null ? parseInt(filters.value.totalItems) : null,
+    set: (value) => (filters.value.totalItems = value !== null ? value : null),
+  });
+
+  const updateTransactionsFilters = () => {
+    globalFiltersStore.setFilters(listingId, { ...filters.value });
+  };
+
+  const clearAllFilters = () => {
+    filters.value = {
+      dateFilter: null,
+      categoryFilter: null,
+      amountMinFilter: null,
+      amountMaxFilter: null,
+      currentPage: 1,
+	  totalItems: totalItems.value,
+	  pageSize: pageSize.value
+    };
+    updateTransactionsFilters();
+  };
+
+  const handlePageChange = (page) => {
+    currentPage.value = page;
+  };
+
+  const handlePageSizeChange = (size) => {
+    pageSize.value = size;
+  };
+
+  watch(filters, updateTransactionsFilters);
+
+  return {
+    dateFilter,
+    categoryFilter,
+    amountMinFilter,
+    amountMaxFilter,
+    currentPage,
+    pageSize,
+    totalItems,
+    updateTransactionsFilters,
+    clearAllFilters,
+    handlePageChange,
+    handlePageSizeChange,
+  };
 }
