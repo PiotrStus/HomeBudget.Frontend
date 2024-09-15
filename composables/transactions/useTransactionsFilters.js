@@ -14,24 +14,24 @@ export function useTransactionsFilters(listingId) {
   });
 
   const categoryFilter = computed({
-    get: () => Number(filters.value.categoryFilter) || null,
+    get: () => filters.value.categoryFilter || null,
     set: (value) => (filters.value.categoryFilter = value),
   });
 
   const amountMinFilter = computed({
-    get: () => parseFloat(filters.value.amountMinFilter) || null,
+    get: () => filters.value.amountMinFilter || null,
     set: (value) => (filters.value.amountMinFilter = value),
   });
 
   const amountMaxFilter = computed({
-    get: () => parseFloat(filters.value.amountMaxFilter) || null,
+    get: () => filters.value.amountMaxFilter || null,
     set: (value) => (filters.value.amountMaxFilter = value),
   });
 
   const currentPage = computed({
     get: () => {
 		console.log('filters.value.currentPage:', filters.value.currentPage);
-		const page = parseInt(filters.value.currentPage) ?? 1;
+		const page = filters.value.currentPage ?? 1;
 		console.log('page:', page);
 		return page;
 	  },
@@ -44,7 +44,7 @@ export function useTransactionsFilters(listingId) {
   });
 
   const totalItems = computed({
-    get: () => filters.value.totalItems !== null ? parseInt(filters.value.totalItems) : null,
+    get: () => filters.value.totalItems !== null ? filters.value.totalItems : null,
     set: (value) => (filters.value.totalItems = value !== null ? value : null),
   });
 

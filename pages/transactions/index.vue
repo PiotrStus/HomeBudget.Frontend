@@ -82,6 +82,7 @@ const dayjs = useDayjs();
 const categoriesStore = useCategoriesStore();
 const showDialog = ref(false);
 const listingId = "transactions";
+const errorMsg = ref("");
 import { useTransactionsFilters } from '~/composables/transactions/useTransactionsFilters'
 
 
@@ -120,6 +121,14 @@ const loadTransactions = async (page = 1, pageSize = 10, countPages = null) => {
 	const formattedDate = dateFilter.value
 		? dayjs(dateFilter.value).format("YYYY-MM-DD")
 		: null;
+	errorMsg.value = "";
+	const fieldMap = {
+        "AmountMin": "Od",
+		"AmountMax": "Do"
+    };
+	const messageMap = {
+        "ScalePrecisionValidator": "Przekroczono dozwolony zakres kwoty. Maksymalna kwota wynosi 999999.99 zł."
+    };
 	return useWebApiFetch("/Transaction/GetTransactions", {
 		query: {
 			page,
@@ -130,6 +139,10 @@ const loadTransactions = async (page = 1, pageSize = 10, countPages = null) => {
 			categoryId: categoryFilter.value,
 			countPages
 		},
+		onResponseError: ({ response }) => {
+						let message = getErrorMessage(response, messageMap, fieldMap);
+						globalMessageStore.showErrorMessage(message);
+					},
 	})
 		.then(({ data, error }) => {
 			if (data.value) {
