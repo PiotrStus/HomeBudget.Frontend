@@ -30,5 +30,12 @@ export const useGlobalMessageStore = defineStore({
         type : 'Success',
       })
     },
+
+    showWarningMessage(text) {
+      this.showMessage({
+        text : text,
+        type : 'Warning',
+      })
+    },
   }
 })

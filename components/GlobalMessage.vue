@@ -74,6 +74,8 @@ const color = computed(() => {
         return "success"
     } else if (currentMessage.value?.type === 'Error') {
         return "error"
+	} else if (currentMessage.value?.type === 'Warning') {
+        return "warning"
     } else {
         return "primary";
     }

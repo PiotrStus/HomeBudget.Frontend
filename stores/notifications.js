@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import getNotificationTitle from "~/utils/notifications";
 
 export const useNotificationsStore = defineStore({
 	id: "notifications-store",
@@ -34,6 +35,7 @@ export const useNotificationsStore = defineStore({
 		},
 
 		updateLastNotification() {
+			const globalMessageStore = useGlobalMessageStore();
 			if (this.notifications.length > 0) {
 				this.notifications.sort((a, b) => new Date(b.date) - new Date(a.date));
 
@@ -57,6 +59,12 @@ export const useNotificationsStore = defineStore({
 					}
 
 					this.lastNotification = newestNotification;
+					let message = getNotificationTitle(newestNotification);
+					if (this.newNotifications.length > 1) {
+						message = `Dostępnych jest ${this.newNotifications.length} nowych powiadomień`;
+					}
+
+					globalMessageStore.showWarningMessage(message);
 				} else {
 					this.isNewNotification = false;
 				}

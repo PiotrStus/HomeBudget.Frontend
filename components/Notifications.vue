@@ -29,17 +29,11 @@
 </template>
 
 <script setup>
+import getNotificationTitle from "~/utils/notifications";
 const showDialog = ref(false);
 const selectedNotification = ref(null);
 const notificationsStore = useNotificationsStore();
 
-const getNotificationTitle = (notification) => {
-			if (notification.content === 'CategoryLimitExceeded') {
-				return `Przekroczono limit w kategorii: ${notification.categoryName}`;
-			} else {
-				return notification.content;
-			}
-		}
 
 const handleNotificationClick = (notification) => {
 	selectedNotification.value = notification;

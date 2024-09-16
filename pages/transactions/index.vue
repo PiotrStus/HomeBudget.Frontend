@@ -71,7 +71,7 @@
 		<ConfirmDialog ref="confirmDialog" />
 		<AddTransactionDialog
 			v-model:show="showDialog"
-			@transactionAdded="loadTransactions(currentPage, pageSize, true)"
+			@transactionAdded="handleTransactionAdded"
 			:categories="categoriesStore.categories"
 		/>
 	</v-card>
@@ -227,6 +227,11 @@ const deleteTransaction = (item) => {
 			}
 		});
 };
+
+const notificationsStore = useNotificationsStore();
+const handleTransactionAdded = () => {
+	loadTransactions(currentPage.value, pageSize.value, true);
+}
 
 onMounted(async () => {
 	await categoriesStore.loadCategories();
