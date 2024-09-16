@@ -231,6 +231,7 @@ const deleteTransaction = (item) => {
 const notificationsStore = useNotificationsStore();
 const handleTransactionAdded = () => {
 	loadTransactions(currentPage.value, pageSize.value, true);
+	notificationsStore.loadNotifications();
 }
 
 onMounted(async () => {

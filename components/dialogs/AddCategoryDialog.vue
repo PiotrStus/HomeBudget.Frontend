@@ -41,11 +41,11 @@ const { getErrorMessage} = useWebApiResponseParser();
 const localShow = defineModel("show")
 const errorMsg = ref("");
 const loading = ref(false);
-const emit = defineEmits(['update-categories']);
+const emit = defineEmits(['categoryAdded']);
 
 
-const updateCategories = () => {
-  emit('update-categories');
+const categoryAdded = () => {
+  emit('categoryAdded');
 };
 
 watch(localShow, (newState) => {
@@ -99,7 +99,7 @@ const addNewCategory = async () => {
 	.then((response) => {
 		if (response.data.value) {
 			globalMessageStore.showSuccessMessage('Kategoria została dodana')
-			updateCategories();
+			categoryAdded();
 			localShow.value = false;
 		}
 	})

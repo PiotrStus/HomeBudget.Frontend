@@ -30,6 +30,7 @@ const {ruleRequired} = useFormValidationRules();
 const route = useRoute();
 const router = useRouter();
 const globalMessageStore = useGlobalMessageStore();
+const notificationsStore = useNotificationsStore();
 const { getErrorMessage} = useWebApiResponseParser();
 
 const loading = ref(false);
@@ -69,6 +70,7 @@ const save = () => {
 		if (response.data.value) {
 			globalMessageStore.showSuccessMessage('Zapisano zmiany.');
 			router.push({ path: `/budgets/planned/${route.query.plannedId}` });
+			notificationsStore.loadNotifications();
 		}
 		})
 	.finally(() => {

@@ -61,7 +61,7 @@ export const useNotificationsStore = defineStore({
 					this.lastNotification = newestNotification;
 					let message = getNotificationTitle(newestNotification);
 					if (this.newNotifications.length > 1) {
-						message = `Dostępnych jest ${this.newNotifications.length} nowych powiadomień`;
+						message = `Dostępne są ${this.newNotifications.length} nowe powiadomienia`;
 					}
 
 					globalMessageStore.showWarningMessage(message);

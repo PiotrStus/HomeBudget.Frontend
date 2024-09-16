@@ -52,6 +52,7 @@ import { VNumberInput } from 'vuetify/labs/VNumberInput';
 const { ruleRequired, ruleMaxLen, ruleDate } = useFormValidationRules();
 const categoriesStore = useCategoriesStore();
 const globalMessageStore = useGlobalMessageStore();
+const notificationsStore = useNotificationsStore();
 const { getErrorMessage} = useWebApiResponseParser();
 const route = useRoute();
 const router = useRouter();
@@ -109,6 +110,7 @@ const save = () => {
 		if (response.data.value) {
 			globalMessageStore.showSuccessMessage('Zapisano zmiany.');
 			router.push({ path: '/transactions' });
+			notificationsStore.loadNotifications();
 		}
 		})
 	.finally(() => {
