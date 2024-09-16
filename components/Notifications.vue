@@ -16,6 +16,9 @@
 		transition="scale-transition"
 	>
 		<v-list rounded="lg" style="max-height: 200px; max-width: 200px; overflow-y: auto;">
+			<v-list-item v-if="notificationsLength === 0">
+				<v-list-item-title style="white-space: normal; text-align: center;">Brak nowych powiadomień</v-list-item-title>
+			</v-list-item>
 			<v-list-item
 				v-for="notification in notificationsStore.notifications"
 				:key="notification"
