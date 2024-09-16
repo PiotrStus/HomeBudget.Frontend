@@ -23,7 +23,7 @@ export const useUserStore = defineStore({
 		loadLoggedInUser() {
 			// dodajemy accountStore
 			const accountStore = useAccountStore();
-
+			const notificationsStore = useNotificationsStore();
 			// ustawiamy loading na true
 			this.loading = true;
 			// uzywamy useWebApiFetch
@@ -44,7 +44,7 @@ export const useUserStore = defineStore({
 						this.userData = data.value;
 						// dodajemy informacje o aktualnie zalogowanym koncie
 						accountStore.loadCurrentAccount();
-						this.loadUserNotifications();
+						notificationsStore.loadNotifications();
 					} else if (error.value) {
 						this.isLoggedIn = false;
 						this.userData = null;
@@ -69,21 +69,6 @@ export const useUserStore = defineStore({
 					this.userData = null;
 				}
 			});
-		},
-
-		loadUserNotifications() {
-			useWebApiFetch("/User/GetUserNotifications")
-				.then(({ data, error }) => {
-					if (data.value) {
-						this.userData = {...this.userData, ...data.value}
-						// console.log(this.userData);
-						// console.log(data.value);
-						// console.log(this.userData.notifications[0])
-					}
-					else if (error.value) {
-						console.log("Brak powiadomień")
-					}
-				})
 		}
-	},
+	}
 });

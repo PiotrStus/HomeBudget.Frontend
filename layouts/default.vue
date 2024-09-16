@@ -39,7 +39,7 @@
 				</template>
 
 				<template v-slot:append>
-					<v-btn @click="openDialog" variant="flat" icon>
+					<v-btn to="/notifications" variant="flat" icon>
 						<v-badge
 							v-if="notificationsLength > 0"
 							:content="notificationsLength"
@@ -128,10 +128,13 @@ const drawer = ref(null);
 // stala reaktywna, ktora
 const userStore = useUserStore();
 const accountStore = useAccountStore();
+const notificationsStore = useNotificationsStore();
 const antiForgeryStore = useAntiForgeryStore();
 
 const notificationsLength = computed(() => {
-	return userStore.userData.notifications?.length || 0;
+	console.log(notificationsStore.notifications);
+	console.log(notificationsStore.notifications?.length);
+	return notificationsStore.notifications?.length || 0;
 });
 
 const menuItems = [
