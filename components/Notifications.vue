@@ -48,6 +48,7 @@ const handleNotificationClick = (notification) => {
 
 const handleNotificationClosed = () => {
 	console.log("closed2");
+	notificationsStore.confirmNotification(selectedNotification.value.id);
 }
 
 const notificationsLength = computed(() => {

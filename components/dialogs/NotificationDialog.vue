@@ -9,8 +9,8 @@
 			<v-card-subtitle>
 				Data: {{ dayjs(props.notification.date).format("DD.MM.YYYY HH:mm") }}
 			</v-card-subtitle>
-			<v-card-text>
-				<p>Treść: {{ getNotificationDescription(props.notification) }}</p>
+			<v-card-text class="pa-4">
+				<p>{{ getNotificationDescription(props.notification) }}</p>
 				<p>Kategoria: {{ props.notification.categoryName }}</p>
 			</v-card-text>
 			<v-card-actions>

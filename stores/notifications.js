@@ -15,7 +15,7 @@ export const useNotificationsStore = defineStore({
 
 	actions: {
 		loadNotifications() {
-			useWebApiFetch("/User/GetUserNotifications")
+			useWebApiFetch("/Notification/GetUserNotifications")
 				.then(({ data, error }) => {
 					if (data.value) {
 						console.log(data.value);
@@ -66,5 +66,27 @@ export const useNotificationsStore = defineStore({
 				this.newNotifications = [];
 			}
 		},
+
+		confirmNotification(notificationId) {
+			useWebApiFetch('Notification/ConfirmNotification', {
+                method: 'POST',
+                body: {id : notificationId},
+                watch: false,
+                onResponseError: ({ response }) => {
+                    let message = getErrorMessage(response, {})
+                    globalMessageStore.showErrorMessage(message);
+                }
+            })
+			  .then(({ data, error }) => {
+				if (data.value) {
+					this.loadNotifications();
+				} else if (error.value) {
+				  console.log("Nie udało się usunąć powiadomienia");
+				}
+			  })
+			  .finally(() => {
+				console.log(this.notifications);
+			  });
+		  },
 	},
 });
