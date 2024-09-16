@@ -19,11 +19,6 @@
 							:textFieldStyle="{ minWidth: '300px' }"
 						/>
 					</v-list-item>
-					<!-- <v-list-item class="d-flex align-center">
-						<v-btn variant="flat" icon>
-							<v-icon>mdi-filter-plus</v-icon>
-						</v-btn>
-					</v-list-item> -->
 				</v-list>
 			</v-menu>
 		</v-btn>

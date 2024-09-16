@@ -39,16 +39,7 @@
 				</template>
 
 				<template v-slot:append>
-					<v-btn to="/notifications" variant="flat" icon>
-						<v-badge
-							v-if="notificationsLength > 0"
-							:content="notificationsLength"
-							color="red"
-						>
-							<v-icon>mdi-bell</v-icon>
-						</v-badge>
-						<v-icon v-else>mdi-bell-outline</v-icon>
-					</v-btn>
+					<Notifications />
 				</template>
 
 				<!-- w analogiczny sposob mamy tutaj subkomponenty listItem 
@@ -91,7 +82,6 @@
 				<NuxtPage v-if="userStore.$state.isLoggedIn === true" />
 			</div>
 		</v-main>
-		<WarningsDialog v-model:show="show"/>
 		<LoginDialog></LoginDialog>
 		
 	
@@ -128,14 +118,8 @@ const drawer = ref(null);
 // stala reaktywna, ktora
 const userStore = useUserStore();
 const accountStore = useAccountStore();
-const notificationsStore = useNotificationsStore();
 const antiForgeryStore = useAntiForgeryStore();
 
-const notificationsLength = computed(() => {
-	console.log(notificationsStore.notifications);
-	console.log(notificationsStore.notifications?.length);
-	return notificationsStore.notifications?.length || 0;
-});
 
 const menuItems = [
 	{
