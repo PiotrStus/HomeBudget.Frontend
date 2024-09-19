@@ -88,6 +88,7 @@ import { useTransactionsFilters } from '~/composables/transactions/useTransactio
 
 
 
+
 const {
 	dateFilter,
 	categoryFilter,
@@ -127,7 +128,7 @@ const loadTransactions = async (page = 1, pageSize = 10, countPages = null) => {
 		"AmountMax": "Do"
     };
 	const messageMap = {
-        "ScalePrecisionValidator": "Przekroczono dozwolony zakres kwoty. Maksymalna kwota wynosi 999999.99 zł."
+        "ScalePrecisionValidator": "Przekroczono dozwolony zakres kwoty. Kwota musi zawierać się w przedziale od -999999,99 zł do 999999,99 zł."
     };
 	return useWebApiFetch("/Transaction/GetTransactions", {
 		query: {

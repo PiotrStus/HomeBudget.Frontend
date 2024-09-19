@@ -36,7 +36,7 @@ export const useFormValidationRules = () => {
 			return (value) => (!value || value.length <= max) || `Przekroczono maksymalną długość: ${max}`;
 		},
 		ruleMaxNumberWithDecimals: (maxDigitsBeforeDecimal, maxDigitsAfterDecimal) => {
-			const patttern = new RegExp(`^\\d{1,${maxDigitsBeforeDecimal}}(\\.\\d{0,${maxDigitsAfterDecimal}})?$`);
+			const patttern = new RegExp(`^-?\\d{1,${maxDigitsBeforeDecimal}}(\\.\\d{0,${maxDigitsAfterDecimal}})?$`);
 			
 			return (value) => {
 			  if (!value) return true; 

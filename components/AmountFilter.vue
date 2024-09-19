@@ -22,6 +22,7 @@
 												:style="{ minWidth: '200px' }"
 												:clearable="true"
 												@click:clear="() => clearFilter('localAmountMinFilter')"
+												:rules="[ruleMaxNumberWithDecimals(6,2)]"
 											/>
 										<v-number-input
 											:model-value="localAmountMaxFilter"
@@ -32,6 +33,7 @@
 											:style="{ minWidth: '200px' }"
 											:clearable="true"
 											@click:clear="() => clearFilter('localAmountMaxFilter')"
+											:rules="[ruleMaxNumberWithDecimals(6,2)]"
 											/>
 										</div>
 									</v-list-item>
@@ -45,6 +47,7 @@
 import { VNumberInput } from "vuetify/labs/VNumberInput";
 const localAmountMinFilter = defineModel("amountMinFilter");
 const localAmountMaxFilter = defineModel("amountMaxFilter");
+const { ruleMaxNumberWithDecimals } = useFormValidationRules();
 
 const clearFilter = (filterName) => {
   if (filterName === "localAmountMinFilter") {
