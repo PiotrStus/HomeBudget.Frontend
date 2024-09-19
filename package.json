@@ -13,8 +13,10 @@
     "@date-io/date-fns": "^3.0.0",
     "@mdi/font": "^7.4.47",
     "@pinia/nuxt": "^0.5.1",
+    "echarts": "^5.5.1",
     "nuxt": "^3.12.2",
     "pinia": "^2.1.7",
+    "vue-echarts": "^7.0.3",
     "vuedraggable": "^4.1.0"
   },
   "devDependencies": {
