@@ -9,14 +9,6 @@
 			<VCardTitle class="text-center">Dodaj nową operację</VCardTitle>
 			<VForm @submit.prevent="submit" :disabled="loading">
 				<VCardText>
-					<!-- <v-date-input 
-						label="Data operacji"
-						v-model="viewModel.date"
-						:rules="[ruleRequired, ruleDate]"
-						prepend-icon="" 
-						variant="outlined"
-						class="mb-2"
-					/> -->
 					<TextFieldDatePicker 
 						class="mb-2"
 						v-model="viewModel.date"
@@ -68,6 +60,7 @@
 						color="primary"
 						type="submit"
 						variant="elevated"
+						:loading="loading"
 					>
 						Dodaj
 					</v-btn>
