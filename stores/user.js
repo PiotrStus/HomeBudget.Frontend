@@ -58,6 +58,7 @@ export const useUserStore = defineStore({
 		// wolamy akcje UserLogout, ktora jest w API
 		// w [HttpPost] Logout()
 		logout() {
+			const notificationsStore = useNotificationsStore();
 			useWebApiFetch("/User/Logout", {
 				// jak jest metoda GET to nie trzeba podawac zadnych paramaetrow
 				// jak POST to trzeba
@@ -67,6 +68,7 @@ export const useUserStore = defineStore({
 				if (response.data.value) {
 					this.isLoggedIn = false;
 					this.userData = null;
+					notificationsStore.clearNotifications();
 				}
 			});
 		}

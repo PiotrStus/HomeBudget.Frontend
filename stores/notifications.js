@@ -96,5 +96,12 @@ export const useNotificationsStore = defineStore({
 				console.log(this.notifications);
 			  });
 		  },
+
+		clearNotifications() {
+			this.notifications = [];
+			this.lastNotification = null;
+			this.isNewNotification = false;
+			this.newNotifications = [];
+		},
 	},
 });
