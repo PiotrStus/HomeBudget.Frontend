@@ -145,7 +145,6 @@ const loadPlannedCategories = async () => {
 
 
 onMounted(async () => {
-    await categoriesStore.loadCategories();
     loadPlannedCategories();
 });
 

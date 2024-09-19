@@ -234,7 +234,7 @@ const deleteMonthlyBudget = (item) => {
 };
 
 const updateBudgets = () => {
-	yearBudgetsStore.loadYearBudgets().then;
+	yearBudgetsStore.loadYearBudgets(true).then;
 	if (yearId.value) {
 		viewModel.value.selectedYearId = yearId.value;
 	} else {
@@ -246,5 +246,6 @@ const monthlyBudgetAdded = (monthlyBudgetId) => {
 	router.push({ path: `/budgets/planned/${monthlyBudgetId}` });
 };
 
-onMounted(updateBudgets);
+
+
 </script>

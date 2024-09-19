@@ -236,7 +236,6 @@ const handleTransactionAdded = () => {
 }
 
 onMounted(async () => {
-	await categoriesStore.loadCategories();
 	await loadTransactions(currentPage.value, pageSize.value);
 });
 </script>

@@ -7,6 +7,7 @@ export const useCategoriesStore = defineStore({
 	state: () => {
 		return {
 		loading: false,
+		loaded: false,
 		categories: []
 	};
 	},
@@ -17,8 +18,13 @@ export const useCategoriesStore = defineStore({
 	},
 
 	actions: {
-		loadCategories() {
+		loadCategories(force = false) {
 			this.loading = true;
+			if (!force && this.loaded) {
+				return Promise.resolve().finally(() => {
+					this.loading = false;
+				});
+			}
 			return useWebApiFetch('/Category/GetAllCategories')
 				.then(({ data, error}) => {
 					if (data.value) {

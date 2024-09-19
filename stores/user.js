@@ -24,6 +24,8 @@ export const useUserStore = defineStore({
 			// dodajemy accountStore
 			const accountStore = useAccountStore();
 			const notificationsStore = useNotificationsStore();
+			const yearBudgetsStore = useYearBudgetsStore();
+			const categoriesStore = useCategoriesStore();
 			// ustawiamy loading na true
 			this.loading = true;
 			// uzywamy useWebApiFetch
@@ -45,6 +47,8 @@ export const useUserStore = defineStore({
 						// dodajemy informacje o aktualnie zalogowanym koncie
 						accountStore.loadCurrentAccount();
 						notificationsStore.loadNotifications();
+						yearBudgetsStore.loadYearBudgets();
+						categoriesStore.loadCategories();
 					} else if (error.value) {
 						this.isLoggedIn = false;
 						this.userData = null;

@@ -54,9 +54,7 @@ const removeCategory = (categoryToRemove) => {
 };
 
 const updateItems = () => {
-    categoriesStore.loadCategories();
+    categoriesStore.loadCategories(true);
 };
-
-onMounted(updateItems);
 
 </script>

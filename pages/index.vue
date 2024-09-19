@@ -171,7 +171,7 @@ const yearBudgetsStore = useYearBudgetsStore();
 const plannedExpenseCategories = ref([]);
 const plannedIncomeCategories = ref([]);
 const selectedMonthId = ref(null);
-const monthItems = ref([]);
+
 const loading = ref(false);
 
 
@@ -199,17 +199,19 @@ const loadPlannedCategories = async (monthId) => {
 		});
 };
 
-const loadAvailableMonths = () => {
-	yearBudgetsStore.loadYearBudgets().then(() => {
-		monthItems.value = yearBudgetsStore.yearBudgets.flatMap(budget =>
+
+const monthItems = computed(() => {
+	if (yearBudgetsStore.loaded) {
+		return yearBudgetsStore.yearBudgets.flatMap(budget =>
 			budget.monthlyBudgets.map(month => ({
 				title: `${getMonthName(month.month)} ${budget.year}`,
 				value: month.id
 			}))
 		);
-	});
-	console.log(monthItems.value);
-};
+	}
+	return [];
+ });
+
 
 
 
@@ -249,7 +251,7 @@ const disabled = computed(() => selectedMonthId.value === null);
 
 
 
-onMounted(() => {loadAvailableMonths();});
+
 </script>
 
 

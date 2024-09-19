@@ -142,7 +142,6 @@ const loadData = () => {
 
 
 onMounted(async () => {
-	await categoriesStore.loadCategories();
 	await loadData();
 	});
 
