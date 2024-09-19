@@ -14,7 +14,8 @@
 										<div class="d-block align-center w-100">
 											<v-number-input
 												class="mt-4"
-												v-model="debouncedMinAmount"
+												:model-value="localAmountMinFilter"
+												@update:model-value="$event => updateMinFilterDebounced($event)"
 												variant="outlined"
 												controlVariant="default"
 												label="Od"
@@ -22,8 +23,9 @@
 												:clearable="true"
 												@click:clear="() => clearFilter('localAmountMinFilter')"
 											/>
-											<v-number-input
-											v-model="debouncedMaxAmount"	
+										<v-number-input
+											:model-value="localAmountMaxFilter"
+											@update:model-value="$event => updateMaxFilterDebounced($event)"	
 											variant="outlined"
 											controlVariant="default"
 											label="Do"
@@ -44,67 +46,23 @@ import { VNumberInput } from "vuetify/labs/VNumberInput";
 const localAmountMinFilter = defineModel("amountMinFilter");
 const localAmountMaxFilter = defineModel("amountMaxFilter");
 
-
 const clearFilter = (filterName) => {
   if (filterName === "localAmountMinFilter") {
-    debouncedMinAmount.value = null;
+    localAmountMinFilter.value = null;
 	
   } else if (filterName === "localAmountMaxFilter") {
-    debouncedMaxAmount.value = null;
+    localAmountMaxFilter.value = null;
   }
 };
 
-const debouncedMinAmount = ref(localAmountMinFilter.value);
-const debouncedMaxAmount = ref(localAmountMaxFilter.value);
-
-watch(debouncedMinAmount, (newVal) => {
-	if (newVal !== localAmountMinFilter.value) {
-	console.log('znowu sie zmieniam Min')
-	updateMinFilterDebounced(newVal);
-	console.log(localAmountMinFilter.value);
-	}
-});
-
-watch(debouncedMaxAmount, (newVal) => {
-	if (newVal !== localAmountMaxFilter.value) {
-	console.log('znowu sie zmieniam Max')
-	updateMaxFilterDebounced(newVal);
-	console.log(localAmountMaxFilter.value);
-	}
-});
-
-watch(localAmountMinFilter, (newVal) => {
-	if (newVal !== debouncedMinAmount.value) {
-	console.log('znowu sie zmieniam local Min')
-	debouncedMinAmount.value = newVal;
-	console.log(debouncedMinAmount.value);
-	}
-});
-
-watch(localAmountMaxFilter, (newVal) => {
-	if (newVal !== debouncedMaxAmount.value) {
-	console.log('znowu sie zmieniam local Max')
-	debouncedMaxAmount.value = newVal;
-	console.log(debouncedMaxAmount.value);
-	}
-});
-
-
 const updateMinFilterDebounced = useDebounceFn((value) => {
   localAmountMinFilter.value = value;
-  console.log(localAmountMinFilter.value);
-}, 1300);
+}, 500);
 
 const updateMaxFilterDebounced = useDebounceFn((value) => {
   localAmountMaxFilter.value = value;
-  console.log(localAmountMaxFilter.value);
-}, 1300);
+}, 500);
 
-watch([debouncedMinAmount, debouncedMaxAmount, localAmountMinFilter, localAmountMaxFilter], () => {
-	console.log(debouncedMinAmount.value);
-	console.log(localAmountMinFilter.value);
-	console.log(debouncedMaxAmount.value);
-	console.log(localAmountMaxFilter.value);
-});
+
 
 </script>
