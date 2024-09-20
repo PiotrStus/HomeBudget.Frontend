@@ -6,7 +6,6 @@ export function useTransactionsFilters(listingId) {
   const filters = ref(globalFiltersStore.getFilters(listingId));
 
   watch(filters, (newValue) => {
-    console.log(filters)
     globalFiltersStore.setFilters(listingId, newValue);
   }, { deep: true });
 
@@ -68,11 +67,6 @@ export function useTransactionsFilters(listingId) {
     pageSize.value = size;
   };
   
-  onMounted(() => {
-    const filters = ref(globalFiltersStore.getFilters(listingId));
-    console.log(filters.value); // Loguje wartość filtrów po zamontowaniu
-  });
-
   return {
     dateFilter,
     categoryFilter,
