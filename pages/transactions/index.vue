@@ -99,7 +99,7 @@ const {
 	totalItems,
 	clearAllFilters,
 	handlePageChange,
-	handlePageSizeChange,
+	handlePageSizeChange
 } = useTransactionsFilters(listingId);
 
 
@@ -160,10 +160,6 @@ const loadTransactions = async (page = 1, pageSize = 10, countPages = null) => {
 		});
 };
 
-// const handleTransactionAdded = () => {
-// 	loadTransactions(currentPage.value, pageSize.value, true);
-// 	// totalItems.value = totalItems.value + 1;
-// }
 
 const resetPage = () => {
   currentPage.value = 1;
@@ -219,7 +215,6 @@ const deleteTransaction = (item) => {
 								"Budżet miesięczny został usunięty"
 							);
 							loadTransactions(currentPage.value, pageSize.value, true);
-							// totalItems.value = totalItems.value - 1;
 						}
 					})
 					.finally(() => {

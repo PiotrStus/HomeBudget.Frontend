@@ -3,10 +3,12 @@ import { useStorage } from "@vueuse/core";
 export function useTransactionsFilters(listingId) {
   const globalFiltersStore = useGlobalFiltersStore();
 
-  const filters = useStorage(
-    `${listingId}-filters`,
-    globalFiltersStore.getFilters(listingId)
-  );
+  const filters = ref(globalFiltersStore.getFilters(listingId));
+
+  watch(filters, (newValue) => {
+    console.log(filters)
+    globalFiltersStore.setFilters(listingId, newValue);
+  }, { deep: true });
 
   const dateFilter = computed({
     get: () => filters.value.dateFilter || null,
@@ -30,9 +32,7 @@ export function useTransactionsFilters(listingId) {
 
   const currentPage = computed({
     get: () => {
-		console.log('filters.value.currentPage:', filters.value.currentPage);
 		const page = filters.value.currentPage ?? 1;
-		console.log('page:', page);
 		return page;
 	  },
     set: (value) => (filters.value.currentPage = value),
@@ -48,10 +48,6 @@ export function useTransactionsFilters(listingId) {
     set: (value) => (filters.value.totalItems = value !== null ? value : null),
   });
 
-  const updateTransactionsFilters = () => {
-    globalFiltersStore.setFilters(listingId, { ...filters.value });
-  };
-
   const clearAllFilters = () => {
     filters.value = {
       dateFilter: null,
@@ -62,7 +58,6 @@ export function useTransactionsFilters(listingId) {
 	  totalItems: totalItems.value,
 	  pageSize: pageSize.value
     };
-    updateTransactionsFilters();
   };
 
   const handlePageChange = (page) => {
@@ -72,8 +67,11 @@ export function useTransactionsFilters(listingId) {
   const handlePageSizeChange = (size) => {
     pageSize.value = size;
   };
-
-  watch(filters, updateTransactionsFilters);
+  
+  onMounted(() => {
+    const filters = ref(globalFiltersStore.getFilters(listingId));
+    console.log(filters.value); // Loguje wartość filtrów po zamontowaniu
+  });
 
   return {
     dateFilter,
@@ -83,7 +81,6 @@ export function useTransactionsFilters(listingId) {
     currentPage,
     pageSize,
     totalItems,
-    updateTransactionsFilters,
     clearAllFilters,
     handlePageChange,
     handlePageSizeChange,
