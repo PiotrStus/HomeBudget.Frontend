@@ -19,14 +19,17 @@
 			</v-btn>
 		</v-card-actions>
 	</v-card>
+	<v-card v-if="!disabled">
+		<v-toolbar color="transparent">
+			<v-toolbar-title class="text-center mx-auto">Podsumowanie miesiąca: {{ currentDate.format("MMMM YYYY") }}</v-toolbar-title>
+		</v-toolbar>
+	</v-card>
 	<v-card class="mt-5" v-if="!disabled">
-		<v-card-text>
-			<VChart class="chart" :option="option1" autoresize />
-		</v-card-text>
+		<MonthlyBalanceChart />
 	</v-card>
 	<v-card class="mt-5" v-if="!disabled">
 		<v-card-text>
-			<VChart class="chart" :option="option2" autoresize />
+			<VChart class="chart" :option="option1" autoresize />
 		</v-card-text>
 	</v-card>
 </template>
@@ -65,6 +68,7 @@ use([
 //b - nazwa elementu
 //c - wartość
 //d - procent
+
 
 const option1 = ref({
 	title: {
@@ -113,48 +117,6 @@ const option1 = ref({
 	],
 });
 
-////////////////////////////////////////////////////////////////////////////
-// 2nd chart
-////////////////////////////////////////////////////////////////////////////
-const option2 = ref({
-	title: {
-		text: "Porównanie planowanych i rzeczywistych wydatków",
-		left: "center",
-	},
-	tooltip: {
-		trigger: "axis",
-	},
-	legend: {
-		data: ["Planowane", "Rzeczywiste"],
-		left: "center",
-		top: "bottom",
-	},
-	xAxis: {
-		type: "category",
-		data: ["Jedzenie", "Transport", "Zakupy", "Rozrywka", "Inne"],
-	},
-	yAxis: {
-		type: "value",
-	},
-	series: [
-		{
-			name: "Planowane",
-			type: "bar",
-			data: [500, 300, 200, 100, 150],
-		},
-		{
-			name: "Rzeczywiste",
-			type: "bar",
-			data: [450, 320, 180, 120, 140],
-		},
-	],
-});
-
-const exampleBarData = {
-	categories: ["Jedzenie", "Transport", "Zakupy", "Rozrywka", "Inne"],
-	planned: [500, 300, 200, 100, 150],
-	actual: [450, 320, 180, 120, 140],
-};
 
 ////////////////////////////////////////////////////////////////////////////
 const yearBudgetsStore = useYearBudgetsStore();
@@ -229,9 +191,12 @@ watch(plannedExpenseCategories, (newValues) => {
 
 const disabled = computed(() => loaded.value === false);
 
+const currentDate = ref('');
+
 onMounted(() => {
-	const currentDate = dayjs();
-	loadPlannedCategories(currentDate.format());
+	const today = dayjs();
+	currentDate.value = today;
+	loadPlannedCategories(currentDate.value.format());
 });
 </script>
 
