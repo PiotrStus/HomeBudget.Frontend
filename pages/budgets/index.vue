@@ -21,7 +21,7 @@
 							<v-btn
 								variant="flat"
 								prepend-icon="mdi-plus"
-								@click="showDialog = true"
+								@click="showYearDialog = true"
 								>Dodaj</v-btn
 							>
 						</template>
@@ -118,9 +118,10 @@
 			v-model:show="showMonthlyDialog"
 			v-model:yearIdBudget="yearId"
 			@monthlyBudgetAdded="monthlyBudgetAdded"
+			@noYearBudgets="handleNoYearBudgets"
 		/>
 		<AddYearBudgetDialog
-			v-model:show="showDialog"
+			v-model:show="showYearDialog"
 			v-model:yearIdBudget="yearId"
 			@yearBudgetAdded="updateBudgets"
 		/>
@@ -131,7 +132,7 @@
 <script setup>
 import _ from "lodash";
 import MonthsEnum from "~/utils/months";
-const showDialog = ref(false);
+const showYearDialog = ref(false);
 const showMonthlyDialog = ref(false);
 const globalMessageStore = useGlobalMessageStore();
 const { getErrorMessage } = useWebApiResponseParser();
@@ -149,7 +150,9 @@ const headers = ref([
 ]);
 
 const yearBudgetsWithAllOption = computed(() => {
-	return [{ id: null, year: "Wszystkie" }, ...yearBudgetsStore.yearBudgets];
+	return yearBudgetsStore.yearBudgets.length > 0
+    ? [{ id: null, year: "Wszystkie" }, ...yearBudgetsStore.yearBudgets]
+    : yearBudgetsStore.yearBudgets;
 });
 
 const formattedBudgets = computed(() => {
@@ -243,9 +246,14 @@ const updateBudgets = () => {
 };
 
 const monthlyBudgetAdded = (monthlyBudgetId) => {
+	yearBudgetsStore.loadYearBudgets(true);
 	router.push({ path: `/budgets/planned/${monthlyBudgetId}` });
 };
 
-
+const handleNoYearBudgets = () =>
+{
+	showMonthlyDialog.value = false;
+	showYearDialog.value = true;
+}
 
 </script>

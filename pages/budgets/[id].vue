@@ -99,6 +99,7 @@ const save = () => {
 	})
 	.then((response) => {
 		if (response.data.value) {
+			yearBudgetsStore.loadYearBudgets(true);
 			globalMessageStore.showSuccessMessage('Zapisano zmiany.');
 			router.push({ path: '/budgets' });
 		}
