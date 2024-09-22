@@ -8,6 +8,9 @@ This project is a home budget management frontend application built using Nuxt.j
 <br> </br>
 ![alt text](image-1.png)
 
+
+## How to run the project
+
 To get started, make sure to install the dependencies for the project:
 
 ```bash
@@ -41,7 +44,21 @@ yarn dev
 bun run dev
 ```
 
+## Commands for Development
 
+The following commands are available for development and production management:
+
+```bash
+# Start the development server
+npm run dev
+
+# Build the project for production
+npm run build
+
+# Preview the production build
+npm run preview
+
+```
 ## Features
 
 This home budget application includes the following features:
@@ -58,22 +75,6 @@ This home budget application includes the following features:
 - **Spending Limit Notifications**: Receive notifications if you exceed the budget in any category for a given month.
 - **RPC-Based API Communication**: The entire application communicates with the backend API using Remote Procedure Call (RPC).
 - **Responsive Design**: The UI is fully responsive for use on both desktop and mobile devices.
-
-## Commands for Development
-
-The following commands are available for development and production management:
-
-```bash
-# Start the development server
-npm run dev
-
-# Build the project for production
-npm run build
-
-# Preview the production build
-npm run preview
-
-```
 
 ## Future Enhancements
 
