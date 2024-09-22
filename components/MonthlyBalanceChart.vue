@@ -13,7 +13,7 @@ import {
 	TitleComponent,
 	TooltipComponent,
 	LegendComponent,
-	GridComponent,
+	GridComponent
 } from "echarts/components";
 
 const echartsTheme = computed(() =>
@@ -28,17 +28,14 @@ use([
 	TitleComponent,
 	TooltipComponent,
 	LegendComponent,
-	GridComponent,
-	BarChart,
+	GridComponent
 ]);
 
-//a - nazwa kategorii
-//b - nazwa elementu
-//c - wartość
-//d - procent
 
 import { useTheme } from "vuetify";
 const theme = useTheme();
+import { useDisplay } from "vuetify";
+const { mobile } = useDisplay();
 
 const backgroundColor = ref(theme.global.current.value.colors.surface);
 
@@ -62,6 +59,7 @@ const option2 = computed(() => ({
 		axisPointer: {
 			type: "shadow",
 		},
+		valueFormatter: (value) => `${value} zł`
 	},
 	legend: {
 		data: ["Planowane", "Rzeczywiste"],
@@ -69,6 +67,9 @@ const option2 = computed(() => ({
 		orient: "horizontal",
 		left: "center",
 		top: "bottom",
+	},
+	grid: {
+		left: mobile.value ? '15%' : '10%',
 	},
 	xAxis: {
 		type: "category",
@@ -78,7 +79,7 @@ const option2 = computed(() => ({
 		type: "value",
 		max: Math.max(...exampleBarData.planned, ...exampleBarData.actual),
 		axisLabel: {
-		formatter: '{value} zł'
+		formatter: '{value} zł',
 		}
 	},
 	series: [
@@ -119,9 +120,9 @@ const option2 = computed(() => ({
 }));
 
 const exampleBarData = {
-	categories: ["Jedzenie", "Transport", "Mieszkanie", "Rozrywka", "Inne"],
-	planned: [2000, 1000, 1500, 300, 150],
-	actual: [450, 320, 1200, 120, 500],
+	categories: ["Jedzenie", "Transport", "Mieszkanie", "Rozrywka", "Edukacja", "Inne"],
+	planned: [2000, 1000, 1500, 300, 150, 100],
+	actual: [450, 320, 1200, 120, 500, 100],
 };
 </script>
 
