@@ -1,12 +1,8 @@
 <template>
-		<v-card-text>
-			<VChart class="chart" :option="option2" autoresize />
-		</v-card-text>
+	<v-card-text>
+		<VChart class="chart" :option="option2" autoresize />
+	</v-card-text>
 </template>
-
-
-
-
 
 <script setup>
 import VChart, { THEME_KEY } from "vue-echarts";
@@ -20,10 +16,10 @@ import {
 	GridComponent,
 } from "echarts/components";
 
-const echartsTheme = computed(() => theme.global.current.value.dark ? 'dark' : 'light');
+const echartsTheme = computed(() =>
+	theme.global.current.value.dark ? "dark" : "light"
+);
 provide(THEME_KEY, echartsTheme);
-
-
 
 use([
 	CanvasRenderer,
@@ -41,61 +37,92 @@ use([
 //c - wartość
 //d - procent
 
-
 import { useTheme } from "vuetify";
 const theme = useTheme();
 
 const backgroundColor = ref(theme.global.current.value.colors.surface);
 
-watch(() => theme.global.current.value, (newVal) => {
-  backgroundColor.value = newVal.colors.surface;
-});
+watch(
+	() => theme.global.current.value,
+	(newVal) => {
+		backgroundColor.value = newVal.colors.surface;
+	}
+);
 
 const option2 = computed(() => ({
-	backgroundColor: backgroundColor.value,
 	title: {
 		text: "Porównanie wydatków",
 		subtext: "Planowane vs rzeczywiste",
 		left: "center",
-		align: "right"
+		align: "right",
 	},
+	backgroundColor: backgroundColor.value,
 	tooltip: {
 		trigger: "axis",
+		axisPointer: {
+			type: "shadow",
+		},
 	},
 	legend: {
 		data: ["Planowane", "Rzeczywiste"],
+		type: "scroll",
+		orient: "horizontal",
 		left: "center",
 		top: "bottom",
 	},
 	xAxis: {
 		type: "category",
-		data: ["Jedzenie", "Transport", "Zakupy", "Rozrywka", "Inne"],
+		data: exampleBarData.categories,
 	},
 	yAxis: {
 		type: "value",
+		max: Math.max(...exampleBarData.planned, ...exampleBarData.actual),
+		axisLabel: {
+		formatter: '{value} zł'
+		}
 	},
 	series: [
 		{
 			name: "Planowane",
 			type: "bar",
-			data: [500, 300, 200, 100, 150],
+			data: exampleBarData.planned,
+			itemStyle: {
+				color: "#91cc75",
+				opacity: 0.5,
+			},
+			barGap: "-100%",
+			z: 1,
 		},
 		{
 			name: "Rzeczywiste",
 			type: "bar",
-			data: [450, 320, 180, 120, 140],
+			data: exampleBarData.actual.map((actual, index) => ({
+				value: actual,
+				itemStyle: {
+					color: actual > exampleBarData.planned[index] ? "#ee6666" : "#5470c6",
+				},
+			})),
+			label: {
+				show: true,
+				position: "inside",
+				formatter: (params) => {
+					const actual = exampleBarData.actual[params.dataIndex];
+					const planned = exampleBarData.planned[params.dataIndex];
+					const percent = ((actual / planned) * 100).toFixed(2);
+					return `${percent} %`;
+				},
+			},
+			barGap: "-100%",
+			z: 2,
 		},
 	],
 }));
 
 const exampleBarData = {
-	categories: ["Jedzenie", "Transport", "Zakupy", "Rozrywka", "Inne"],
-	planned: [500, 300, 200, 100, 150],
-	actual: [450, 320, 180, 120, 140],
+	categories: ["Jedzenie", "Transport", "Mieszkanie", "Rozrywka", "Inne"],
+	planned: [2000, 1000, 1500, 300, 150],
+	actual: [450, 320, 1200, 120, 500],
 };
-
-
-
 </script>
 
 <style scoped>
