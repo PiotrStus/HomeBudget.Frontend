@@ -1,10 +1,14 @@
 <template>
 	<v-card-text>
-		<VChart class="chart" :option="option2" autoresize />
+		<VChart class="chart" :option="option" autoresize />
 	</v-card-text>
 </template>
 
 <script setup>
+import { useTheme } from "vuetify";
+const theme = useTheme();
+import { useDisplay } from "vuetify";
+const { mobile } = useDisplay();
 import VChart, { THEME_KEY } from "vue-echarts";
 import { use } from "echarts/core";
 import { CanvasRenderer } from "echarts/renderers";
@@ -31,11 +35,12 @@ use([
 	GridComponent
 ]);
 
-
-import { useTheme } from "vuetify";
-const theme = useTheme();
-import { useDisplay } from "vuetify";
-const { mobile } = useDisplay();
+const props = defineProps({ 
+	date: {
+		type: String,
+		required: true,
+	}
+})
 
 const backgroundColor = ref(theme.global.current.value.colors.surface);
 
@@ -46,7 +51,7 @@ watch(
 	}
 );
 
-const option2 = computed(() => ({
+const option = computed(() => ({
 	title: {
 		text: "Porównanie wydatków",
 		subtext: "Planowane vs rzeczywiste",
@@ -69,24 +74,31 @@ const option2 = computed(() => ({
 		top: "bottom",
 	},
 	grid: {
-		left: mobile.value ? '15%' : '10%',
+		left: mobile.value ? "20%" : "10%",
 	},
 	xAxis: {
 		type: "category",
-		data: exampleBarData.categories,
+		data: barExpenseData.value.categories,
+		axisLabel: {
+			show: !mobile.value,
+			interval: 0, 
+		},
 	},
 	yAxis: {
 		type: "value",
-		max: Math.max(...exampleBarData.planned, ...exampleBarData.actual),
+		max: Math.max(
+			...barExpenseData.value.planned,
+			...barExpenseData.value.actual
+		),
 		axisLabel: {
-		formatter: '{value} zł',
-		}
+			formatter: "{value} zł",
+		},
 	},
 	series: [
 		{
 			name: "Planowane",
 			type: "bar",
-			data: exampleBarData.planned,
+			data: barExpenseData.value.planned,
 			itemStyle: {
 				color: "#91cc75",
 				opacity: 0.5,
@@ -97,20 +109,25 @@ const option2 = computed(() => ({
 		{
 			name: "Rzeczywiste",
 			type: "bar",
-			data: exampleBarData.actual.map((actual, index) => ({
+			data: barExpenseData.value.actual.map((actual, index) => ({
 				value: actual,
 				itemStyle: {
-					color: actual > exampleBarData.planned[index] ? "#ee6666" : "#5470c6",
+					color:
+						actual > barExpenseData.value.planned[index]
+							? "#ee6666"
+							: "#5470c6",
 				},
 			})),
 			label: {
-				show: true,
+				show: mobile.value ? (params) => params.dataIndex % 2 === 0 : true,
 				position: "inside",
+				fontSize: mobile.value ? 7 : 13,
+				offset: [0, -3],
 				formatter: (params) => {
-					const actual = exampleBarData.actual[params.dataIndex];
-					const planned = exampleBarData.planned[params.dataIndex];
+					const actual = barExpenseData.value.actual[params.dataIndex];
+					const planned = barExpenseData.value.planned[params.dataIndex];
 					const percent = ((actual / planned) * 100).toFixed(2);
-					return `${percent} %`;
+					return `${percent}%`;
 				},
 			},
 			barGap: "-100%",
@@ -119,11 +136,74 @@ const option2 = computed(() => ({
 	],
 }));
 
-const exampleBarData = {
-	categories: ["Jedzenie", "Transport", "Mieszkanie", "Rozrywka", "Edukacja", "Inne"],
-	planned: [2000, 1000, 1500, 300, 150, 100],
-	actual: [450, 320, 1200, 120, 500, 100],
+const barExpenseData = ref({
+	categories: [],
+	planned: [],
+	actual: [],
+});
+
+const barIncomeData = ref({
+	categories: [],
+	planned: [],
+	actual: [],
+});
+
+const loading = ref(false);
+const loaded = ref(false);
+
+const expanseBalanceCategories = ref([]);
+const incomeBalanceCategories = ref([]);
+
+const loadMonthlyBalance = async (date) => {
+	loading.value = true;
+	useWebApiFetch("/HomePage/GetMonthlyBalanceQuery", {
+		query: { date },
+	})
+		.then(({ data, error }) => {
+			if (data.value) {
+				if (data.value.plannedCategories?.length > 0) {
+					loaded.value = true;
+				}
+				expanseBalanceCategories.value =
+					data.value.monthlyBalanceCategories.filter(
+						(category) => category.categoryType === "Expense"
+					);
+				incomeBalanceCategories.value =
+					data.value.monthlyBalanceCategories.filter(
+						(category) => category.categoryType === "Income"
+					);
+				barExpenseData.value.categories = expanseBalanceCategories.value.map(
+					(item) => item.categoryName
+				);
+				barIncomeData.value.categories = incomeBalanceCategories.value.map(
+					(item) => item.categoryName
+				);
+				barExpenseData.value.planned = expanseBalanceCategories.value.map(
+					(item) => item.plannedAmount
+				);
+				barIncomeData.value.planned = incomeBalanceCategories.value.map(
+					(item) => item.plannedAmount
+				);
+				barExpenseData.value.actual = expanseBalanceCategories.value.map(
+					(item) => item.actualAmount
+				);
+				barIncomeData.value.actual = incomeBalanceCategories.value.map(
+					(item) => item.actualAmount
+				);
+			} else if (error.value) {
+				loaded.value = false;
+				barExpenseData.value = [];
+				barIncomeData.value = [];
+			}
+		})
+		.finally(() => {
+			loading.value = false;
+		});
 };
+
+onMounted(() => {
+	loadMonthlyBalance(props.date);
+});
 </script>
 
 <style scoped>

@@ -25,7 +25,7 @@
 		</v-toolbar>
 	</v-card>
 	<v-card class="mt-5" v-if="!disabled">
-		<MonthlyBalanceChart />
+		<MonthlyBalanceChart :date="currentDate.format()" />
 	</v-card>
 	<v-card class="mt-5" v-if="!disabled">
 		<v-card-text>
@@ -191,11 +191,9 @@ watch(plannedExpenseCategories, (newValues) => {
 
 const disabled = computed(() => loaded.value === false);
 
-const currentDate = ref('');
+const currentDate = ref(dayjs());
 
 onMounted(() => {
-	const today = dayjs();
-	currentDate.value = today;
 	loadPlannedCategories(currentDate.value.format());
 });
 </script>
