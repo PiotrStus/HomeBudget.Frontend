@@ -1,7 +1,9 @@
 <template>
+	<v-card class="mt-5" v-show="loaded && !disable">
 	<v-card-text>
 		<VChart class="chart" :option="option" autoresize />
 	</v-card-text>
+	</v-card>
 </template>
 
 <script setup>
@@ -19,6 +21,7 @@ import {
 	LegendComponent,
 	GridComponent
 } from "echarts/components";
+
 
 const echartsTheme = computed(() =>
 	theme.global.current.value.dark ? "dark" : "light"
@@ -39,7 +42,11 @@ const props = defineProps({
 	date: {
 		type: String,
 		required: true,
-	}
+	},
+	disable: {
+		type: Boolean,
+		default: false,
+	},
 })
 
 const backgroundColor = ref(theme.global.current.value.colors.surface);
@@ -161,7 +168,7 @@ const loadMonthlyBalance = async (date) => {
 	})
 		.then(({ data, error }) => {
 			if (data.value) {
-				if (data.value.plannedCategories?.length > 0) {
+				if (data.value.monthlyBalanceCategories?.length > 0) {
 					loaded.value = true;
 				}
 				expanseBalanceCategories.value =
