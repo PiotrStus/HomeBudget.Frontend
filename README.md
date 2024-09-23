@@ -5,8 +5,7 @@ This project is a home budget management frontend application built using Nuxt.j
 
 ## Application Previews
 ![alt text](image.png)
-<br> </br>
-![alt text](image-1.png)
+![alt text](image-2.png)
 
 
 ## How to run the project
