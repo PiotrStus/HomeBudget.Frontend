@@ -1,5 +1,6 @@
 <template>
-	<v-card class="mt-5" v-show="loaded && !disable">
+	<v-skeleton-loader v-if="loading" type="card" />
+	<v-card class="mt-5" v-if="loaded">
 		<v-card-text>
 			<VChart class="chart" :option="option" autoresize />
 	</v-card-text>
@@ -147,7 +148,7 @@ watch(plannedExpenseCategories, (newValues) => {
 
 const props = defineProps({
 	date: {
-		type: String,
+		type: Object,
 		required: true,
 	},
 	disable: {
@@ -157,7 +158,7 @@ const props = defineProps({
 });
 
 onMounted(() => {
-	loadPlannedCategories(props.date);
+	loadPlannedCategories(props.date.format());
 });
 </script>
 

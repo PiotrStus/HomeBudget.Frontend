@@ -1,5 +1,6 @@
 <template>
-	<v-card class="mt-5" v-show="loaded && !disable">
+	<v-skeleton-loader v-if="loading" type="card" />
+	<v-card class="mt-5" v-if="loaded">
 	<v-card-text>
 		<VChart class="chart" :option="option" autoresize />
 	</v-card-text>
@@ -40,7 +41,7 @@ use([
 
 const props = defineProps({ 
 	date: {
-		type: String,
+		type: Object,
 		required: true,
 	},
 	disable: {
@@ -48,6 +49,7 @@ const props = defineProps({
 		default: false,
 	},
 })
+
 
 const backgroundColor = ref(theme.global.current.value.colors.surface);
 
@@ -163,7 +165,7 @@ const incomeBalanceCategories = ref([]);
 
 const loadMonthlyBalance = async (date) => {
 	loading.value = true;
-	useWebApiFetch("/HomePage/GetMonthlyBalanceQuery", {
+	useWebApiFetch("/HomePage/GetMonthlyBalance", {
 		query: { date },
 	})
 		.then(({ data, error }) => {
@@ -209,7 +211,7 @@ const loadMonthlyBalance = async (date) => {
 };
 
 onMounted(() => {
-	loadMonthlyBalance(props.date);
+	loadMonthlyBalance(props.date.format());
 });
 </script>
 
