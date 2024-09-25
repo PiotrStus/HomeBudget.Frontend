@@ -142,6 +142,11 @@ const menuItems = [
 		icon: "mdi-receipt-text-plus",
 		url: "/transactions",
 	},
+	{
+		name: "Raporty",
+		icon: "mdi-chart-line",
+		url: "/reports",
+	},
 ];
 
 function toggleTheme() {
