@@ -40,6 +40,7 @@ import { VSkeletonLoader } from 'vuetify/components';
 const loading = ref(false);
 const route = useRoute();
 const globalMessageStore = useGlobalMessageStore();
+const categoriesStore = useCategoriesStore();
 const { getErrorMessage} = useWebApiResponseParser();
 const {ruleRequired, ruleMaxLen} = useFormValidationRules();
 const saving = ref(false);
@@ -78,6 +79,7 @@ const save = () => {
 	.then((response) => {
 		if (response.data.value) {
 			globalMessageStore.showSuccessMessage('Zapisano zmiany.');
+			categoriesStore.loadCategories(true);
 			router.push({ path: '/categories' });
 		}
 		})
