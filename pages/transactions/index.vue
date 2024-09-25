@@ -212,7 +212,7 @@ const deleteTransaction = (item) => {
 					.then((response) => {
 						if (response.data.value) {
 							globalMessageStore.showSuccessMessage(
-								"Budżet miesięczny został usunięty"
+								"Operacja została usunięta"
 							);
 							loadTransactions(currentPage.value, pageSize.value, true);
 						}

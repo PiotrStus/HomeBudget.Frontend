@@ -1,6 +1,6 @@
 <template>
-	<v-skeleton-loader v-if="loading" type="card" />
-	<v-card class="mt-5" v-if="loaded">
+	<v-skeleton-loader class="mt-4" v-if="loading" type="card" />
+	<v-card class="mt-4" v-if="loaded">
 	<v-card-text>
 		<VChart class="chart" :option="option" autoresize />
 	</v-card-text>
@@ -135,7 +135,7 @@ const option = computed(() => ({
 				formatter: (params) => {
 					const actual = barExpenseData.value.actual[params.dataIndex];
 					const planned = barExpenseData.value.planned[params.dataIndex];
-					const percent = ((actual / planned) * 100).toFixed(2);
+					const percent = ((actual / planned) * 100).toFixed(0);
 					return `${percent}%`;
 				},
 			},

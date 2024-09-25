@@ -1,6 +1,6 @@
 <template>
-	<v-skeleton-loader v-if="loading" type="card" />
-	<v-card class="mt-5" v-if="loaded">
+	<v-skeleton-loader class="mt-4" v-if="loading" type="card" />
+	<v-card class="card" v-if="loaded">
 		<v-card-text>
 			<VChart class="chart" :option="option" autoresize />
 	</v-card-text>
@@ -165,5 +165,10 @@ onMounted(() => {
 <style scoped>
 .chart {
 	height: 50vh;
+}
+
+.card {
+	height: 55vh;
+	margin-top: 16px;
 }
 </style>

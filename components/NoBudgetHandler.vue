@@ -1,7 +1,7 @@
 <template>
 	<v-skeleton-loader v-if="loading" type="card" elevation="24" />
-	<v-card v-if="budgetNotExist"class="mb-4">
-		<v-card-subtitle class="text-center">
+	<v-card v-if="budgetNotExist" class="mb-4">
+		<v-card-subtitle class="text-center mt-4" >
 			Brak bieżącego budżetu dla obecnego miesiąca. Zaplanuj budżet
 			uwzględniając w pierwszej kolejności przypisanie kategorii.
 		</v-card-subtitle>
