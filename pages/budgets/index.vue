@@ -252,7 +252,7 @@ const monthlyBudgetAdded = (monthlyBudgetId) => {
 
 const handleNoYearBudgets = () =>
 {
-	showMonthlyDialog.value = false;
+	//showMonthlyDialog.value = false;
 	showYearDialog.value = true;
 }
 

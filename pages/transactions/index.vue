@@ -107,7 +107,7 @@ const headers = ref([
 	{ title: "Data", value: "date", align: "start" },
 	{ title: "Kategoria", value: "categoryName", align: "start" },
 	{ title: "OPIS", value: "name", align: "start" },
-	{ title: "Kwota", value: "amount", sortable: true, align: "start" },
+	{ title: "Kwota", value: "amount", sortable: true, align: "end" },
 	{ title: "", value: "action", align: "end" },
 ]);
 

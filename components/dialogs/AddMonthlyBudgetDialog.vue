@@ -56,10 +56,10 @@
 					>
 					<v-btn
 						class="mx-auto"
-						:color="yearBudgetsStore.yearBudgets?.length > 0 ? 'primary' : 'default'"
+						:color="addMonthlyDisabled ? 'default' : 'primary'"
 						type="submit"
 						variant="elevated"
-						:disabled="!(yearBudgetsStore.yearBudgets?.length)"
+						:disabled="addMonthlyDisabled"
 						>Dodaj</v-btn
 					>
 				</VCardActions>
@@ -84,6 +84,13 @@ const yearBudgetsStore = useYearBudgetsStore();
 const monthlyBudgetAdded = (monthlyBudgetId) => {
 	emit("monthlyBudgetAdded", monthlyBudgetId);
 };
+
+
+const addMonthlyDisabled = computed(() => {
+	const disable = (!viewModel.value.yearId || !viewModel.value.month);
+	console.log(disable);
+	return disable;
+})
 
 watch(localShow, (newState) => {
 	if (newState) {
