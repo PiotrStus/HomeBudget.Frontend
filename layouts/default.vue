@@ -20,7 +20,7 @@
 		<v-navigation-drawer
 			:order="mobile ? -1 : 0"
 			v-model="drawer"
-			v-if="userStore.$state.isLoggedIn === true"
+			v-if="userStore.$state.isLoggedIn === true && accountStore.$state.accountLoaded === true"
 		>
 			<!-- ona jest dwulinijkowa wiec bedzie droszeczke wyzsza -->
 			<v-list-item lines="two">
@@ -79,10 +79,11 @@
 
 		<v-main>
 			<div class="pa-4">
-				<NuxtPage v-if="userStore.$state.isLoggedIn === true" />
+				<NuxtPage v-if="userStore.$state.isLoggedIn === true && accountStore.$state.accountLoaded === true" />
 			</div>
 		</v-main>
 		<LoginDialog></LoginDialog>
+		<AccountDialog></AccountDialog>
 		
 	
 		<!-- 
