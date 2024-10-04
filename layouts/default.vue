@@ -128,19 +128,19 @@ const menuItems = [
 		url: "/",
 	},
 	{
-		name: "Kategorie",
-		icon: "mdi-view-grid-plus-outline",
-		url: "/categories",
-	},
+		name: "Operacje",
+		icon: "mdi-receipt-text-plus",
+		url: "/transactions",
+	},	
 	{
 		name: "Budżety",
 		icon: "mdi-book-outline",
 		url: "/budgets",
 	},
 	{
-		name: "Operacje",
-		icon: "mdi-receipt-text-plus",
-		url: "/transactions",
+		name: "Kategorie",
+		icon: "mdi-view-grid-plus-outline",
+		url: "/categories",
 	},
 	{
 		name: "Raporty",
