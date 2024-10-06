@@ -45,7 +45,8 @@ export const useUserStore = defineStore({
 						// czyli to bedzie json, ktory ma property email i w srodku mamy email
 						this.userData = data.value;
 						// dodajemy informacje o aktualnie zalogowanym koncie
-						accountStore.loadCurrentAccount();
+						//accountStore.loadCurrentAccount();
+						accountStore.loadUserAccounts();
 						notificationsStore.loadNotifications();
 						yearBudgetsStore.loadYearBudgets();
 						categoriesStore.loadCategories();

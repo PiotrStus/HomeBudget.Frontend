@@ -13,7 +13,8 @@ export const useAccountStore = defineStore({
 			loading: false,
 			// dane ktore przyjda z naszego api
 			accountData: null,
-			accountLoaded: false
+			accountLoaded: false,
+			accounts: null
 		};
 	},
 	// mamy dwie akcje
@@ -32,14 +33,7 @@ export const useAccountStore = defineStore({
 				.then(({ data, error }) => {
 					if (data.value) {
 						this.accountData = data.value;
-						this.accountLoaded = true;
-						console.log(this.accountLoaded)
-						console.log("sdfsf");
-						// czyli accountData to bedzie json, ktorego dostaniemy z requesta z API
-						// w UserController.cs tam jest [HttpGet] GetCurrentAccount() i on zwraca oK(data)
-						// czyli jak sie przejdzie dalej ten request bedzie w CurrentAccountQuery.cs
-						// i tam jest Result jako Name
-						// czyli to bedzie json, ktory ma property Name i w srodku mamy Name
+						//this.accountLoaded = true;
 					} else if (error.value) {
 						this.accountData = null;
 					}
@@ -48,5 +42,24 @@ export const useAccountStore = defineStore({
 					this.loading = false;
 				});
 		},
+		loadUserAccounts() {
+			this.loading = true;
+			useWebApiFetch("/Account/GetUsersAccounts")
+				.then(({ data, error }) => {
+					if (data.value) {
+						//this.accountLoaded = true;
+						console.log(data.value.accounts);
+						this.accounts = data.value.accounts;
+						console.log(this.accounts);
+					} else if (error.value) {
+						//this.accountLoaded = false;
+						this.accounts = null;
+					}
+				})
+				.finally(() => {
+					this.loading = false;
+				});
+		},
+
 	},
 });

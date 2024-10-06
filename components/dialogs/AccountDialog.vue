@@ -1,41 +1,36 @@
 <template>
-	<VDialog :model-value="show" persistent width="400" scroll-strategy="none">
+	<VDialog :model-value="show" persistent width="600" scroll-strategy="none">
 		<VCard class="py-4">
 			<VCardTitle class="text-center">Wybierz konto</VCardTitle>
-			<div v-if="userStore.$state.loading === true" class="pa-4 d-flex justify-center">
+			<div v-if="userStore.$state.loading === true" class="pa-4 d-flex justify-center whitespace-nowrap">
     			<VProgressCircular indeterminate></VProgressCircular>
 			</div>
-			<VForm v-else @submit.prevent="submit" :disabled="loading">
-				<VCardText>
-					<v-text-field
-						class="mb-4"
-						variant="outlined"
-						v-model="viewModel.email"
-						label="Email"
-						:rules="[ruleEmail, ruleRequired]"
-					></v-text-field>
-					<v-text-field
-						class="mb-4"
-						variant="outlined"
-						v-model="viewModel.password"
-						type="password"
-						label="Hasło"
-						:rules="[ruleRequired]"
-					></v-text-field>
-					<VAlert v-if="errorMsg" type="error" variant="tonal">{{ errorMsg }}</VAlert>
-				</VCardText>
-				<VCardActions>
-					<v-btn
-						class="mx-auto"
-						color="primary"
-						type="submit"
-						variant="elevated"
-						:loading="loading"
-						>Zaloguj</v-btn
-					>
-				</VCardActions>
-				<VCardText class="text-caption text-center">Nie masz konta? <NuxtLink to="/register">Zarejestruj się</NuxtLink></VCardText>
-			</VForm>
+			<div v-else>
+				<div class="d-flex overflow-x-auto" >
+					<v-card
+						v-for="account in accountStore.accounts"
+						:key="account.id"
+						class="d-flex align-center justify-center ma-4"
+						height="200"
+						style="flex: 0 0 200px;"
+						>
+						<div class="d-flex flex-column align-center">
+							<v-icon icon="mdi-home-account" size="100" class="mb-4"></v-icon>
+							{{ account.name }}
+						</div>
+					</v-card>
+					<v-card
+						class="d-flex align-center justify-center ma-4"
+						height="200"
+						style="flex: 0 0 200px;"
+						>
+						<div class="d-flex flex-column align-center">
+							<v-icon icon="mdi-home-plus-outline" size="100" class="mb-4"></v-icon>
+							Dodaj konto
+						</div>
+					</v-card>
+				</div>
+			</div> 
 		</VCard>
 	</VDialog>
 </template>
@@ -68,25 +63,5 @@ const submit = async (ev) => {
     }
 }
 
-const login = () => {  
-    loading.value = true;
-    errorMsg.value = "";
-    useWebApiFetch('/User/Login', {
-      method: 'POST',
-      body: { ...viewModel.value },
-      onResponseError: ({ response }) => {
-		errorMsg.value = getErrorMessage(response, {"InvalidLoginOrPassword": "Błędny login lub hasło"});
-      }
-    })
-    .then((response) => {
-        if (response.data.value) {
-			viewModel.value.password = '';
-
-            userStore.loadLoggedInUser();
-        }
-    })
-    .finally(() => {
-        loading.value = false;
-    });
-};
 </script>
+
