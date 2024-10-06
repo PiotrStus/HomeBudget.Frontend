@@ -14,20 +14,24 @@
 						height="200"
 						style="flex: 0 0 200px;"
 						>
-						<div class="d-flex flex-column align-center">
-							<v-icon icon="mdi-home-account" size="100" class="mb-4"></v-icon>
-							{{ account.name }}
-						</div>
+						<v-btn class="d-flex flex-column align-center" variant="flat" size="200" @click="handleAddAccount">
+							<div class="d-flex flex-column align-center">
+								<v-icon icon="mdi-home-account" size="100" class="mb-4"></v-icon>
+								<span style="text-transform: capitalize;">{{ account.name }}</span>
+							</div>
+						</v-btn>
 					</v-card>
 					<v-card
 						class="d-flex align-center justify-center ma-4"
 						height="200"
 						style="flex: 0 0 200px;"
 						>
-						<div class="d-flex flex-column align-center">
-							<v-icon icon="mdi-home-plus-outline" size="100" class="mb-4"></v-icon>
-							Dodaj konto
-						</div>
+						<v-btn class="d-flex flex-column align-center" variant="flat" size="200" @click="handleAddAccount">
+							<div class="d-flex flex-column align-center">
+								<v-icon icon="mdi-home-plus-outline" size="100" class="mb-4"></v-icon>
+								<span style="text-transform: capitalize;">Dodaj konto</span>
+							</div>
+						</v-btn>
 					</v-card>
 				</div>
 			</div> 
