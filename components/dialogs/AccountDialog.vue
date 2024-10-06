@@ -6,7 +6,7 @@
     			<VProgressCircular indeterminate></VProgressCircular>
 			</div>
 			<div v-else>
-				<div class="d-flex overflow-x-auto" >
+				<div class="d-flex align-center justify-space-evenly overflow-x-auto pa-4" >
 					<v-card
 						v-for="account in accountStore.accounts"
 						:key="account.id"
@@ -14,19 +14,19 @@
 						height="200"
 						style="flex: 0 0 200px;"
 						>
-						<v-btn class="d-flex flex-column align-center" variant="flat" size="200" @click="handleAddAccount">
+						<v-btn class="d-flex flex-column align-center" variant="flat" size="200" @click="handleChooseAccount">
 							<div class="d-flex flex-column align-center">
 								<v-icon icon="mdi-home-account" size="100" class="mb-4"></v-icon>
-								<span style="text-transform: capitalize;">{{ account.name }}</span>
+								<span style="text-transform: lowercase;">{{ account.name }}</span>
 							</div>
 						</v-btn>
 					</v-card>
 					<v-card
-						class="d-flex align-center justify-center ma-4"
+						class="d-flex ma-4"
 						height="200"
 						style="flex: 0 0 200px;"
 						>
-						<v-btn class="d-flex flex-column align-center" variant="flat" size="200" @click="handleAddAccount">
+						<v-btn class="d-flex flex-column align-center" variant="flat" size="200" @click="showAddAccountDialog = true">
 							<div class="d-flex flex-column align-center">
 								<v-icon icon="mdi-home-plus-outline" size="100" class="mb-4"></v-icon>
 								<span style="text-transform: capitalize;">Dodaj konto</span>
@@ -37,6 +37,10 @@
 			</div> 
 		</VCard>
 	</VDialog>
+	<AddAccountDialog 
+		v-model:show="showAddAccountDialog" 
+		@accountAdded="handleAccountAdded"
+	/>
 </template>
 
 <style lang="scss" scoped></style>
@@ -44,28 +48,16 @@
 <script setup>
 const userStore = useUserStore();
 const accountStore = useAccountStore();
-
-const { getErrorMessage } = useWebApiResponseParser();
-const { ruleRequired, ruleEmail } = useFormValidationRules();
+const showAddAccountDialog = ref(false);
 
 const show = computed(() => {
     return (accountStore.$state.accountLoaded === false || accountStore.$state.loading === true) && userStore.$state.isLoggedIn === true;
 });
 
-const errorMsg = ref("");
-const loading = ref(false);
 
-const viewModel = ref({
-	email: "",
-	password: "",
-});
-
-const submit = async (ev) => {
-    const { valid } = await ev;
-    if (valid) {
-        login();
-    }
-}
+const handleAccountAdded = () => (
+	accountStore.loadUserAccounts()
+);
 
 </script>
 

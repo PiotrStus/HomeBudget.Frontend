@@ -10,7 +10,7 @@
 			<VForm @submit.prevent="submit" :disabled="loading">
 				<VCardText>
 					<v-text-field 
-						:rules="[ruleRequired, ruleMaxLen(50)]" 
+						:rules="[ruleMaxLen(50)]" 
 						variant="outlined" 
 						v-model="viewModel.name" 
 						label="Nazwa konta"
@@ -47,14 +47,14 @@
 
 <script setup>
 const globalMessageStore = useGlobalMessageStore();
-const { ruleRequired, ruleMaxLen, ruleDate, ruleMaxNumberWithDecimals } = useFormValidationRules();
+const { ruleMaxLen} = useFormValidationRules();
 const { getErrorMessage } = useWebApiResponseParser();
 const localShow = defineModel("show");
 const errorMsg = ref("");
 const loading = ref(false);
-const emit = defineEmits(['transactionAdded']);
-const transactionAdded = () => {
-  emit('transactionAdded');
+const emit = defineEmits(['accountAdded']);
+const accountAdded = () => {
+  emit('accountAdded');
 };
 
 watch(localShow, (newState) => {
@@ -77,30 +77,32 @@ const handleCancel = () => {
 const submit = async (ev) => {
 	const { valid } = await ev;
 	if (valid) {
-		createNewTransaction();
+		createNewAccount();
 	}
 };
 
-const createNewTransaction = async () => {
+const createNewAccount = async () => {
 	loading.value = true;
-	useWebApiFetch("/Transaction/CreateTransaction", {
+	errorMsg.value = "";
+	const messageMap = {
+        "AccountAlreadyExist": "Dane konto już istnieje"
+    };
+	useWebApiFetch("/Account/CreateAccount", {
 		method: "POST",
 		body: {
 			name: viewModel.value.name,
-			categoryId: viewModel.value.categoryId,
-			date: viewModel.value.date,
-			amount: viewModel.value.amount,
 		},
 		watch: false,
 		onResponseError: ({ response }) => {
-			let message = getErrorMessage(response);
+			errorMsg.value = "Błąd dodawania nowego konta";
+			let message = getErrorMessage(response, messageMap);
 			globalMessageStore.showErrorMessage(message);
 		},
 	})
 		.then((response) => {
 			if (response.data.value) {
-				globalMessageStore.showSuccessMessage("Operacja została dodana");
-				transactionAdded();
+				globalMessageStore.showSuccessMessage("Konto zostało dodane");
+				accountAdded();
 				localShow.value = false;
 			}
 		})
