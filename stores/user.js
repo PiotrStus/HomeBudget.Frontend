@@ -23,9 +23,6 @@ export const useUserStore = defineStore({
 		loadLoggedInUser() {
 			// dodajemy accountStore
 			const accountStore = useAccountStore();
-			const notificationsStore = useNotificationsStore();
-			const yearBudgetsStore = useYearBudgetsStore();
-			const categoriesStore = useCategoriesStore();
 			// ustawiamy loading na true
 			this.loading = true;
 			// uzywamy useWebApiFetch
@@ -47,9 +44,7 @@ export const useUserStore = defineStore({
 						// dodajemy informacje o aktualnie zalogowanym koncie
 						//accountStore.loadCurrentAccount();
 						accountStore.loadUserAccounts();
-						notificationsStore.loadNotifications();
-						yearBudgetsStore.loadYearBudgets();
-						categoriesStore.loadCategories();
+
 					} else if (error.value) {
 						this.isLoggedIn = false;
 						this.userData = null;
@@ -64,6 +59,7 @@ export const useUserStore = defineStore({
 		// w [HttpPost] Logout()
 		logout() {
 			const notificationsStore = useNotificationsStore();
+			const accountStore = useAccountStore();
 			useWebApiFetch("/User/Logout", {
 				// jak jest metoda GET to nie trzeba podawac zadnych paramaetrow
 				// jak POST to trzeba
@@ -74,6 +70,8 @@ export const useUserStore = defineStore({
 					this.isLoggedIn = false;
 					this.userData = null;
 					notificationsStore.clearNotifications();
+					accountStore.accountLoaded = false;
+					console.log(accountStore.accountLoaded);
 				}
 			});
 		}

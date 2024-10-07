@@ -64,6 +64,9 @@ const handleAccountAdded = () => (
 const handleChooseAccount = (accountId) => {
 	loading.value = true;
 	errorMsg.value = "";
+	const notificationsStore = useNotificationsStore();
+	const yearBudgetsStore = useYearBudgetsStore();
+	const categoriesStore = useCategoriesStore();
 	const messageMap = {
         "Unauthorized": "Brak dostępu"
     };
@@ -82,8 +85,9 @@ const handleChooseAccount = (accountId) => {
 		.then((response) => {
 			if (response.data.value) {
 				globalMessageStore.showSuccessMessage("Konto zostało wybrane");
-				// tutaj trzeba zmienic
-				//accountAdded();
+				notificationsStore.loadNotifications();
+				yearBudgetsStore.loadYearBudgets();
+				categoriesStore.loadCategories();
 				accountStore.accountLoaded = true;
 			}
 		})

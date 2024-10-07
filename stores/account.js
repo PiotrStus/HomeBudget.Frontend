@@ -60,6 +60,5 @@ export const useAccountStore = defineStore({
 					this.loading = false;
 				});
 		},
-
 	},
 });
