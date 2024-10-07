@@ -14,7 +14,7 @@
 						height="200"
 						style="flex: 0 0 200px;"
 						>
-						<v-btn class="d-flex flex-column align-center" variant="flat" size="200" @click="handleChooseAccount">
+						<v-btn class="d-flex flex-column align-center" variant="flat" size="200" @click="handleChooseAccount(account.id)">
 							<div class="d-flex flex-column align-center">
 								<v-icon icon="mdi-home-account" size="100" class="mb-4"></v-icon>
 								<span style="text-transform: lowercase;">{{ account.name }}</span>
@@ -49,15 +49,48 @@
 const userStore = useUserStore();
 const accountStore = useAccountStore();
 const showAddAccountDialog = ref(false);
-
+const loading = ref(false);
+const errorMsg = ref("");
 const show = computed(() => {
     return (accountStore.$state.accountLoaded === false || accountStore.$state.loading === true) && userStore.$state.isLoggedIn === true;
 });
-
+const globalMessageStore = useGlobalMessageStore();
+const { getErrorMessage } = useWebApiResponseParser();
 
 const handleAccountAdded = () => (
 	accountStore.loadUserAccounts()
 );
+
+const handleChooseAccount = (accountId) => {
+	loading.value = true;
+	errorMsg.value = "";
+	const messageMap = {
+        "Unauthorized": "Brak dostępu"
+    };
+	useWebApiFetch("/Account/SwitchAccount", {
+		method: "POST",
+		body: {
+			accountId: accountId,
+		},
+		watch: false,
+		onResponseError: ({ response }) => {
+			errorMsg.value = "Błąd podczas wybierania konta";
+			let message = getErrorMessage(response, messageMap);
+			globalMessageStore.showErrorMessage(message);
+		},
+	})
+		.then((response) => {
+			if (response.data.value) {
+				globalMessageStore.showSuccessMessage("Konto zostało wybrane");
+				// tutaj trzeba zmienic
+				//accountAdded();
+				accountStore.accountLoaded = true;
+			}
+		})
+		.finally(() => {
+			loading.value = false;
+		});
+};
 
 </script>
 
