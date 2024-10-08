@@ -23,6 +23,9 @@ export const useAccountStore = defineStore({
 		loadCurrentAccount() {
 			// ustawiamy loading na true
 			this.loading = true;
+			const notificationsStore = useNotificationsStore();
+			const yearBudgetsStore = useYearBudgetsStore();
+			const categoriesStore = useCategoriesStore();
 			// uzywamy useWebApiFetch
 			// podajemy adres kontrolera z naszego API
 			// wolamy z controllera akce GetCurrentAccount() z AccountController.cs
@@ -32,13 +35,24 @@ export const useAccountStore = defineStore({
 				// tutaj response ma dwa property: data i error
 				.then(({ data, error }) => {
 					if (data.value) {
-						this.accountData = data.value;
-						//this.accountLoaded = true;
+						if (data.value.name) 
+						{
+							this.accountData = data.value;
+							notificationsStore.loadNotifications();
+							yearBudgetsStore.loadYearBudgets();
+							categoriesStore.loadCategories();
+							this.accountLoaded = true;
+						}
+						else 
+						{
+							this.accountData = null;
+						}
 					} else if (error.value) {
 						this.accountData = null;
 					}
 				})
 				.finally(() => {
+					this.loadUserAccounts();
 					this.loading = false;
 				});
 		},
@@ -47,12 +61,8 @@ export const useAccountStore = defineStore({
 			useWebApiFetch("/Account/GetUsersAccounts")
 				.then(({ data, error }) => {
 					if (data.value) {
-						//this.accountLoaded = true;
-						console.log(data.value.accounts);
 						this.accounts = data.value.accounts;
-						console.log(this.accounts);
 					} else if (error.value) {
-						//this.accountLoaded = false;
 						this.accounts = null;
 					}
 				})

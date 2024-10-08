@@ -84,6 +84,7 @@ const handleChooseAccount = (accountId) => {
 	})
 		.then((response) => {
 			if (response.data.value) {
+				accountStore.accountData = response.data.value;
 				globalMessageStore.showSuccessMessage("Konto zostało wybrane");
 				notificationsStore.loadNotifications();
 				yearBudgetsStore.loadYearBudgets();
