@@ -148,6 +148,11 @@ const menuItems = [
 		icon: "mdi-chart-line",
 		url: "/reports",
 	},
+	{
+		name: "Zarządzanie kontem",
+		icon: "mdi-account-group",
+		url: "/users",
+	},
 ];
 
 function toggleTheme() {
