@@ -42,7 +42,13 @@
 					</v-card>
 					</v-col>
 				</v-row>
+				<v-row justify="center" align="center">
+					<v-col cols="12" md="6" class="d-flex flex-column align-center">
+						<v-btn v-if="accountStore.$state.accountLoaded === true" @click="handleCancel" class="mb-4">Anuluj</v-btn>
+					</v-col>
+				</v-row>
 			</div> 
+
 		</VCard>
 	</VDialog>
 	<AddAccountDialog 
@@ -53,13 +59,11 @@
 
 
 <script setup>
-const userStore = useUserStore();
 const accountStore = useAccountStore();
 const showAddAccountDialog = ref(false);
-const loading = ref(false);
 const errorMsg = ref("");
 const show = computed(() => {
-    return (accountStore.$state.accountLoaded === false || accountStore.$state.loading === true) && userStore.$state.isLoggedIn === true;
+	return accountStore.$state.showAccountDialog === true;
 });
 const globalMessageStore = useGlobalMessageStore();
 const { getErrorMessage } = useWebApiResponseParser();
@@ -68,12 +72,13 @@ const handleAccountAdded = () => (
 	accountStore.loadUserAccounts()
 );
 
+const handleCancel = () => (
+	accountStore.showAccountDialog = false
+);
+
 const handleChooseAccount = (accountId) => {
-	loading.value = true;
+	accountStore.loading = true;
 	errorMsg.value = "";
-	const notificationsStore = useNotificationsStore();
-	const yearBudgetsStore = useYearBudgetsStore();
-	const categoriesStore = useCategoriesStore();
 	const messageMap = {
         "Unauthorized": "Brak dostępu"
     };
@@ -91,19 +96,20 @@ const handleChooseAccount = (accountId) => {
 	})
 		.then((response) => {
 			if (response.data.value) {
-				//accountStore.accountData = response.data.value;
 				globalMessageStore.showSuccessMessage("Konto zostało wybrane");
-				// notificationsStore.loadNotifications();
-				// yearBudgetsStore.loadYearBudgets();
-				// categoriesStore.loadCategories();
-				// accountStore.accountLoaded = true;
-				accountStore.loadCurrentAccount();
+				if (accountStore.accountLoaded)
+				{
+					location.reload()
+				}
+				else
+				{
+					accountStore.loadCurrentAccount();
+					accountStore.showAccountDialog = false;
+				}
 			}
 		})
 		.finally(() => {
-			loading.value = false;
+			accountStore.loading = false;
 		});
 };
-
 </script>
-

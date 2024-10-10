@@ -1,13 +1,22 @@
 <template>
 	<v-app>
-		<v-app-bar color="brand">
+		<v-app-bar color="brand" class="d-flex align-center justify-between">
 			<v-app-bar-nav-icon
 				v-if="mobile"
 				@click="drawer = !drawer"
 			></v-app-bar-nav-icon>
 
-			<v-app-bar-title v-if="accountStore.$state.accountData?.name">{{ accountStore.$state.accountData.name }}</v-app-bar-title>
+			<v-app-bar-title v-if="accountStore.$state.accountData?.name" class="mr-2">
+				{{ accountStore.$state.accountData.name }}
+				<v-btn v-if="!mobile && accountStore.$state.accounts?.length > 1 && accountStore.$state.accountLoaded === true" icon variant="flat" color="brand" @Click="openAccountDialog">
+					<v-icon>mdi-menu-down</v-icon>
+				</v-btn>
+			</v-app-bar-title>
+			<v-btn v-if="mobile && accountStore.$state.accounts?.length > 1 && accountStore.$state.accountLoaded === true" icon variant="flat" color="brand" @Click="openAccountDialog">
+					<v-icon>mdi-menu-down</v-icon>
+			</v-btn>
 
+			
 			<v-spacer></v-spacer>
 			<VBtn
 				icon="mdi-theme-light-dark"
@@ -191,6 +200,11 @@ const logout = () => {
 
 // odpalenie komponentu bedzie czekac az ta akcja sie wykona poprzez await
 await antiForgeryStore.loadAntiForgeryToken();
+
+const openAccountDialog = () => {
+	accountStore.showAccountDialog = true;
+	console.log(accountStore.showAccountDialog);
+}
 
 // w moemncie kiedy komponent jest podlaczany do drzewa i wyswietlany
 onMounted(() => {

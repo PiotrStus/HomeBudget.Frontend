@@ -14,7 +14,8 @@ export const useAccountStore = defineStore({
 			// dane ktore przyjda z naszego api
 			accountData: null,
 			accountLoaded: false,
-			accounts: null
+			accounts: null,
+			showAccountDialog: false
 		};
 	},
 	// mamy dwie akcje
@@ -42,10 +43,12 @@ export const useAccountStore = defineStore({
 							yearBudgetsStore.loadYearBudgets();
 							categoriesStore.loadCategories();
 							this.accountLoaded = true;
+							this.showAccountDialog = false;
 						}
 						else 
 						{
 							this.accountData = null;
+							this.showAccountDialog = true;
 						}
 					} else if (error.value) {
 						this.accountData = null;
