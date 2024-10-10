@@ -10,9 +10,9 @@
                 </div>
             </template>
         </v-toolbar>
-        <AddUserDialog v-model:show="showDialog" @categoryAdded="updateItems"/>
+        <AddUserDialog v-model:show="showDialog" @userAdded="handleUserChanged"/>
         <v-card-text>
-            <Users :loading="categoriesStore.loading" :items="users" :headers="headers" @remove-category="removeCategory"/>
+            <Users :loading="loading" :items="users" :headers="headers" @user-removed="handleUserChanged"/>
         </v-card-text>
     </VCard>
 </template>
@@ -30,10 +30,6 @@ const headers = ref([
     {title: '', value: 'action', align: 'end'}
 ]);
 
-const updateItems = () => {
-    categoriesStore.loadCategories(true);
-};
-
 const loadUsers = async () => {
 	loading.value = true;
 	useWebApiFetch("/Account/GetUsers")
@@ -47,6 +43,10 @@ const loadUsers = async () => {
 		.finally(() => {
 			loading.value = false;
 		});
+};
+
+const handleUserChanged = () => {
+    loadUsers();
 };
 
 onMounted(loadUsers)

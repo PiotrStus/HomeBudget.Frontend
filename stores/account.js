@@ -61,7 +61,7 @@ export const useAccountStore = defineStore({
 		},
 		loadUserAccounts() {
 			this.loading = true;
-			useWebApiFetch("/Account/GetUsersAccounts")
+			useWebApiFetch("/User/GetUsersAccounts")
 				.then(({ data, error }) => {
 					if (data.value) {
 						this.accounts = data.value.accounts;
