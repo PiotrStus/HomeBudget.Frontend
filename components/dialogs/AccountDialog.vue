@@ -84,12 +84,13 @@ const handleChooseAccount = (accountId) => {
 	})
 		.then((response) => {
 			if (response.data.value) {
-				accountStore.accountData = response.data.value;
+				//accountStore.accountData = response.data.value;
 				globalMessageStore.showSuccessMessage("Konto zostało wybrane");
-				notificationsStore.loadNotifications();
-				yearBudgetsStore.loadYearBudgets();
-				categoriesStore.loadCategories();
-				accountStore.accountLoaded = true;
+				// notificationsStore.loadNotifications();
+				// yearBudgetsStore.loadYearBudgets();
+				// categoriesStore.loadCategories();
+				// accountStore.accountLoaded = true;
+				accountStore.loadCurrentAccount();
 			}
 		})
 		.finally(() => {
