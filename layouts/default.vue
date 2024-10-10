@@ -6,7 +6,7 @@
 				@click="drawer = !drawer"
 			></v-app-bar-nav-icon>
 
-			<v-app-bar-title>Budżet domowy</v-app-bar-title>
+			<v-app-bar-title v-if="accountStore.$state.accountData?.name">{{ accountStore.$state.accountData.name }}</v-app-bar-title>
 
 			<v-spacer></v-spacer>
 			<VBtn
@@ -44,12 +44,9 @@
 
 				<!-- w analogiczny sposob mamy tutaj subkomponenty listItem 
 				title i subtitle, one sa w odpowiedni sposob przestylowane w vuetify-->
-				<VListItemTitle v-if="accountStore.$state.accountData?.name">{{
-					accountStore.$state.accountData.name
-				}}</VListItemTitle>
-				<VListItemSubtitle v-if="userStore.$state.userData?.email">{{
+				<VListItemTitle v-if="userStore.$state.userData?.email">{{
 					userStore.$state.userData.email
-				}}</VListItemSubtitle>
+				}}</VListItemTitle>
 			</v-list-item>
 			<VDivider></VDivider>
 

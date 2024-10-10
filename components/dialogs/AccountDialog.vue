@@ -1,15 +1,19 @@
 <template>
-	<VDialog :model-value="show" persistent width="600" scroll-strategy="none">
+	<VDialog :model-value="show" persistent width="500" height="400" scroll-strategy="none">
 		<VCard class="py-4">
 			<VCardTitle class="text-center">Wybierz konto</VCardTitle>
-			<div v-if="userStore.$state.loading === true" class="pa-4 d-flex justify-center whitespace-nowrap">
+			<div v-if="accountStore.$state.loading === true" class="pa-4 d-flex justify-center whitespace-nowrap">
     			<VProgressCircular indeterminate></VProgressCircular>
 			</div>
 			<div v-else>
-				<div class="d-flex align-center justify-space-evenly overflow-x-auto pa-4" >
-					<v-card
+				<v-row class="pa-4" justify="center" align="center">
+					<v-col 
 						v-for="account in accountStore.accounts"
 						:key="account.id"
+						cols="12" md="6"
+						class="d-flex justify-center"
+					>
+					<v-card
 						class="d-flex align-center justify-center ma-4"
 						height="200"
 						style="flex: 0 0 200px;"
@@ -21,6 +25,9 @@
 							</div>
 						</v-btn>
 					</v-card>
+					</v-col>
+					<v-col cols="12" md="6" class="d-flex justify-center">
+
 					<v-card
 						class="d-flex ma-4"
 						height="200"
@@ -33,7 +40,8 @@
 							</div>
 						</v-btn>
 					</v-card>
-				</div>
+					</v-col>
+				</v-row>
 			</div> 
 		</VCard>
 	</VDialog>
@@ -43,7 +51,6 @@
 	/>
 </template>
 
-<style lang="scss" scoped></style>
 
 <script setup>
 const userStore = useUserStore();

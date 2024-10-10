@@ -69,6 +69,7 @@ export const useUserStore = defineStore({
 				if (response.data.value) {
 					this.isLoggedIn = false;
 					this.userData = null;
+					accountStore.accountData = null;
 					notificationsStore.clearNotifications();
 					accountStore.accountLoaded = false;
 					console.log(accountStore.accountLoaded);
