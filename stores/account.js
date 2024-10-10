@@ -40,7 +40,7 @@ export const useAccountStore = defineStore({
 						{
 							this.accountData = data.value;
 							notificationsStore.loadNotifications();
-							yearBudgetsStore.loadYearBudgets();
+							yearBudgetsStore.loadYearBudgets(true);
 							categoriesStore.loadCategories();
 							this.accountLoaded = true;
 							this.showAccountDialog = false;
@@ -72,6 +72,6 @@ export const useAccountStore = defineStore({
 				.finally(() => {
 					this.loading = false;
 				});
-		},
+		}
 	},
 });
