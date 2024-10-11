@@ -6,17 +6,12 @@
 				@click="drawer = !drawer"
 			></v-app-bar-nav-icon>
 
-			<v-app-bar-title v-if="accountStore.$state.accountData?.name" class="mr-2">
-				{{ accountStore.$state.accountData.name }}
-				<v-btn v-if="!mobile && accountStore.$state.accounts?.length > 1 && accountStore.$state.accountLoaded === true" icon variant="flat" color="brand" @Click="openAccountDialog">
-					<v-icon>mdi-menu-down</v-icon>
-				</v-btn>
-			</v-app-bar-title>
-			<v-btn v-if="mobile && accountStore.$state.accounts?.length > 1 && accountStore.$state.accountLoaded === true" icon variant="flat" color="brand" @Click="openAccountDialog">
+			<div v-if="accountStore.$state.accountData?.name"  style="max-width: 200px;">
+				<p class="ml-4 text-truncate" style="font-size: 20px;">{{ accountStore.$state.accountData.name }}</p>
+			</div>
+			<v-btn v-if="accountStore.$state.accounts?.length > 1 && accountStore.$state.accountLoaded === true" icon variant="flat" color="brand" @Click="openAccountDialog">
 					<v-icon>mdi-menu-down</v-icon>
 			</v-btn>
-
-			
 			<v-spacer></v-spacer>
 			<VBtn
 				icon="mdi-theme-light-dark"
