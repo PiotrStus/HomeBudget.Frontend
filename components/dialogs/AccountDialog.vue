@@ -2,6 +2,9 @@
 	<VDialog :model-value="show" persistent width="500" height="400" scroll-strategy="none">
 		<VCard class="py-4">
 			<VCardTitle class="text-center">Wybierz konto</VCardTitle>
+			<v-btn icon @click="handleCancel" title="Zamknij" variant="flat" class="position-absolute" style="top: 0px; right: 0px;">
+				<v-icon>mdi-close</v-icon>
+			</v-btn>
 			<div v-if="accountStore.$state.loading === true" class="pa-4 d-flex justify-center whitespace-nowrap">
     			<VProgressCircular indeterminate></VProgressCircular>
 			</div>
@@ -40,11 +43,6 @@
 							</div>
 						</v-btn>
 					</v-card>
-					</v-col>
-				</v-row>
-				<v-row justify="center" align="center">
-					<v-col cols="12" md="6" class="d-flex flex-column align-center">
-						<v-btn v-if="accountStore.$state.accountLoaded === true" @click="handleCancel" class="mb-4">Anuluj</v-btn>
 					</v-col>
 				</v-row>
 			</div> 
