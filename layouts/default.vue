@@ -1,13 +1,17 @@
 <template>
 	<v-app>
-		<v-app-bar color="brand">
+		<v-app-bar color="brand" class="d-flex align-center justify-between">
 			<v-app-bar-nav-icon
 				v-if="mobile"
 				@click="drawer = !drawer"
 			></v-app-bar-nav-icon>
 
-			<v-app-bar-title>Budżet domowy</v-app-bar-title>
-
+			<div v-if="accountStore.$state.accountData?.name"  style="max-width: 200px;">
+				<p class="ml-4 text-truncate" style="font-size: 20px;">{{ accountStore.$state.accountData.name }}</p>
+			</div>
+			<v-btn v-if="accountStore.$state.accounts?.length > 1 && accountStore.$state.accountLoaded === true" icon variant="flat" color="brand" @Click="openAccountDialog">
+					<v-icon>mdi-menu-down</v-icon>
+			</v-btn>
 			<v-spacer></v-spacer>
 			<VBtn
 				icon="mdi-theme-light-dark"
@@ -20,7 +24,7 @@
 		<v-navigation-drawer
 			:order="mobile ? -1 : 0"
 			v-model="drawer"
-			v-if="userStore.$state.isLoggedIn === true"
+			v-if="userStore.$state.isLoggedIn === true && accountStore.$state.accountLoaded === true"
 		>
 			<!-- ona jest dwulinijkowa wiec bedzie droszeczke wyzsza -->
 			<v-list-item lines="two">
@@ -44,12 +48,9 @@
 
 				<!-- w analogiczny sposob mamy tutaj subkomponenty listItem 
 				title i subtitle, one sa w odpowiedni sposob przestylowane w vuetify-->
-				<VListItemTitle v-if="accountStore.$state.accountData?.name">{{
-					accountStore.$state.accountData.name
-				}}</VListItemTitle>
-				<VListItemSubtitle v-if="userStore.$state.userData?.email">{{
+				<VListItemTitle v-if="userStore.$state.userData?.email">{{
 					userStore.$state.userData.email
-				}}</VListItemSubtitle>
+				}}</VListItemTitle>
 			</v-list-item>
 			<VDivider></VDivider>
 
@@ -79,10 +80,11 @@
 
 		<v-main>
 			<div class="pa-4">
-				<NuxtPage v-if="userStore.$state.isLoggedIn === true" />
+				<NuxtPage v-if="userStore.$state.isLoggedIn === true && accountStore.$state.accountLoaded === true" />
 			</div>
 		</v-main>
 		<LoginDialog></LoginDialog>
+		<AccountDialog></AccountDialog>
 		
 	
 		<!-- 
@@ -128,24 +130,29 @@ const menuItems = [
 		url: "/",
 	},
 	{
-		name: "Kategorie",
-		icon: "mdi-view-grid-plus-outline",
-		url: "/categories",
-	},
+		name: "Operacje",
+		icon: "mdi-receipt-text-plus",
+		url: "/transactions",
+	},	
 	{
 		name: "Budżety",
 		icon: "mdi-book-outline",
 		url: "/budgets",
 	},
 	{
-		name: "Operacje",
-		icon: "mdi-receipt-text-plus",
-		url: "/transactions",
+		name: "Kategorie",
+		icon: "mdi-view-grid-plus-outline",
+		url: "/categories",
 	},
 	{
 		name: "Raporty",
 		icon: "mdi-chart-line",
 		url: "/reports",
+	},
+	{
+		name: "Zarządzanie kontem",
+		icon: "mdi-account-group",
+		url: "/users",
 	},
 ];
 
@@ -188,6 +195,11 @@ const logout = () => {
 
 // odpalenie komponentu bedzie czekac az ta akcja sie wykona poprzez await
 await antiForgeryStore.loadAntiForgeryToken();
+
+const openAccountDialog = () => {
+	accountStore.showAccountDialog = true;
+	console.log(accountStore.showAccountDialog);
+}
 
 // w moemncie kiedy komponent jest podlaczany do drzewa i wyswietlany
 onMounted(() => {

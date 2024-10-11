@@ -13,6 +13,9 @@ export const useAccountStore = defineStore({
 			loading: false,
 			// dane ktore przyjda z naszego api
 			accountData: null,
+			accountLoaded: false,
+			accounts: null,
+			showAccountDialog: false
 		};
 	},
 	// mamy dwie akcje
@@ -21,6 +24,9 @@ export const useAccountStore = defineStore({
 		loadCurrentAccount() {
 			// ustawiamy loading na true
 			this.loading = true;
+			const notificationsStore = useNotificationsStore();
+			const yearBudgetsStore = useYearBudgetsStore();
+			const categoriesStore = useCategoriesStore();
 			// uzywamy useWebApiFetch
 			// podajemy adres kontrolera z naszego API
 			// wolamy z controllera akce GetCurrentAccount() z AccountController.cs
@@ -30,19 +36,42 @@ export const useAccountStore = defineStore({
 				// tutaj response ma dwa property: data i error
 				.then(({ data, error }) => {
 					if (data.value) {
-						this.accountData = data.value;
-						// czyli accountData to bedzie json, ktorego dostaniemy z requesta z API
-						// w UserController.cs tam jest [HttpGet] GetCurrentAccount() i on zwraca oK(data)
-						// czyli jak sie przejdzie dalej ten request bedzie w CurrentAccountQuery.cs
-						// i tam jest Result jako Name
-						// czyli to bedzie json, ktory ma property Name i w srodku mamy Name
+						if (data.value.name) 
+						{
+							this.accountData = data.value;
+							notificationsStore.loadNotifications();
+							yearBudgetsStore.loadYearBudgets(true);
+							categoriesStore.loadCategories();
+							this.accountLoaded = true;
+							this.showAccountDialog = false;
+						}
+						else 
+						{
+							this.accountData = null;
+							this.showAccountDialog = true;
+						}
 					} else if (error.value) {
 						this.accountData = null;
 					}
 				})
 				.finally(() => {
+					this.loadUserAccounts();
 					this.loading = false;
 				});
 		},
+		loadUserAccounts() {
+			this.loading = true;
+			useWebApiFetch("/User/GetUsersAccounts")
+				.then(({ data, error }) => {
+					if (data.value) {
+						this.accounts = data.value.accounts;
+					} else if (error.value) {
+						this.accounts = null;
+					}
+				})
+				.finally(() => {
+					this.loading = false;
+				});
+		}
 	},
 });

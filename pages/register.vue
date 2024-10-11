@@ -103,7 +103,7 @@ const register = () => {
 	errorMsg.value = "";
 	console.log(viewModel)
 	// strzela pod inny adres w naszym api
-	useWebApiFetch('/User/CreateUserWithAccount', {
+	useWebApiFetch('/User/CreateUser', {
 		method: 'POST',
 		body: { ...viewModel.value },
 
