@@ -2,7 +2,7 @@
 	<VDialog :model-value="show" persistent width="500" height="400" scroll-strategy="none">
 		<VCard class="py-4">
 			<VCardTitle class="text-center">Wybierz konto</VCardTitle>
-			<v-btn icon @click="handleCancel" title="Zamknij" variant="flat" class="position-absolute" style="top: 0px; right: 0px;">
+			<v-btn v-if="accountStore.$state.accountLoaded === true" icon @click="handleCancel" title="Zamknij" variant="flat" class="position-absolute" style="top: 0px; right: 0px;">
 				<v-icon>mdi-close</v-icon>
 			</v-btn>
 			<div v-if="accountStore.$state.loading === true" class="pa-4 d-flex justify-center whitespace-nowrap">
