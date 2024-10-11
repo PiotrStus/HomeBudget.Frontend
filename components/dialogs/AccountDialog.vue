@@ -1,5 +1,5 @@
 <template>
-	<VDialog :model-value="show" :persistent="!accountStore.$state.accountLoaded" width="500" height="400" scroll-strategy="none">
+	<VDialog :model-value="show" :persistent="!accountStore.$state.accountLoaded" @click:outside="handleOutsideClick" width="500" height="400" scroll-strategy="none">
 		<VCard class="py-4">
 			<VCardTitle class="text-center">Wybierz konto</VCardTitle>
 			<v-btn v-if="accountStore.$state.accountLoaded === true" icon @click="handleCancel" title="Zamknij" variant="flat" class="position-absolute" style="top: 0px; right: 0px;">
@@ -66,13 +66,20 @@ const show = computed(() => {
 const globalMessageStore = useGlobalMessageStore();
 const { getErrorMessage } = useWebApiResponseParser();
 
-const handleAccountAdded = () => (
-	accountStore.loadUserAccounts()
-);
+const handleAccountAdded = () => {
+	accountStore.loadUserAccounts();
+};
 
-const handleCancel = () => (
-	accountStore.showAccountDialog = false
-);
+const handleOutsideClick = () => {
+    if (accountStore.$state.accountLoaded) {
+        handleCancel();
+    }
+};
+
+const handleCancel = () => {
+	accountStore.showAccountDialog = false;
+	console.log(accountStore.showAccountDialog)
+};
 
 const handleChooseAccount = (accountId) => {
 	accountStore.loading = true;
@@ -110,4 +117,6 @@ const handleChooseAccount = (accountId) => {
 			accountStore.loading = false;
 		});
 };
+
+
 </script>
