@@ -1,5 +1,5 @@
 <template>
-	<VDialog :model-value="show" :persistent="!accountStore.$state.accountLoaded" @click:outside="handleOutsideClick" width="500" height="400" scroll-strategy="none">
+	<VDialog :model-value="show" :persistent="!accountStore.$state.accountLoaded" @click:outside="handleOutsideClick" @keydown.esc="handleOutsideClick" width="500" height="400" scroll-strategy="none">
 		<VCard class="py-4">
 			<VCardTitle class="text-center">Wybierz konto</VCardTitle>
 			<v-btn v-if="accountStore.$state.accountLoaded === true" icon @click="handleCancel" title="Zamknij" variant="flat" class="position-absolute" style="top: 0px; right: 0px;">
