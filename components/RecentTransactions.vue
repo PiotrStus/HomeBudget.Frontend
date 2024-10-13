@@ -58,8 +58,6 @@ const checkBudgetExists = (date, count) => {
 				if (data.value.transactions?.length > 0) {
 				recentTransactions.value = data.value.transactions;
 				dataLoaded.value = true;
-				console.log(data.value);
-				console.log(recentTransactions.value);
 				}
 			} else if (error.value) {
 				console.log(error.value);
@@ -85,21 +83,3 @@ onMounted(() => checkBudgetExists(props.date.format(), 10));
 	margin-top: 16px;
 }
 </style>
-
-
-
-
-<!-- <v-list class="transactions">			
-	<v-list-item class="mt-2" 
-				 variant="elevated" 
-				 prepend-icon="mdi-receipt-text-outline" 
-				 v-for="transaction in recentTransactions" 
-				 :key="transaction.id">
-		<v-card>
-			<v-card-text>
-				<v-list-item-title>{{ transaction.name }}</v-list-item-title>
-				<v-list-item-subtitle>Kwota: {{ transaction.amount }} zł</v-list-item-subtitle>
-			</v-card-text>
-		</v-card>
-	</v-list-item>
-</v-list> -->

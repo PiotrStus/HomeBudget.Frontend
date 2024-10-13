@@ -161,6 +161,7 @@ watch(
 	() => props.date, 
 	(newDate) => {
 		if (newDate) {
+			loaded.value = false;
 			loadPlannedCategories(newDate.format());
 		}
 	}

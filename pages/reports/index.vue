@@ -15,12 +15,9 @@
 			/>
 		</v-card-text>
 	</v-card>
-	<v-card class="mt-5" v-if="!disabled">
-		<MonthlyBalanceChart :date="currentDate" /> 
-	</v-card>
-	<v-card class="mt-5" v-if="!disabled">
-		<MonthlyPlannedCategoriesChart :date="currentDate" /> 
-	</v-card>
+	<MonthlyBalanceChart :date="currentDate" v-if="!disabled"/> 
+	<MonthlyPlannedCategoriesChart :date="currentDate" v-if="!disabled"/> 
+	<MonthlyTransactions :date="currentDate" v-if="!disabled"/> 
 </template>
 
 <script setup>
@@ -28,8 +25,6 @@ import MonthsEnum from "~/utils/months";
 const dayjs = useDayjs();
 const yearBudgetsStore = useYearBudgetsStore();
 const selectedMonthId = ref(null);
-
-
 
 const monthItems = computed(() => {
 	if (yearBudgetsStore.loaded) {
@@ -51,13 +46,16 @@ const monthItems = computed(() => {
 	return [];
  });
 
- watch(selectedMonthId, () => {
-	const selectedMonth = monthItems.value.find(month => {
+const selectedMonth = ref(null);
+
+watch(selectedMonthId, () => {
+	selectedMonth.value = monthItems.value.find(month => {
 		return month.month === selectedMonthId.value;
 	});
+	console.log(selectedMonth)
 	if (selectedMonthId)
  	{
-		currentDate.value = dayjs().year(selectedMonth.year).month(selectedMonth.month).date(3);
+		currentDate.value = dayjs().year(selectedMonth.value.year).month(selectedMonth.value.month).date(3);
 	}
 });
 

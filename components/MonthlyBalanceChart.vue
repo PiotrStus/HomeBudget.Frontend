@@ -214,6 +214,7 @@ watch(
 	() => props.date, 
 	(newDate) => {
 		if (newDate) {
+			loaded.value = false;
 			loadMonthlyBalance(newDate.format());
 		}
 	}
