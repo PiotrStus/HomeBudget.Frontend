@@ -60,7 +60,7 @@ const option = ref({
 	backgroundColor: backgroundColor.value,
 	tooltip: {
 		trigger: "item",
-		formatter: "{a} <br/>{b} : {c} ({d}%)",
+		formatter: "{a} <br/>{b} : {c} zł ({d}%)",
 	},
 	legend: {
 		type: "scroll",
@@ -156,6 +156,15 @@ const props = defineProps({
 		default: false,
 	},
 });
+
+watch(
+	() => props.date, 
+	(newDate) => {
+		if (newDate) {
+			loadPlannedCategories(newDate.format());
+		}
+	}
+);
 
 onMounted(() => {
 	loadPlannedCategories(props.date.format());

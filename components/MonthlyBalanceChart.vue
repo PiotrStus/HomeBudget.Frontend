@@ -210,6 +210,15 @@ const loadMonthlyBalance = async (date) => {
 		});
 };
 
+watch(
+	() => props.date, 
+	(newDate) => {
+		if (newDate) {
+			loadMonthlyBalance(newDate.format());
+		}
+	}
+);
+
 onMounted(() => {
 	loadMonthlyBalance(props.date.format());
 });

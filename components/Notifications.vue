@@ -59,13 +59,10 @@ const handleNotificationClick = (notification) => {
 };
 
 const handleNotificationClosed = () => {
-	console.log("closed2");
 	notificationsStore.confirmNotification(selectedNotification.value.id);
 };
 
 const notificationsLength = computed(() => {
-	console.log(notificationsStore.notifications);
-	console.log(notificationsStore.notifications?.length);
 	return notificationsStore.notifications?.length || 0;
 });
 </script>
