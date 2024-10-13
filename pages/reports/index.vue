@@ -41,7 +41,12 @@ const monthItems = computed(() => {
 				year: budget.year,
 				month: getMonthId(month.month)
 			}))
-		);
+		).sort((a, b) => {
+			if (a.year !== b.year) {
+				return b.year - a.year;
+			}
+			return b.month - a.month;
+		});
 	}
 	return [];
  });
