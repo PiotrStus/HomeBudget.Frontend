@@ -17,6 +17,7 @@
 							variant="outlined"
 							label="Data operacji"
 							:textFieldStyle="{ minWidth: '300px' }"
+							:date="props.date"
 						/>
 					</v-list-item>
 				</v-list>
@@ -30,5 +31,9 @@
 <script setup>
 
 const localDateFilter = defineModel("dateFilter");
+
+const props = defineProps({
+  "date": Object
+});
 
 </script>

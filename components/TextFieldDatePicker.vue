@@ -10,8 +10,14 @@
       </v-text-field>
     </template>
 
-    <v-date-picker hide-header :multiple="range ? 'range' : false" :model-value="pickerValue"
-      @update:model-value="onPickerInput">
+    <v-date-picker 
+              hide-header 
+              :multiple="range ? 'range' : false" 
+              :model-value="pickerValue"
+              @update:model-value="onPickerInput"
+              :min="props.date ? props.date.startOf('month').format('YYYY-MM-DD') : null"
+              :max="props.date ? props.date.endOf('month').format('YYYY-MM-DD') : null"
+    >
       <template #actions v-if="range">
         <v-btn variant="text" @click="cancel"> Anuluj </v-btn>
         <v-btn variant="text" color="primary" @click="save"> Ok </v-btn>
@@ -22,9 +28,7 @@
 
 <script setup>
 const dayjs = useDayjs();
-
 const model = defineModel();
-
 const props = defineProps({
   range: {
     type: Boolean,
@@ -41,6 +45,7 @@ const props = defineProps({
   "textFieldClass" : String,
   "textFieldStyle": Object,
   "menuStyle": Object,
+  "date": Object
 });
 
 const open = ref(false);

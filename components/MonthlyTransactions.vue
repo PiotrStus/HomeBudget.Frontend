@@ -44,7 +44,7 @@
 				/>
 			</template>
 			<template v-slot:header.date>
-				<DateFilter v-model:dateFilter="dateFilter" />
+				<DateFilter v-model:dateFilter="dateFilter" :date="props.date" />
 			</template>
 			<template v-slot:item.date="{ value }">
 				{{ dayjs(value).format("DD.MM.YYYY") }}
@@ -95,6 +95,7 @@ const props = defineProps({
 watch(() => props.date, () =>
 {
 	loaded.value = false;
+	clearAllFilters();
 	loadMonthlyTransactions(1, pageSize.value);
 })
 
@@ -177,6 +178,7 @@ const loadMonthlyTransactions = async (page = 1, pageSize = 10, countPages = nul
 
 
 onMounted(async () => {
+	console.log(props.date);
 	await loadMonthlyTransactions(currentPage.value, pageSize.value);
 });
 
