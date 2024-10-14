@@ -11,7 +11,7 @@
 
 			<!-- formularz -->
 
-            <VForm @submit.prevent="submit" :disabled="loading">
+            <VForm @submit.prevent="submit" :disabled="loading" ref="registerForm">
                 <VCardText>
 					<!--
 					pole tekstowe na email 
@@ -34,7 +34,7 @@
 				:loading="loading" -> jak request leci to wyswietla kreciolek
 				-->
                 <VCardActions class="justify-center">
-                    <v-btn color="primary" type="submit" variant="elevated" :loading="loading">Utwórz konto</v-btn>
+                    <v-btn color="primary" type="submit" variant="elevated" :loading="loading" class="mb-4">Utwórz konto</v-btn>
                 </VCardActions>
 
             </VForm>
@@ -98,6 +98,8 @@ const submit = async (ev) => {
 	}
 }
 
+const registerForm = ref(null);
+
 const register = () => {
 	loading.value = true;
 	errorMsg.value = "";
@@ -113,8 +115,9 @@ const register = () => {
 		})
 		.then((response) => {
 			if (response.data.value) {
-				globalMessageStore.showSuccessMessage('Twoje konto zostało utworzone. Zalogowano do aplikacji.');
-				router.push({ path: '/' });
+				registerForm.value.reset();
+				globalMessageStore.showSuccessMessage("Konto zostało utworzone! Kliknij w link weryfikacyjny, który został wysłany na adres e-mail (sprawdź też folder Spam).");
+				//router.push({ path: '/' });
 			}
 	})
 	.finally(() => {
