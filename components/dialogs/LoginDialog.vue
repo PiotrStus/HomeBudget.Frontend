@@ -105,7 +105,10 @@ const login = () => {
 
     loading.value = true;
     errorMsg.value = "";
-
+	const messageMap = {
+        "InvalidLoginOrPassword": "Błędny login lub hasło",
+		"UserNotConfirmed": "Konto nieaktywne. Sprawdź swoją skrzynkę e-mail"
+    };
     useWebApiFetch('/User/Login', {
       method: 'POST',
 	  // jesli dodamy ... obiekt traci swoja reaktynwosc i sa czyste properties w tym obiekcie
@@ -117,7 +120,7 @@ const login = () => {
 		// robimy to
 		// czyli z kodu serwera -> ErrorException("InvalidLoginOrPassword")
 		// to jest zlapane w Exception Viewerze i potem w JSONie
-		errorMsg.value = getErrorMessage(response, {"InvalidLoginOrPassword": "Błędny login lub hasło"});
+		errorMsg.value = getErrorMessage(response, messageMap);
       }
     })
 	// jesli request sie uda i nie ma bledow
