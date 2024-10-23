@@ -2,7 +2,7 @@
 	<VDialog :model-value="show" :persistent="!accountStore.$state.accountLoaded" @click:outside="handleOutsideClick" @keydown.esc="handleOutsideClick" width="500" height="400" scroll-strategy="none">
 		<VCard >
 			<VCardTitle class="py-4 text-center sticky-header">Wybierz konto</VCardTitle>
-			<v-btn v-if="accountStore.$state.accountLoaded === true" icon @click="handleCancel" title="Zamknij" variant="flat" class="position-absolute" style="top: 0px; right: 0px;">
+			<v-btn v-if="accountStore.$state.accountLoaded === true" icon @click="handleCancel" title="Zamknij" variant="flat" class="position-absolute" style="top: 0px; right: 0px; z-index: 10; ">
 				<v-icon>mdi-close</v-icon>
 			</v-btn>
 			<div v-if="accountStore.$state.loading === true" class="pa-4 d-flex justify-center whitespace-nowrap">

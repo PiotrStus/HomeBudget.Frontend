@@ -24,7 +24,7 @@
 		<v-navigation-drawer
 			:order="mobile ? -1 : 0"
 			v-model="drawer"
-			v-if="userStore.$state.isLoggedIn === true && accountStore.$state.accountLoaded === true && !loading"
+			v-if="userStore.$state.isLoggedIn === true && accountStore.$state.accountLoaded === true"
 		>
 			<!-- ona jest dwulinijkowa wiec bedzie droszeczke wyzsza -->
 			<v-list-item lines="two">
@@ -80,10 +80,10 @@
 
 		<v-main>
 			<div class="pa-4">
-				<NuxtPage v-if="userStore.$state.isLoggedIn === true && accountStore.$state.accountLoaded === true && !loading" />
+				<NuxtPage v-if="userStore.$state.isLoggedIn === true && accountStore.$state.accountLoaded === true" />
 			</div>
 		</v-main>
-		<LoginDialog v-if="!loading"></LoginDialog>
+		<LoginDialog></LoginDialog>
 		<AccountDialog></AccountDialog>
 		
 	
@@ -99,7 +99,7 @@
 <script setup>
 // nazwa musi byc identyczna
 const confirmDialog = ref(null);
-const route = useRoute();
+
 
 const show = ref(false);
 
@@ -201,50 +201,10 @@ const openAccountDialog = () => {
 	console.log(accountStore.showAccountDialog);
 }
 
-const errorMsg = ref("");
-const loading = ref(false);
-const globalMessageStore = useGlobalMessageStore();
-const { getErrorMessage} = useWebApiResponseParser();
-
-
-const confirm = (guid) => {  
-	loading.value = true;
-	errorMsg.value = "";
-	const messageMap = {
-        "ActivationNotCompletedOrAlreadyActivated": "Aktywacja nie została ukończona lub konto jest już aktywowane.",
-		"WrongGuidFormat": "Niepoprawny format kodu aktywacyjnego"
-    };
-	useWebApiFetch('/User/ConfirmUser', {
-	method: 'POST',
-	body: { userGuid: guid},
-	onResponseError: ({ response }) => {
-		let message = getErrorMessage(response, messageMap);
-		globalMessageStore.showErrorMessage(message);
-	}
-	})
-	.then((response) => {
-		if (response.data.value) {
-			globalMessageStore.showSuccessMessage("Konto użytkownika zostało aktywowane");
-			userStore.loadLoggedInUser();
-		}
-	})
-	.finally(() => {
-		loading.value = false;
-	});
-};
 
 onMounted(() => {
 	theme.global.name.value = currentTheme.value;
 
-	const guid = route.query.guid;
-
-	if (guid)
-	{
-		confirm(guid);
-	}
-	else
-	{
-		userStore.loadLoggedInUser();
-	}
+	userStore.loadLoggedInUser();
 });
 </script>

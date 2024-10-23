@@ -3,13 +3,6 @@
 <v-card class="mt-4" v-if="loaded">
 	<v-toolbar color="transparent text-center">
 			<v-toolbar-title>Zrealizowane operacje</v-toolbar-title>
-			<v-btn
-					icon="mdi-filter-off-outline"
-					title="Usuń filtry"
-					variant="flat"
-					@click="clearAllFilters"
-					class="mr-2"
-				/>
 	</v-toolbar>
 	<v-card-text>
 		<v-data-table-server
@@ -25,27 +18,12 @@
 			:items-length="totalItems"
 			page-text="{0}-{1} z {2}"
 			:no-data-text="
-				dateFilter || amountMinFilter || amountMaxFilter || categoryFilter
+				dateFilter || amountMinFilter || amountMaxFilter
 					? 'Brak transakcji spełniających kryteria wyszukiwania.'
 					: 'Brak dostępnych transakcji. Dodaj nową.'
 			"
 			loading-text="Wczytywanie"
 		>
-			<template v-slot:header.categoryName>
-				<CategoryFilter
-					v-model:categoryFilter="categoryFilter"
-					:categories="categoriesStore.categories"
-				/>
-			</template>
-			<template v-slot:header.amount>
-				<AmountFilter
-					v-model:amountMinFilter="amountMinFilter"
-					v-model:amountMaxFilter="amountMaxFilter"
-				/>
-			</template>
-			<template v-slot:header.date>
-				<DateFilter v-model:dateFilter="dateFilter" :date="props.date" />
-			</template>
 			<template v-slot:item.date="{ value }">
 				{{ dayjs(value).format("DD.MM.YYYY") }}
 			</template>
@@ -58,7 +36,6 @@
 <script setup>
 const dayjs = useDayjs();
 import { useTransactionsFilters } from '~/composables/transactions/useTransactionsFilters'
-const categoriesStore = useCategoriesStore();
 const loaded = ref(false);
 const loading = ref(false);
 const listingId = "monthlyTransactions";
@@ -74,7 +51,6 @@ const headers = ref([
 
 const {
 	dateFilter,
-	categoryFilter,
 	amountMinFilter,
 	amountMaxFilter,
 	currentPage,
@@ -107,8 +83,7 @@ watch(
   [
     dateFilter,
     amountMinFilter,
-    amountMaxFilter,
-    categoryFilter
+    amountMaxFilter
   ],
   () => {
 	if (currentPage.value !== 1) {
@@ -151,7 +126,6 @@ const loadMonthlyTransactions = async (page = 1, pageSize = 10, countPages = nul
 			date: formattedDate,
 			amountMin: amountMinFilter.value,
 			amountMax: amountMaxFilter.value,
-			categoryId: categoryFilter.value,
 			countPages
 		},
 		onResponseError: ({ response }) => {
