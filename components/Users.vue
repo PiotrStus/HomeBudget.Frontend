@@ -10,7 +10,7 @@
         loading-text="Wczytywanie">
         <template v-slot:item.email="{ value, item }">
             <template v-if="item.isAdmin">
-                <v-icon>mdi-shield-star</v-icon>
+                <v-icon title="Administrator">mdi-shield-star</v-icon>
             </template>
             {{ value }}
         </template>
