@@ -28,7 +28,12 @@ export const useUserStore = defineStore({
 			// uzywamy useWebApiFetch
 			// podajemy adres kontrolera z naszego API
 			// wolamy z controllera akce GettLoggedInUser() z UserController.cs
-			useWebApiFetch("/User/GetLoggedInUser")
+			useWebApiFetch("/User/GetLoggedInUser", 
+				{
+					onResponseError: ({  }) => {
+					},
+				}
+			)
 				// co sie ma wydarzyc po requescie
 				// mamy opcje dane i blad
 				// tutaj response ma dwa property: data i error

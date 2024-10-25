@@ -21,7 +21,6 @@
 
 <script setup>
 const showDialog = ref(false);
-const categoriesStore = useCategoriesStore();
 const loading = ref(false);
 const users = ref([]);
 

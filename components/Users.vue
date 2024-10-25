@@ -8,8 +8,11 @@
         page-text="{0}-{1} z {2}" 
         no-data-text="Brak użytkowników. Dodaj nowego." 
         loading-text="Wczytywanie">
-        <template v-slot:item.name="{ value }">
-            {{value}}
+        <template v-slot:item.email="{ value, item }">
+            <template v-if="item.isAdmin">
+                <v-icon>mdi-shield-star</v-icon>
+            </template>
+            {{ value }}
         </template>
         <template v-slot:item.action="{ item, value }">
             <div>
@@ -26,7 +29,12 @@ const globalMessageStore = useGlobalMessageStore();
 const { getErrorMessage} = useWebApiResponseParser();
 const confirmDialog = ref(null);
 
+
+
 const deleteUser = (user) => {
+    const messageMap = {
+        "CanNotDeleteAdmin": "Nie można usunąć administratora konta"
+    };
     confirmDialog.value.show({
         title: "Potwierdź usunięcie",
         text: "Czy na pewno chcesz usunać użytkownika?",
@@ -40,7 +48,7 @@ const deleteUser = (user) => {
                 body: {id : user.id},
                 watch: false,
                 onResponseError: ({ response }) => {
-                    let message = getErrorMessage(response, {})
+                    let message = getErrorMessage(response, messageMap)
                     globalMessageStore.showErrorMessage(message);
                 }
             })
