@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+const router = useRouter();
 
 // defineStore -> metoda z Pinia
 export const useUserStore = defineStore({
@@ -65,7 +66,7 @@ export const useUserStore = defineStore({
 		logout() {
 			const notificationsStore = useNotificationsStore();
 			const accountStore = useAccountStore();
-			useWebApiFetch("/User/Logout", {
+			return useWebApiFetch("/User/Logout", {
 				// jak jest metoda GET to nie trzeba podawac zadnych paramaetrow
 				// jak POST to trzeba
 				method: "POST",
@@ -77,6 +78,7 @@ export const useUserStore = defineStore({
 					accountStore.accountData = null;
 					notificationsStore.clearNotifications();
 					accountStore.accountLoaded = false;
+					router.push({ path: '/' });
 					console.log(accountStore.accountLoaded);
 				}
 			});
