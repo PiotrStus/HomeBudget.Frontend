@@ -16,9 +16,7 @@ steps:
     versionSpec: '20.x'
 
 - script:
-    rm -rf node_modules
-    npm install
-    npm run generate
+    npm install && npm run generate
   displayName: 'npm install and generate static page'
 
 - task: AzureStaticWebApp@0
