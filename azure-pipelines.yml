@@ -16,10 +16,13 @@ steps:
     versionSpec: '20.x'
 
 - script:
-    npm install
+    echo "Running npm audit before fix"
+    npm audit
     npm audit fix --force
+    echo "Running npm audit after fix"
+    npm audit
     npm run generate
-  displayName: 'npm install and generate static page'
+  displayName: 'npm install, fix vulnerabilities, and generate static page'
 
 - task: AzureStaticWebApp@0
   inputs:
