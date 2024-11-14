@@ -17,6 +17,7 @@ steps:
 
 - script:
     npm install
+    npm audit fix
     npm run generate
   displayName: 'npm install and generate static page'
 
