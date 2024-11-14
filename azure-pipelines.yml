@@ -16,7 +16,7 @@ steps:
     versionSpec: '20.x'
 
 - script:
-    npm install
+    npm ci
     npm run generate
   displayName: 'npm install and generate static page'
 
