@@ -88,7 +88,6 @@ const monthlyBudgetAdded = (monthlyBudgetId) => {
 
 const addMonthlyDisabled = computed(() => {
 	const disable = (!viewModel.value.yearId || !viewModel.value.month);
-	console.log(disable);
 	return disable;
 })
 

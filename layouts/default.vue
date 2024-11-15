@@ -198,7 +198,6 @@ await antiForgeryStore.loadAntiForgeryToken();
 
 const openAccountDialog = () => {
 	accountStore.showAccountDialog = true;
-	console.log(accountStore.showAccountDialog);
 }
 
 

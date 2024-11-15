@@ -28,7 +28,6 @@ const selectedMonthId = ref(null);
 
 const monthItems = computed(() => {
 	if (yearBudgetsStore.loaded) {
-		console.log(yearBudgetsStore.yearBudgets);
 		return yearBudgetsStore.yearBudgets.flatMap(budget =>
 			budget.monthlyBudgets.map(month => ({
 				title: `${getMonthName(month.month)} ${budget.year}`,
@@ -52,7 +51,6 @@ watch(selectedMonthId, () => {
 	selectedMonth.value = monthItems.value.find(month => {
 		return month.month === selectedMonthId.value;
 	});
-	console.log(selectedMonth)
 	if (selectedMonthId)
  	{
 		currentDate.value = dayjs().year(selectedMonth.value.year).month(selectedMonth.value.month).date(3);

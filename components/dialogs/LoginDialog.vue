@@ -85,11 +85,6 @@ const viewModel = ref({
 	password: "",
 });
 
-
-// const submit = () => {
-// 	console.log(viewModel.value);
-// }
-
 // ona jest asynchroniczna 
 // ev -> event
 // ten event zwraca obiekt, i jeden z jego properties jest valid

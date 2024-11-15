@@ -19,19 +19,10 @@ export const useNotificationsStore = defineStore({
 			useWebApiFetch("/Notification/GetUserNotifications")
 				.then(({ data, error }) => {
 					if (data.value) {
-						console.log(data.value);
 						this.notifications = data.value.notifications;
-						console.log(this.notifications);
 						this.updateLastNotification();
-					} else if (error.value) {
-						console.log("Brak powiadomień");
 					}
 				})
-				.finally(() => {
-					console.log(this.lastNotification);
-					console.log(this.isNewNotification);
-					console.log(this.newNotifications);
-				});
 		},
 
 		updateLastNotification() {
@@ -91,13 +82,8 @@ export const useNotificationsStore = defineStore({
 			  .then(({ data, error }) => {
 				if (data.value) {
 					this.loadNotifications();
-				} else if (error.value) {
-				  console.log("Nie udało się usunąć powiadomienia");
 				}
 			  })
-			  .finally(() => {
-				console.log(this.notifications);
-			  });
 		  },
 
 		clearNotifications() {

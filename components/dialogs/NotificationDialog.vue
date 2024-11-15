@@ -36,7 +36,6 @@ const props = defineProps({
 
 const handleClose = () => {
 	show.value = false;
-	console.log("close");
 	emit('notificationClosed');
 };
 

@@ -150,9 +150,7 @@ const loadMonthlyTransactions = async (page = 1, pageSize = 10, countPages = nul
 		});
 };
 
-
 onMounted(async () => {
-	console.log(props.date);
 	await loadMonthlyTransactions(currentPage.value, pageSize.value);
 });
 

@@ -15,8 +15,6 @@ export const useYearBudgetsStore = defineStore({
 	actions: {
 		 loadYearBudgets(force = false) {
 			this.loading = true;
-			console.log('force', force);
-			console.log('loaded', this.loaded);
 			if (!force && this.loaded) {
 
 				return Promise.resolve().finally(() => {
@@ -30,7 +28,6 @@ export const useYearBudgetsStore = defineStore({
 						const sortedYearBudgets = copiedYearBudgets.sort((a, b) => a.year - b.year);
 						this.yearBudgets = sortedYearBudgets;
 						this.loaded = true;
-						console.log(this.yearBudgets)
 					} else if (error.value) {
 						this.yearBudgets = [];
 						this.loaded = false;

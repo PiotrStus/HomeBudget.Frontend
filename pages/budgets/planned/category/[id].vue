@@ -86,8 +86,6 @@ const loadData = () => {
 	}).then(({ data, error }) => {
 		if (data.value) {
 			viewModel.value = data.value;
-			console.log(viewModel.value)
-			console.log(data.value)
 		} else if (error.value) {
 			globalMessageStore.showErrorMessage("Błąd pobierania danych");
 		}

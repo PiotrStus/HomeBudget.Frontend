@@ -59,7 +59,6 @@ const categoriesToUse = computed(() => {
         categoryType: cat.categoryType,
         
     }));
-    console.log(plannedPairs)
     return categoriesStore.categories.filter(cat => {
         return !plannedPairs.some(plannedCat => 
             plannedCat.name === cat.name && 
@@ -79,7 +78,6 @@ const headers = ref([
 
 const updateItems = () => {
     loadPlannedCategories();
-    console.log(categoriesToUse);
 };
 
 const deletePlannedCategory = (category) => {
@@ -128,11 +126,6 @@ const loadPlannedCategories = async () => {
                     if (a.categoryType === 'Expense' && b.categoryType === 'Income') return 1;
                     return 0;
                     });
-
-					console.log('plannedCategories');
-					console.log(plannedCategories.value);
-					console.log('categoriesStore.categories');
-					console.log(categoriesStore.categories);
 				} else if (error.value) {
 					plannedCategories.value = [];
 				}

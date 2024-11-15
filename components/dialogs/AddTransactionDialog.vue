@@ -107,12 +107,6 @@ const viewModel = ref({
 	amount: null,
 });
 
-watch(() => viewModel.value.date, (newDate) => {
-	console.log(newDate);
-	//formatDateWithoutTimezone2(newDate);
-	console.log(dayjs('30.09.2024', 'DD.MM.YYYY', true).isValid()); 
-});
-
 const handleCancel = () => {
 	localShow.value = false;
 	errorMsg.value = "";

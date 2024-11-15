@@ -79,7 +79,6 @@ export const useUserStore = defineStore({
 					notificationsStore.clearNotifications();
 					accountStore.accountLoaded = false;
 					router.push({ path: '/' });
-					console.log(accountStore.accountLoaded);
 				}
 			});
 		}

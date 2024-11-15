@@ -60,7 +60,6 @@ const plannedCategoriesAdded = () => {
 
 
 watch(localShow, (newState) => {
-	console.log(props.items)
 	if (newState)
 	{
 		viewModel.value = {

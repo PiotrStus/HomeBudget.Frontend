@@ -36,7 +36,6 @@ const emit = defineEmits(['userAdded']);
 
 const userAdded = () => {
   emit('userAdded');
-  console.log('test')
 };
 
 watch(localShow, (newState) => {

@@ -87,7 +87,6 @@ const handleOutsideClick = () => {
 
 const handleCancel = () => {
 	accountStore.showAccountDialog = false;
-	console.log(accountStore.showAccountDialog)
 };
 
 const handleChooseAccount = (accountId) => {
@@ -127,7 +126,6 @@ const handleChooseAccount = (accountId) => {
 		});
 };
 
-onMounted(() => console.log('Aktualny motyw:', theme.isDark ? 'Ciemny' : 'Jasny'));
 </script>
 
 <style scoped>

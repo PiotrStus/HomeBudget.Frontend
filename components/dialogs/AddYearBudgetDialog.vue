@@ -86,7 +86,6 @@ const addNewBudget = () => {
 	})
 	.then((response) => {
 		if (response.data.value) {
-			console.log(response.data.value)
 			globalMessageStore.showSuccessMessage('Budżet roczny został dodany');
 			yearBudgetId.value = response.data.value.yearBudgetId;
 			yearBudgetAdded();

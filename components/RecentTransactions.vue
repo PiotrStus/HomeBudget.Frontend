@@ -59,8 +59,6 @@ const checkBudgetExists = (date, count) => {
 				recentTransactions.value = data.value.transactions;
 				dataLoaded.value = true;
 				}
-			} else if (error.value) {
-				console.log(error.value);
 			}
 		})
 		.finally(() => {

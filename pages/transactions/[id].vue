@@ -129,8 +129,6 @@ const loadData = () => {
 			viewModel.value.date = new Date(data.value.date);
 			viewModel.value.previousCategoryId = data.value.categoryId;
 			viewModel.value.previousDate = new Date(data.value.date);
-			console.log(viewModel.value)
-			console.log(data.value)
 		} else if (error.value) {
 			globalMessageStore.showErrorMessage("Błąd pobierania danych");
 		}
