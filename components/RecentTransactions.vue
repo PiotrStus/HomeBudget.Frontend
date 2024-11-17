@@ -5,13 +5,17 @@
 			Ostatnie operacje
 		</v-card-title>
 		<v-card-text >
+			<div v-if="!recentTransactions.length" class="text-center">
+			Brak dostępnych transakcji. Dodaj nową. 
+			</div>
 			<v-list class="transactions">			
 				<v-list-item class="mt-2" 
 							variant="elevated" 
 							:title="transaction.name"
 							v-for="transaction in recentTransactions" 
 							:key="transaction.id"
-							style="min-height: 80px;"> <!-- lub max-height -->
+							style="min-height: 80px;"
+							> 
 					<template v-slot:prepend>
 						<v-icon>mdi-receipt-text-outline</v-icon>
 					</template>
@@ -57,12 +61,12 @@ const checkBudgetExists = (date, count) => {
 			if (data.value) {
 				if (data.value.transactions?.length > 0) {
 				recentTransactions.value = data.value.transactions;
-				dataLoaded.value = true;
 				}
 			}
 		})
 		.finally(() => {
 			loading.value = false;
+			dataLoaded.value = true;
 		});
 };
 
