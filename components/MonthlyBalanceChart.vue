@@ -96,8 +96,8 @@ const option = computed(() => ({
 	yAxis: {
 		type: "value",
 		max: Math.max(
-			...barExpenseData.value.planned,
-			...barExpenseData.value.actual
+			...(barExpenseData.value.planned.length ? barExpenseData.value.planned : [0]),
+			...(barExpenseData.value.actual.length ? barExpenseData.value.actual : [0])
 		),
 		axisLabel: {
 			formatter: "{value} zł",
@@ -135,7 +135,7 @@ const option = computed(() => ({
 				formatter: (params) => {
 					const actual = barExpenseData.value.actual[params.dataIndex];
 					const planned = barExpenseData.value.planned[params.dataIndex];
-					const percent = ((actual / planned) * 100).toFixed(0);
+					const percent = planned === 0 ? 0 : ((actual / planned) * 100).toFixed(0);
 					return `${percent}%`;
 				},
 			},
@@ -199,6 +199,8 @@ const loadMonthlyBalance = async (date) => {
 				barIncomeData.value.actual = incomeBalanceCategories.value.map(
 					(item) => item.actualAmount
 				);
+				console.log('barExpenseData:', barExpenseData.value);
+
 			} else if (error.value) {
 				loaded.value = false;
 				barExpenseData.value = [];

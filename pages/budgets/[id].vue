@@ -73,7 +73,7 @@ const submit = async (ev) => {
 const save = () => {
 	saving.value = true;
 	const messageMap = {
-        "MonthlyBudgetDidNotChange": "Budżet miesięczny już istnieje"
+        "MonthlyBudgetAlreadyExists": "Budżet miesięczny już istnieje"
     };
 
 	const idAsNumber = Number(route.params.id);

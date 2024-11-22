@@ -64,7 +64,7 @@ const submit = async (ev) => {
 const save = () => {
 	saving.value = true;
 	const messageMap = {
-        "CategoryDidNotChange": "Dana kategoria już istnieje"
+        "CategoryAlreadyExists": "Dana kategoria już istnieje"
     };
 
 	useWebApiFetch('/Category/UpdateCategory', {
