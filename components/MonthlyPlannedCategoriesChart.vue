@@ -134,7 +134,7 @@ const loadPlannedCategories = async (date) => {
 
 watch(plannedExpenseCategories, (newValues) => {
 	const filteredCategories = newValues.filter(
-		(category) => category.amount > 0
+		(category) => category.amount >= 0
 	);
 	option.value.series[0].data = filteredCategories.map((category) => ({
 		value: category.amount,

@@ -199,8 +199,6 @@ const loadMonthlyBalance = async (date) => {
 				barIncomeData.value.actual = incomeBalanceCategories.value.map(
 					(item) => item.actualAmount
 				);
-				console.log('barExpenseData:', barExpenseData.value);
-
 			} else if (error.value) {
 				loaded.value = false;
 				barExpenseData.value = [];
