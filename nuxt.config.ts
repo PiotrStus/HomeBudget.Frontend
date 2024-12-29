@@ -8,11 +8,15 @@ export default defineNuxtConfig({
       // wpiszemy sobie publiczny adres naszego API
     },
   },
+
   devtools: {enabled: false},
+
   devServer: {
     host: '0.0.0.0',
   },
+
   ssr: false,
+
   build: {
     transpile: ['vuetify'],
   },
@@ -26,8 +30,6 @@ export default defineNuxtConfig({
   imports: {
     dirs: ['stores'],
   },
-  
-
 
   modules: [
     (_options, nuxt) => {
@@ -41,6 +43,7 @@ export default defineNuxtConfig({
      'nuxt-lodash',
      'dayjs-nuxt'
   ],
+
   vite: {
     vue: {
       template: {
@@ -54,9 +57,12 @@ export default defineNuxtConfig({
     prefixSkip: false,
     upperAfterPrefix: false,
   },
+
   dayjs: {
     locales: ['en','pl'],
     plugins: ['customParseFormat'],
     defaultLocale: 'pl'
   },
+
+  compatibilityDate: '2024-12-29',
 })

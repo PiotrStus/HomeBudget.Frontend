@@ -60,13 +60,17 @@ const checkBudgetExists = (date, count) => {
 		.then(({ data, error }) => {
 			if (data.value) {
 				if (data.value.transactions?.length > 0) {
+					dataLoaded.value = true;
 				recentTransactions.value = data.value.transactions;
 				}
+			}
+			else if (error.value) {
+				dataLoaded.value = false;
+				recentTransactions.value = [];
 			}
 		})
 		.finally(() => {
 			loading.value = false;
-			dataLoaded.value = true;
 		});
 };
 
